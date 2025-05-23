@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install Frontend Dependencies
+        run: cd frontend && npm ci
+
+      - name: Install Backend Dependencies
+        run: cd backend && npm ci
+
+      - name: Lint Frontend
+        run: cd frontend && npm run lint
+
+      - name: Lint Backend
+        run: cd backend && npm run lint
+
+      - name: Test Frontend
+        run: cd frontend && npm test
+
+      - name: Test Backend
+        run: cd backend && npm test
+
+      - name: Build Frontend
+        run: cd frontend && npm run build
+
+      - name: Build Backend
+        run: cd backend && npm run build 

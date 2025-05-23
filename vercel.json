@@ -1,0 +1,26 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "frontend/dist"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ],
+  "env": {
+    "VITE_API_URL": "https://techflow-api.onrender.com",
+    "VITE_MONGODB_URI": "@mongodb_uri",
+    "VITE_ANALYTICS_ID": "@analytics_id",
+    "VITE_WHATSAPP_NUMBER": "@whatsapp_number",
+    "VITE_LINKEDIN_URL": "@linkedin_url",
+    "VITE_INSTAGRAM_URL": "@instagram_url"
+  }
+}
