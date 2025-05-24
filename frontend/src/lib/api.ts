@@ -65,6 +65,7 @@ export const sendContactData = async (data: {
   email: string;
   phone?: string;
   company?: string;
+  subject: string;
   message: string;
   consent: boolean;
 }) => {
@@ -75,7 +76,8 @@ export const sendContactData = async (data: {
   });
 
   if (!response.ok) {
-    throw new Error(`Erro ao enviar contato: ${response.statusText}`);
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || `Erro ao enviar contato: ${response.statusText}`);
   }
 
   return response.json();
