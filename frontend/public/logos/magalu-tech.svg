@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="80" viewBox="0 0 200 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M40 20H160V60H40V20Z" fill="#2D2D2D"/>
+  <path d="M60 30H140V50H60V30Z" fill="white"/>
+  <text x="100" y="45" text-anchor="middle" fill="#2D2D2D" font-family="Arial" font-weight="bold" font-size="16">MAGALU TECH</text>
+</svg> 

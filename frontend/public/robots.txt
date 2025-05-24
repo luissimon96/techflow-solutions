@@ -1,0 +1,19 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://techflow.solutions/sitemap.xml
+
+# Disallow admin areas (quando houver)
+Disallow: /admin/
+Disallow: /dashboard/
+
+# Allow important pages
+Allow: /
+Allow: /services
+Allow: /clients
+Allow: /blog
+Allow: /contact
+
+# Crawl delay (opcional, em segundos)
+Crawl-delay: 1 
