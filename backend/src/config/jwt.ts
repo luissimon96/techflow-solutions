@@ -8,8 +8,8 @@ export const JWT_CONFIG = {
   expiresIn: process.env.JWT_EXPIRES_IN || '7d',
 };
 
-export function signToken(payload: any): string {
-  return jwt.sign(payload, JWT_CONFIG.secret, { expiresIn: JWT_CONFIG.expiresIn });
+export function signToken(payload: object | string): string {
+  return jwt.sign(payload, JWT_CONFIG.secret, { expiresIn: '7d' });
 }
 
 export function verifyToken(token: string): any {

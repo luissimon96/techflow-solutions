@@ -30,13 +30,14 @@ app.use('/api/contact', contactRouter);
 app.use(errorHandler);
 
 // Conexão com o MongoDB
-const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/techflowdb';
+const mongoUri = process.env.MONGODB_URI;
 
 console.log('🔗 Tentando conectar ao MongoDB...');
 console.log('📍 Database: techflowdb');
 console.log('📦 Collection: user');
 
-if (mongoUri !== 'mongodb://localhost:27017/techflowdb') {
+if (mongoUri) {
+  console.log('🔑 MongoDB URI encontrada, conectando...');
   mongoose.connect(mongoUri)
     .then(() => {
       console.log('✅ Conectado ao MongoDB Atlas');
@@ -46,11 +47,13 @@ if (mongoUri !== 'mongodb://localhost:27017/techflowdb') {
     })
     .catch((error) => {
       console.error('❌ Erro ao conectar ao MongoDB:', error);
+      console.error('🔍 URI de conexão:', mongoUri?.substring(0, 20) + '...');
       process.exit(1);
     });
 } else {
-  console.log('⚠️  Iniciando sem MongoDB (desenvolvimento local)');
-  startServer();
+  console.error('❌ MONGODB_URI não encontrada nas variáveis de ambiente');
+  console.error('⚠️  O servidor não funcionará corretamente sem banco de dados');
+  process.exit(1);
 }
 
 function startServer() {
