@@ -32,6 +32,7 @@ import {
   rateLimiter,
   validateAndSanitize
 } from '@/lib/validation';
+import { sendContactData, handleApiError } from '@/lib/api';
 
 type FormErrors = Partial<Record<keyof ContactFormData, string>>;
 
@@ -77,21 +78,6 @@ export default function Contact() {
     }
   };
 
-  const simulateEmailSending = async (): Promise<void> => {
-    // Simula progresso de envio
-    const steps = [10, 25, 50, 75, 90, 100];
-
-    for (const step of steps) {
-      setSubmitProgress(step);
-      await new Promise(resolve => setTimeout(resolve, 200));
-    }
-
-    // Simula possível erro (5% de chance)
-    if (Math.random() < 0.05) {
-      throw new Error('Erro de conexão com servidor de email');
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -110,11 +96,15 @@ export default function Contact() {
       // Validar e sanitizar dados
       const validatedData = validateAndSanitize(contactFormSchema, formData);
 
-      // Simular envio de email
-      await simulateEmailSending();
+      // Progresso de envio
+      setSubmitProgress(25);
+      await new Promise(resolve => setTimeout(resolve, 100));
 
-      // TODO: Integrar com serviço real de email (EmailJS, Resend, etc.)
-      console.log('Dados validados para envio:', validatedData);
+      // Enviar dados para a API
+      setSubmitProgress(75);
+      await sendContactData(validatedData);
+
+      setSubmitProgress(100);
 
       setSubmitSuccess(true);
       setFormData({
@@ -145,9 +135,10 @@ export default function Contact() {
         });
         setErrors(fieldErrors);
       } else {
+        const errorMessage = handleApiError(error);
         toast({
           title: 'Erro ao enviar mensagem',
-          description: error.message || 'Tente novamente em alguns minutos.',
+          description: errorMessage,
           status: 'error',
           duration: 7000,
           isClosable: true,

@@ -1,15 +1,10 @@
 import { Analytics } from '@vercel/analytics/react';
-import { ReactNode } from 'react';
 
-interface AnalyticsProviderProps {
-  children: ReactNode;
-}
-
-export const AnalyticsProvider = ({ children }: AnalyticsProviderProps) => {
+export const AnalyticsProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
-      {children}
-      <Analytics />
+    { children }
+    < Analytics />
     </>
   );
-}; 
+};
