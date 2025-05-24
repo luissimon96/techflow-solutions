@@ -1,6 +1,63 @@
-const mongoose = require('mongoose');
+import mongoose, { Document, Schema } from 'mongoose';
 
-const quoteSchema = new mongoose.Schema({
+// Interface para o documento Quote
+export interface IQuote extends Document {
+  // Dados do Cliente
+  clientName: string;
+  clientEmail: string;
+  clientPhone?: string;
+  clientCompany?: string;
+  clientPosition?: string;
+
+  // Dados do Projeto
+  projectName: string;
+  projectDescription: string;
+  projectType: 'Desenvolvimento Web' | 'Aplicativo Mobile' | 'E-commerce' | 'Dashboard/Analytics' | 'Sistema ERP' | 'API/Backend' | 'Consultoria Técnica' | 'Manutenção/Suporte' | 'Outro';
+  projectCategory: 'Novo desenvolvimento' | 'Migração/Refatoração' | 'Integração' | 'Melhoria/Otimização' | 'Correção de bugs' | 'Consultoria';
+  technologies: string[];
+  timeline: '1-2 semanas' | '3-4 semanas' | '1-2 meses' | '3-4 meses' | '5-6 meses' | 'Mais de 6 meses' | 'Flexível';
+  budget: 'R$ 5.000 - R$ 15.000' | 'R$ 15.000 - R$ 30.000' | 'R$ 30.000 - R$ 50.000' | 'R$ 50.000 - R$ 100.000' | 'Acima de R$ 100.000' | 'A definir';
+
+  // Funcionalidades e Características
+  features?: string[];
+  integrations?: string[];
+  platforms?: string[];
+
+  // Informações Adicionais
+  hasExistingSystem: boolean;
+  existingSystemDetails?: string;
+  mainGoals?: string;
+  targetAudience?: string;
+
+  // Status da Proposta
+  status: 'pending' | 'in_analysis' | 'proposal_sent' | 'accepted' | 'rejected' | 'canceled';
+
+  // Dados da Proposta
+  proposalValue?: number;
+  proposalTimeline?: string;
+  proposalNotes?: string;
+  proposalSentAt?: Date;
+  proposalAcceptedAt?: Date;
+
+  // Metadados
+  consent: boolean;
+  source: 'website' | 'referral' | 'social_media' | 'direct';
+  urgency: 'low' | 'medium' | 'high';
+  notes?: string;
+
+  // Timestamps
+  createdAt: Date;
+  updatedAt: Date;
+
+  // Virtual
+  responseTime?: number;
+
+  // Métodos
+  updateStatus(newStatus: string, notes?: string): Promise<IQuote>;
+}
+
+// Schema do MongoDB
+const quoteSchema = new Schema<IQuote>({
   // Dados do Cliente
   clientName: {
     type: String,
@@ -12,14 +69,14 @@ const quoteSchema = new mongoose.Schema({
   clientEmail: {
     type: String,
     required: true,
-    lowercase: true,
     trim: true,
-    match: [/^\S+@\S+\.\S+$/, 'Email deve ter um formato válido']
+    lowercase: true,
+    match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   },
   clientPhone: {
     type: String,
     trim: true,
-    match: [/^[\d\s\-()+ ]+$/, 'Telefone deve conter apenas números e símbolos válidos']
+    match: /^[\d\s\-()+ ]+$/
   },
   clientCompany: {
     type: String,
@@ -145,7 +202,7 @@ const quoteSchema = new mongoose.Schema({
     enum: ['pending', 'in_analysis', 'proposal_sent', 'accepted', 'rejected', 'canceled'],
     default: 'pending'
   },
-  
+
   // Dados da Proposta (quando elaborada)
   proposalValue: {
     type: Number,
@@ -170,7 +227,7 @@ const quoteSchema = new mongoose.Schema({
     type: Boolean,
     required: true,
     validate: {
-      validator: function(v) {
+      validator: function (v: boolean) {
         return v === true;
       },
       message: 'Consentimento é obrigatório'
@@ -204,47 +261,49 @@ quoteSchema.index({ createdAt: -1 });
 quoteSchema.index({ 'clientEmail': 1, 'createdAt': -1 });
 
 // Virtual para calcular tempo de resposta
-quoteSchema.virtual('responseTime').get(function() {
+quoteSchema.virtual('responseTime').get(function (this: IQuote) {
   if (this.proposalSentAt) {
-    return Math.floor((this.proposalSentAt - this.createdAt) / (1000 * 60 * 60 * 24)); // dias
+    return Math.floor((this.proposalSentAt.getTime() - this.createdAt.getTime()) / (1000 * 60 * 60 * 24)); // dias
   }
   return null;
 });
 
 // Middleware para sanitização antes de salvar
-quoteSchema.pre('save', function(next) {
+quoteSchema.pre('save', function (this: IQuote, next) {
   // Remover espaços extras
   if (this.projectDescription) {
     this.projectDescription = this.projectDescription.replace(/\s+/g, ' ').trim();
   }
-  
+
   // Normalizar email
   if (this.clientEmail) {
     this.clientEmail = this.clientEmail.toLowerCase().trim();
   }
-  
+
   next();
 });
 
 // Método estático para buscar por status
-quoteSchema.statics.findByStatus = function(status) {
+quoteSchema.statics.findByStatus = function (status: string) {
   return this.find({ status }).sort({ createdAt: -1 });
 };
 
 // Método para atualizar status
-quoteSchema.methods.updateStatus = function(newStatus, notes = '') {
-  this.status = newStatus;
+quoteSchema.methods.updateStatus = function (this: IQuote, newStatus: string, notes = '') {
+  this.status = newStatus as any;
   if (notes) {
     this.notes = notes;
   }
-  
+
   if (newStatus === 'proposal_sent') {
     this.proposalSentAt = new Date();
   } else if (newStatus === 'accepted') {
     this.proposalAcceptedAt = new Date();
   }
-  
+
   return this.save();
 };
 
-module.exports = mongoose.model('Quote', quoteSchema); 
+const Quote = mongoose.model<IQuote>('Quote', quoteSchema);
+
+export default Quote; 

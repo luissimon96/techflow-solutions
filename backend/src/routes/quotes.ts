@@ -1,13 +1,14 @@
-const express = require('express');
-const router = express.Router();
-const {
+import express from 'express';
+import {
   createQuote,
   getQuotes,
   getQuoteById,
   updateQuoteStatus,
   getQuoteStats,
   quoteValidation
-} = require('../controllers/quoteController');
+} from '../controllers/quoteController';
+
+const router = express.Router();
 
 /**
  * @route   POST /api/quotes
@@ -45,4 +46,4 @@ router.get('/:id', getQuoteById); // TODO: Adicionar middleware de autenticaçã
  */
 router.put('/:id/status', updateQuoteStatus); // TODO: Adicionar middleware de autenticação admin
 
-module.exports = router; 
+export { router as quoteRouter }; 

@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import { healthRouter } from './routes/health';
 import { contactRouter } from './routes/contact';
-const quoteRoutes = require('./routes/quotes');
+import { quoteRouter } from './routes/quotes';
 import { errorHandler } from './middleware/errorHandler';
 
 // Configuração do ambiente
@@ -26,7 +26,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use('/health', healthRouter);
 app.use('/api/health', healthRouter);
 app.use('/api/contact', contactRouter);
-app.use('/api/quotes', quoteRoutes);
+app.use('/api/quotes', quoteRouter);
 
 // Error handling
 app.use(errorHandler);

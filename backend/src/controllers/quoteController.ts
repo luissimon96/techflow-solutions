@@ -1,64 +1,65 @@
-const Quote = require('../models/Quote');
-const { body, validationResult } = require('express-validator');
-const DOMPurify = require('isomorphic-dompurify');
+import { Request, Response } from 'express';
+import { body, validationResult } from 'express-validator';
+import DOMPurify from 'isomorphic-dompurify';
+import Quote from '../models/Quote';
 
 // Rate limiting - 2 solicitações por email por hora
-const rateLimitMap = new Map();
+const rateLimitMap = new Map<string, number[]>();
 
-const isRateLimited = (email) => {
+const isRateLimited = (email: string): boolean => {
   const now = Date.now();
   const hourAgo = now - (60 * 60 * 1000); // 1 hora atrás
-  
+
   if (!rateLimitMap.has(email)) {
     rateLimitMap.set(email, []);
   }
-  
-  const requests = rateLimitMap.get(email);
-  
+
+  const requests = rateLimitMap.get(email)!;
+
   // Remove requests antigas (mais de 1 hora)
   const recentRequests = requests.filter(timestamp => timestamp > hourAgo);
   rateLimitMap.set(email, recentRequests);
-  
+
   return recentRequests.length >= 2;
 };
 
-const addRateLimit = (email) => {
+const addRateLimit = (email: string): void => {
   const now = Date.now();
   if (!rateLimitMap.has(email)) {
     rateLimitMap.set(email, []);
   }
-  rateLimitMap.get(email).push(now);
+  rateLimitMap.get(email)!.push(now);
 };
 
 // Validações para criação de orçamento
-const quoteValidation = [
+export const quoteValidation = [
   // Dados do Cliente
   body('clientName')
     .trim()
     .isLength({ min: 2, max: 100 })
     .withMessage('Nome deve ter entre 2 e 100 caracteres')
     .escape(),
-  
+
   body('clientEmail')
     .trim()
     .isEmail()
     .normalizeEmail()
     .withMessage('Email deve ter um formato válido'),
-  
+
   body('clientPhone')
     .optional()
     .trim()
     .matches(/^[\d\s\-()+ ]+$/)
     .withMessage('Telefone deve conter apenas números e símbolos válidos')
     .escape(),
-  
+
   body('clientCompany')
     .optional()
     .trim()
     .isLength({ max: 100 })
     .withMessage('Nome da empresa deve ter no máximo 100 caracteres')
     .escape(),
-  
+
   body('clientPosition')
     .optional()
     .trim()
@@ -72,12 +73,12 @@ const quoteValidation = [
     .isLength({ min: 5, max: 200 })
     .withMessage('Nome do projeto deve ter entre 5 e 200 caracteres')
     .escape(),
-  
+
   body('projectDescription')
     .trim()
     .isLength({ min: 20, max: 2000 })
     .withMessage('Descrição deve ter entre 20 e 2000 caracteres'),
-  
+
   body('projectType')
     .trim()
     .isIn([
@@ -92,7 +93,7 @@ const quoteValidation = [
       'Outro'
     ])
     .withMessage('Tipo de projeto inválido'),
-  
+
   body('projectCategory')
     .trim()
     .isIn([
@@ -104,16 +105,16 @@ const quoteValidation = [
       'Consultoria'
     ])
     .withMessage('Categoria de projeto inválida'),
-  
+
   body('technologies')
     .isArray()
     .withMessage('Tecnologias deve ser um array'),
-  
+
   body('technologies.*')
     .optional()
     .trim()
     .escape(),
-  
+
   body('timeline')
     .trim()
     .isIn([
@@ -126,7 +127,7 @@ const quoteValidation = [
       'Flexível'
     ])
     .withMessage('Prazo inválido'),
-  
+
   body('budget')
     .trim()
     .isIn([
@@ -143,11 +144,11 @@ const quoteValidation = [
   body('features')
     .optional()
     .isArray(),
-  
+
   body('integrations')
     .optional()
     .isArray(),
-  
+
   body('platforms')
     .optional()
     .isArray(),
@@ -156,19 +157,19 @@ const quoteValidation = [
   body('hasExistingSystem')
     .isBoolean()
     .withMessage('hasExistingSystem deve ser um boolean'),
-  
+
   body('existingSystemDetails')
     .optional()
     .trim()
     .isLength({ max: 1000 })
     .withMessage('Detalhes do sistema existente deve ter no máximo 1000 caracteres'),
-  
+
   body('mainGoals')
     .optional()
     .trim()
     .isLength({ max: 500 })
     .withMessage('Objetivos principais deve ter no máximo 500 caracteres'),
-  
+
   body('targetAudience')
     .optional()
     .trim()
@@ -187,72 +188,70 @@ const quoteValidation = [
 ];
 
 // Criar nova solicitação de orçamento
-const createQuote = async (req, res) => {
+export const createQuote = async (req: Request, res: Response): Promise<void> => {
   try {
     // Verificar validações
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         message: 'Dados inválidos',
         errors: errors.array()
       });
+      return;
     }
 
     const { clientEmail } = req.body;
 
     // Verificar rate limiting
     if (isRateLimited(clientEmail)) {
-      return res.status(429).json({
+      res.status(429).json({
         success: false,
-        message: 'Você pode fazer até 2 solicitações por hora. Tente novamente mais tarde.',
-        retryAfter: 3600
+        message: 'Muitas solicitações. Aguarde 1 hora antes de enviar novamente.'
       });
+      return;
     }
 
-    // Sanitizar dados
+    // Sanitizar dados textuais
     const sanitizedData = {
       ...req.body,
       projectDescription: DOMPurify.sanitize(req.body.projectDescription),
-      existingSystemDetails: req.body.existingSystemDetails ? 
+      existingSystemDetails: req.body.existingSystemDetails ?
         DOMPurify.sanitize(req.body.existingSystemDetails) : undefined,
-      mainGoals: req.body.mainGoals ? 
+      mainGoals: req.body.mainGoals ?
         DOMPurify.sanitize(req.body.mainGoals) : undefined,
-      targetAudience: req.body.targetAudience ? 
+      targetAudience: req.body.targetAudience ?
         DOMPurify.sanitize(req.body.targetAudience) : undefined
     };
 
     // Criar nova solicitação
-    const quote = new Quote(sanitizedData);
-    await quote.save();
+    const newQuote = new Quote(sanitizedData);
+    const savedQuote = await newQuote.save();
 
-    // Adicionar ao rate limit
+    // Adicionar ao rate limiting
     addRateLimit(clientEmail);
 
-    // Resposta de sucesso (sem dados sensíveis)
     res.status(201).json({
       success: true,
-      message: 'Solicitação de orçamento enviada com sucesso! Entraremos em contato em até 24 horas.',
+      message: 'Solicitação de orçamento enviada com sucesso!',
       data: {
-        id: quote._id,
-        projectName: quote.projectName,
-        projectType: quote.projectType,
-        status: quote.status,
-        createdAt: quote.createdAt
+        id: savedQuote._id,
+        clientName: savedQuote.clientName,
+        projectName: savedQuote.projectName,
+        status: savedQuote.status,
+        createdAt: savedQuote.createdAt
       }
     });
 
-    // Log para monitoramento (em produção, usar logger adequado)
-    console.log(`Nova solicitação de orçamento: ${quote._id} - ${quote.clientEmail} - ${quote.projectType}`);
-
-  } catch (error) {
+  } catch (error: any) {
     console.error('Erro ao criar solicitação de orçamento:', error);
-    
+
     if (error.code === 11000) {
-      return res.status(400).json({
+      res.status(400).json({
         success: false,
         message: 'Dados duplicados detectados'
       });
+      return;
     }
 
     res.status(500).json({
@@ -263,7 +262,7 @@ const createQuote = async (req, res) => {
 };
 
 // Listar solicitações (admin apenas - a implementar)
-const getQuotes = async (req, res) => {
+export const getQuotes = async (req: Request, res: Response): Promise<void> => {
   try {
     const {
       page = 1,
@@ -275,7 +274,7 @@ const getQuotes = async (req, res) => {
     } = req.query;
 
     // Construir filtros
-    const filters = {};
+    const filters: any = {};
     if (status && status !== 'all') {
       filters.status = status;
     }
@@ -284,14 +283,14 @@ const getQuotes = async (req, res) => {
     }
 
     // Construir ordenação
-    const sort = {};
-    sort[sortBy] = sortOrder === 'desc' ? -1 : 1;
+    const sort: any = {};
+    sort[sortBy as string] = sortOrder === 'desc' ? -1 : 1;
 
     // Buscar com paginação
     const quotes = await Quote.find(filters)
       .sort(sort)
-      .limit(limit * 1)
-      .skip((page - 1) * limit)
+      .limit(Number(limit))
+      .skip((Number(page) - 1) * Number(limit))
       .select('-clientEmail -clientPhone') // Remover dados sensíveis
       .exec();
 
@@ -301,8 +300,8 @@ const getQuotes = async (req, res) => {
       success: true,
       data: quotes,
       pagination: {
-        current: page,
-        pages: Math.ceil(total / limit),
+        current: Number(page),
+        pages: Math.ceil(total / Number(limit)),
         total
       }
     });
@@ -317,16 +316,17 @@ const getQuotes = async (req, res) => {
 };
 
 // Buscar solicitação específica (admin apenas)
-const getQuoteById = async (req, res) => {
+export const getQuoteById = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
 
     const quote = await Quote.findById(id);
     if (!quote) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         message: 'Solicitação não encontrada'
       });
+      return;
     }
 
     res.json({
@@ -344,31 +344,32 @@ const getQuoteById = async (req, res) => {
 };
 
 // Atualizar status da solicitação (admin apenas)
-const updateQuoteStatus = async (req, res) => {
+export const updateQuoteStatus = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
     const { status, notes, proposalValue, proposalTimeline, proposalNotes } = req.body;
 
     const quote = await Quote.findById(id);
     if (!quote) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         message: 'Solicitação não encontrada'
       });
+      return;
     }
 
     // Atualizar status usando método do modelo
-    await quote.updateStatus(status, notes);
+    await (quote as any).updateStatus(status, notes);
 
     // Atualizar dados da proposta se fornecidos
     if (proposalValue !== undefined) {
-      quote.proposalValue = proposalValue;
+      (quote as any).proposalValue = proposalValue;
     }
     if (proposalTimeline !== undefined) {
-      quote.proposalTimeline = proposalTimeline;
+      (quote as any).proposalTimeline = proposalTimeline;
     }
     if (proposalNotes !== undefined) {
-      quote.proposalNotes = proposalNotes;
+      (quote as any).proposalNotes = proposalNotes;
     }
 
     await quote.save();
@@ -389,7 +390,7 @@ const updateQuoteStatus = async (req, res) => {
 };
 
 // Estatísticas de solicitações (admin apenas)
-const getQuoteStats = async (req, res) => {
+export const getQuoteStats = async (req: Request, res: Response): Promise<void> => {
   try {
     const stats = await Quote.aggregate([
       {
@@ -437,13 +438,4 @@ const getQuoteStats = async (req, res) => {
       message: 'Erro interno do servidor'
     });
   }
-};
-
-module.exports = {
-  createQuote,
-  getQuotes,
-  getQuoteById,
-  updateQuoteStatus,
-  getQuoteStats,
-  quoteValidation
 }; 
