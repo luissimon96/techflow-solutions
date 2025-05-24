@@ -1,224 +1,229 @@
-# TechFlow Solutions
+# 🚀 TechFlow Solutions
 
-Site institucional da TechFlow Solutions, uma empresa especializada em desenvolvimento de software e soluções tecnológicas.
+**Full-stack web application** para empresa de desenvolvimento de software, construída com React/TypeScript (frontend) e Node.js/Express/MongoDB (backend).
 
-## 🚀 Tecnologias
+## 📋 Funcionalidades
+
+✅ **Landing Page Responsiva** com design moderno  
+✅ **Sistema de Contato** com validação e rate limiting  
+✅ **Sistema de Orçamentos** completo com 25+ campos estruturados  
+✅ **Analytics e Tracking** de conversões  
+✅ **Dashboard Admin** (API endpoints prontos)  
+✅ **Banco de dados MongoDB** com schemas otimizados  
+✅ **Deploy automatizado** no Render  
+
+## 🛠️ Stack Tecnológica
 
 ### Frontend
 
-- React
-- TypeScript
-- Vite
-- Chakra UI
-- React Router
-- React Query
-- Framer Motion
-- Vercel Analytics
+- **React 18** + **TypeScript**
+- **Chakra UI** para design system
+- **React Router** para navegação
+- **Framer Motion** para animações
+- **Zod** para validação
+- **Vite** como build tool
 
 ### Backend
 
-- Node.js
-- Express
-- TypeScript
-- MongoDB
-- JWT
-- Zod (validação)
+- **Node.js** + **Express** + **TypeScript**
+- **MongoDB** com **Mongoose**
+- **Express Validator** para validação
+- **CORS** e **Rate Limiting**
+- **JWT** para autenticação (preparado)
 
-## 🌐 URLs de Produção
+## 🚀 Desenvolvimento Local
 
-- **Frontend**: <https://www.srluissimon.com>
-- **Backend API**: <https://techflow-solutions-backend.onrender.com>
-- **Documentação da API**: <https://techflow-solutions-backend.onrender.com/docs>
+### Pré-requisitos
 
-## 📋 Pré-requisitos
+- Node.js >= 18.0.0
+- npm >= 8.0.0
+- MongoDB Atlas (ou local)
 
-- Node.js 18+
-- npm ou yarn
-
-## 🔧 Instalação
-
-1. Clone o repositório:
+### 🔧 Configuração Inicial
 
 ```bash
-git clone https://github.com/seu-usuario/techflow-solutions.git
+# Clonar repositório
+git clone https://github.com/luissimon96/techflow-solutions.git
 cd techflow-solutions
+
+# Instalar dependências de todos os projetos
+npm run install:all
+
+# Configurar variáveis de ambiente
+cp backend/env.example backend/.env
+# Edite backend/.env com suas configurações
 ```
 
-2. Configure o Frontend:
+### ⚡ Scripts de Desenvolvimento
 
 ```bash
-cd frontend
-npm install
-
-# Configure as variáveis de ambiente
-cp .env.example .env
-# Edite o arquivo .env com suas configurações
-```
-
-3. Configure o Backend:
-
-```bash
-cd ../backend
-npm install
-
-# Configure as variáveis de ambiente
-cp env.example .env
-# Edite o arquivo .env com suas configurações (MongoDB, JWT, etc.)
-```
-
-4. Inicie os servidores:
-
-**Frontend (desenvolvimento):**
-
-```bash
-cd frontend
+# 🚀 Iniciar desenvolvimento (backend + frontend simultaneamente)
 npm run dev
+
+# 📱 Iniciar apenas frontend (porta 5173)
+npm run dev:frontend
+
+# 🖥️ Iniciar apenas backend (porta 3000)
+npm run dev:backend
+
+# 🔍 Verificar saúde da aplicação
+npm run health:check
 ```
 
-**Backend (desenvolvimento):**
+### 🏗️ Scripts de Build e Produção
 
 ```bash
-cd backend
-npm run dev
+# 🔨 Build completo (backend + frontend)
+npm run build
+
+# 🔨 Build apenas backend
+npm run build:backend
+
+# 🔨 Build apenas frontend
+npm run build:frontend
+
+# 🚀 Iniciar produção (após build)
+npm start
+
+# 📦 Preparar para deploy
+npm run deploy:prepare
 ```
 
-O frontend estará disponível em `http://localhost:3000` e o backend em `http://localhost:5000`
+### 🧪 Scripts de Teste e Qualidade
 
-## 🛠️ Scripts Disponíveis
+```bash
+# 🧪 Executar todos os testes
+npm test
 
-### Frontend
+# 🧪 Testes apenas backend
+npm run test:backend
 
-- `npm run dev` - Inicia o servidor de desenvolvimento
-- `npm run build` - Cria a build de produção
-- `npm run preview` - Visualiza a build de produção localmente
-- `npm run lint` - Executa o linter
-- `npm run test` - Executa os testes
+# 🧪 Testes apenas frontend
+npm run test:frontend
 
-### Backend
+# 🔍 Linting completo
+npm run lint
 
-- `npm run dev` - Inicia o servidor de desenvolvimento
-- `npm run build` - Compila TypeScript
-- `npm start` - Inicia o servidor de produção
-- `npm run test` - Executa os testes
-- `npm run lint` - Executa o linter
+# ✨ Formatação de código
+npm run format
 
-## 📦 Estrutura do Projeto
+# 🧹 Limpeza completa
+npm run clean
+```
+
+## 📁 Estrutura do Projeto
 
 ```
 techflow-solutions/
-├── frontend/              # Aplicação React
-│   ├── src/
-│   │   ├── components/    # Componentes reutilizáveis
-│   │   ├── pages/         # Páginas da aplicação
-│   │   ├── lib/           # Utilitários e configurações
-│   │   ├── theme/         # Configuração do tema
-│   │   └── assets/        # Recursos estáticos
-│   ├── public/            # Arquivos públicos
-│   └── tests/            # Testes
-├── backend/               # API Node.js
-│   ├── src/
-│   │   ├── controllers/   # Controladores
-│   │   ├── models/        # Modelos de dados
-│   │   ├── routes/        # Rotas da API
-│   │   ├── middleware/    # Middlewares
-│   │   └── utils/         # Utilitários
-│   └── tests/            # Testes
-└── docs/                 # Documentação
+├── 📦 package.json          # Scripts raiz e workspaces
+├── 📋 README.md            # Este arquivo
+├── 🖥️ backend/            # API Node.js + Express
+│   ├── 📦 package.json
+│   ├── 🔧 src/
+│   │   ├── 📋 index.ts     # Entrada principal
+│   │   ├── 🛣️ routes/      # Rotas da API
+│   │   ├── 🎮 controllers/ # Lógica de negócio
+│   │   ├── 📊 models/      # Schemas MongoDB
+│   │   └── 🔧 middleware/  # Middlewares
+│   └── 📁 dist/           # Build compilado
+├── 📱 frontend/           # App React + TypeScript
+│   ├── 📦 package.json
+│   ├── 🔧 src/
+│   │   ├── 📋 main.tsx    # Entrada principal
+│   │   ├── 📄 pages/      # Páginas da aplicação
+│   │   ├── 🧩 components/ # Componentes reutilizáveis
+│   │   └── 🔧 lib/        # Utilitários e APIs
+│   └── 📁 dist/          # Build estático
+└── 📚 docs/              # Documentação
+    └── 📋 PROJECT_ROADMAP_UPDATED.md
 ```
 
-## ⚙️ Variáveis de Ambiente
+## 🌐 URLs da Aplicação
 
-### Frontend (.env)
+### Desenvolvimento Local
 
-```env
-VITE_API_URL=https://techflow-solutions-backend.onrender.com
-VITE_API_BASE_URL=https://techflow-solutions-backend.onrender.com/api
+- **Frontend:** <http://localhost:5173>
+- **Backend API:** <http://localhost:3000>
+- **Health Check:** <http://localhost:3000/health>
+
+### Produção
+
+- **Site:** <https://techflow-solutions-frontend.onrender.com>
+- **API:** <https://techflow-solutions-backend.onrender.com>
+
+## 🔗 Principais Endpoints da API
+
+```bash
+# 🏥 Saúde do servidor
+GET /health
+
+# 📧 Sistema de contato
+POST /api/contact
+
+# 💼 Sistema de orçamentos
+POST /api/quotes              # Criar solicitação
+GET  /api/quotes              # Listar (admin)
+GET  /api/quotes/:id          # Obter específico (admin)
+GET  /api/quotes/stats        # Estatísticas (admin)
+PUT  /api/quotes/:id/status   # Atualizar status (admin)
 ```
+
+## 🔧 Configuração de Ambiente
 
 ### Backend (.env)
 
 ```env
-PORT=10000
-NODE_ENV=production
-MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/techflow
-JWT_SECRET=your-super-secret-jwt-key
+# MongoDB
+MONGODB_URI=mongodb+srv://...
+
+# CORS
+CORS_ORIGIN=http://localhost:5173,https://your-domain.com
+
+# JWT (preparado para admin)
+JWT_SECRET=your-secret-key
 JWT_EXPIRES_IN=7d
-CORS_ORIGIN=https://www.srluissimon.com,http://localhost:3000
-RENDER=true
-RENDER_EXTERNAL_URL=https://techflow-solutions-backend.onrender.com
+
+# Porta
+PORT=3000
 ```
 
-## 🌐 Deploy
+## 📊 Status do Projeto
 
-### Frontend - Vercel
+**Progresso:** 95% Completo ✅
 
-O frontend está hospedado na Vercel e é automaticamente atualizado quando há push na branch main.
+### ✅ Funcionalidades Implementadas
 
-### Backend - Render
+- [x] Landing page responsiva
+- [x] Sistema de contato completo
+- [x] Sistema de orçamentos (25+ campos)
+- [x] Validação robusta (frontend + backend)
+- [x] Rate limiting e segurança
+- [x] Schemas MongoDB otimizados
+- [x] API RESTful completa
+- [x] Analytics e tracking
+- [x] Deploy automatizado
 
-O backend está hospedado no Render:
+### 🔄 Próximas Fases
 
-- URL: <https://techflow-solutions-backend.onrender.com>
-- Deploy automático a partir da branch main
-- Configurações de ambiente gerenciadas no dashboard do Render
+- [ ] **Fase 3:** Dashboard administrativo
+- [ ] **Fase 4:** Autenticação admin
+- [ ] **Fase 5:** Sistema de cases de sucesso
 
-## 🧪 Testes
+## 🚀 Deploy
 
-### Frontend
+O projeto está configurado para deploy automático no **Render**:
 
-```bash
-cd frontend
-npm run test              # Testes unitários
-npm run test:coverage     # Testes com cobertura
-npm run test:a11y         # Testes de acessibilidade
-```
+1. **Backend:** Build automático do TypeScript
+2. **Frontend:** Build estático com Vite
+3. **MongoDB:** Atlas com connection pooling
 
-### Backend
+## 📞 Suporte
 
-```bash
-cd backend
-npm run test              # Testes unitários
-npm run test:integration  # Testes de integração
-```
+Para dúvidas ou suporte:
 
-## 🔒 Segurança
+- 📧 Email: <contato@techflowsolutions.com>
+- 🐛 Issues: [GitHub Issues](https://github.com/luissimon96/techflow-solutions/issues)
 
-- Headers de segurança configurados (CSP, HSTS, etc.)
-- Validação de entrada com Zod
-- Rate limiting implementado
-- CORS configurado adequadamente
-- Sanitização de dados
+---
 
-## ♿ Acessibilidade
-
-- ARIA labels implementados
-- Navegação por teclado
-- Testes automatizados com jest-axe
-- Contraste de cores WCAG AA
-
-## 📈 Performance
-
-- Code splitting e lazy loading
-- Otimização de imagens
-- Cache de recursos estáticos
-- Bundle optimization
-
-## 📝 Licença
-
-Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
-
-## 👥 Autores
-
-- **TechFlow Solutions** - *Desenvolvimento* - [TechFlow Solutions](https://www.srluissimon.com)
-
-## 🙏 Agradecimentos
-
-- Todos os clientes e parceiros que confiam em nossas soluções
-- Comunidade open source que disponibiliza as ferramentas utilizadas
-
-## 📚 Documentação Adicional
-
-- [Roadmap do Projeto](docs/PROJECT_ROADMAP.md)
-- [Guia de Contribuição](docs/CONTRIBUTING.md)
-- [Arquitetura](docs/ARCHITECTURE.md)
-- [Guia de Deploy](docs/DEPLOYMENT.md)
+**TechFlow Solutions** - Transformando ideias em soluções tecnológicas 🚀
