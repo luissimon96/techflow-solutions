@@ -52,17 +52,17 @@ export default function Services() {
       });
     }
 
-    // Navigate to contact with service pre-selected
-    navigate('/contact', {
+    // Navigate to quote request with service pre-selected
+    navigate('/orcamento', {
       state: {
-        prefilledSubject: `Orçamento para ${serviceTitle}`,
-        serviceType: serviceTitle
+        serviceType: serviceTitle,
+        prefilledService: serviceTitle
       }
     });
   };
 
   const handleContactFromModal = () => {
-    navigate('/contact');
+    navigate('/contato');
   };
 
   return (
@@ -146,7 +146,7 @@ export default function Services() {
               <Button
                 colorScheme="brand"
                 size="lg"
-                onClick={() => navigate('/contact')}
+                onClick={() => navigate('/contato')}
                 _hover={{
                   transform: 'translateY(-2px)',
                 }}

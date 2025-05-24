@@ -13,6 +13,9 @@ export const API_ENDPOINTS = {
   // Contato
   CONTACT: '/contact',
 
+  // Orçamentos
+  QUOTES: '/quotes',
+
   // Portfolio
   PROJECTS: '/projects',
 
@@ -159,4 +162,43 @@ export const api = {
 
   delete: <T>(endpoint: string, options?: RequestInit) =>
     fetchApi<T>(endpoint, { ...options, method: 'DELETE' }),
+};
+
+/**
+ * Função para enviar solicitação de orçamento
+ */
+export const sendQuoteRequest = async (data: {
+  clientName: string;
+  clientEmail: string;
+  clientPhone?: string;
+  clientCompany?: string;
+  clientPosition?: string;
+  projectName: string;
+  projectDescription: string;
+  projectType: string;
+  projectCategory: string;
+  technologies?: string[];
+  timeline: string;
+  budget: string;
+  features?: string[];
+  integrations?: string[];
+  platforms?: string[];
+  hasExistingSystem?: boolean;
+  existingSystemDetails?: string;
+  mainGoals?: string;
+  targetAudience?: string;
+  consent: boolean;
+}) => {
+  const response = await fetch(buildApiUrl(API_ENDPOINTS.QUOTES), {
+    method: 'POST',
+    headers: API_CONFIG.headers,
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || `Erro ao enviar orçamento: ${response.statusText}`);
+  }
+
+  return response.json();
 }; 

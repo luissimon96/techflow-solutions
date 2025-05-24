@@ -5,6 +5,7 @@ import Services from '@/pages/Services';
 import Clients from '@/pages/Clients';
 import Blog from '@/pages/Blog';
 import Contact from '@/pages/Contact';
+import QuoteRequest from '@/pages/QuoteRequest';
 
 export const router = createBrowserRouter([
   {
@@ -30,6 +31,10 @@ export const router = createBrowserRouter([
       {
         path: 'contato',
         element: <Contact />,
+      },
+      {
+        path: 'orcamento',
+        element: <QuoteRequest />,
       },
     ],
   },

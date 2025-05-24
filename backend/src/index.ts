@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import { healthRouter } from './routes/health';
 import { contactRouter } from './routes/contact';
+const quoteRoutes = require('./routes/quotes');
 import { errorHandler } from './middleware/errorHandler';
 
 // Configuração do ambiente
@@ -25,6 +26,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use('/health', healthRouter);
 app.use('/api/health', healthRouter);
 app.use('/api/contact', contactRouter);
+app.use('/api/quotes', quoteRoutes);
 
 // Error handling
 app.use(errorHandler);
@@ -61,6 +63,7 @@ function startServer() {
     console.log(`🚀 Servidor rodando na porta ${port}`);
     console.log(`🏥 Health check: http://localhost:${port}/health`);
     console.log(`📧 API Contact: http://localhost:${port}/api/contact`);
+    console.log(`💼 API Quotes: http://localhost:${port}/api/quotes`);
     console.log(`🌐 CORS configurado para: ${process.env.CORS_ORIGIN || 'localhost'}`);
   });
 } 

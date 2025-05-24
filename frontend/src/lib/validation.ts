@@ -107,11 +107,85 @@ export const searchSchema = z.object({
     .optional(),
 });
 
+/**
+ * Schema para solicitação de orçamento
+ */
+export const quoteRequestSchema = z.object({
+  // Dados do Cliente
+  clientName: z.string()
+    .min(2, 'Nome deve ter pelo menos 2 caracteres')
+    .max(100, 'Nome deve ter no máximo 100 caracteres'),
+
+  clientEmail: z.string()
+    .email('Email deve ter um formato válido')
+    .min(1, 'Email é obrigatório'),
+
+  clientPhone: z.string()
+    .optional()
+    .refine((val) => !val || /^[\d\s\-()+ ]+$/.test(val), {
+      message: 'Telefone deve conter apenas números e símbolos válidos'
+    }),
+
+  clientCompany: z.string()
+    .max(100, 'Nome da empresa deve ter no máximo 100 caracteres')
+    .optional(),
+
+  clientPosition: z.string()
+    .max(100, 'Cargo deve ter no máximo 100 caracteres')
+    .optional(),
+
+  // Dados do Projeto
+  projectName: z.string()
+    .min(5, 'Nome do projeto deve ter pelo menos 5 caracteres')
+    .max(200, 'Nome do projeto deve ter no máximo 200 caracteres'),
+
+  projectDescription: z.string()
+    .min(20, 'Descrição deve ter pelo menos 20 caracteres')
+    .max(2000, 'Descrição deve ter no máximo 2000 caracteres'),
+
+  projectType: z.string()
+    .min(1, 'Tipo de projeto é obrigatório'),
+
+  projectCategory: z.string()
+    .min(1, 'Categoria é obrigatória'),
+
+  technologies: z.array(z.string()).default([]),
+
+  timeline: z.string()
+    .min(1, 'Prazo é obrigatório'),
+
+  budget: z.string()
+    .min(1, 'Faixa de orçamento é obrigatória'),
+
+  // Funcionalidades e Características
+  features: z.array(z.string()).default([]),
+  integrations: z.array(z.string()).default([]),
+  platforms: z.array(z.string()).default([]),
+
+  // Informações Adicionais
+  hasExistingSystem: z.boolean().default(false),
+  existingSystemDetails: z.string().optional(),
+  mainGoals: z.string().optional(),
+  targetAudience: z.string().optional(),
+
+  // LGPD
+  consent: z
+    .boolean()
+    .refine((val) => val === true, {
+      message: 'Você deve aceitar os termos para continuar'
+    }),
+});
+
 // Tipos derivados dos schemas
 export type ContactFormData = z.infer<typeof contactFormSchema>;
 export type NewsletterData = z.infer<typeof newsletterSchema>;
 export type CommentData = z.infer<typeof commentSchema>;
 export type SearchData = z.infer<typeof searchSchema>;
+
+/**
+ * Tipo inferido do schema de orçamento
+ */
+export type QuoteRequestData = z.infer<typeof quoteRequestSchema>;
 
 // Função utilitária para sanitizar HTML
 export function sanitizeHtml(input: string): string {
