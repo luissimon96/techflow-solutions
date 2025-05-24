@@ -2,9 +2,10 @@ services:
   - type: web
     name: techflow-solutions-backend
     runtime: node
-    rootDir: backend
-    buildCommand: npm install && npm run build
-    startCommand: npm start
+    region: oregon
+    plan: free
+    buildCommand: chmod +x build.sh && ./build.sh
+    startCommand: chmod +x start.sh && ./start.sh
     envVars:
       - key: NODE_ENV
         value: production
