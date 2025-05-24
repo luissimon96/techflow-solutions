@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://techflow.solutions/sitemap.xml
+Sitemap: https://www.srluissimon.com/sitemap.xml
 
 # Disallow admin areas (quando houver)
 Disallow: /admin/

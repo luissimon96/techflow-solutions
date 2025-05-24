@@ -15,7 +15,7 @@ services:
       - key: JWT_SECRET
         sync: false
       - key: CORS_ORIGIN
-        value: https://techflow-solutions.vercel.app,http://localhost:3000
+        value: https://www.srluissimon.com,http://localhost:3000
       - key: RENDER
         value: "true"
       - key: RENDER_EXTERNAL_URL

@@ -12,12 +12,12 @@ interface SEOHeadProps {
 }
 
 const DEFAULT_SEO = {
-  title: 'TechFlow Solutions - Desenvolvimento de Software e Soluções Tecnológicas',
-  description: 'TechFlow Solutions é uma empresa especializada em desenvolvimento de software, aplicações web, mobile e soluções tecnológicas inovadoras para impulsionar seu negócio.',
-  keywords: 'desenvolvimento de software, aplicações web, desenvolvimento mobile, soluções tecnológicas, consultoria TI, React, TypeScript, Node.js',
-  image: 'https://techflow.solutions/og-image.jpg',
-  url: 'https://techflow.solutions',
-  type: 'website'
+  title: 'TechFlow Solutions - Desenvolvimento de Software',
+  description: 'Transformamos ideias em soluções tecnológicas inovadoras. Desenvolvimento de software, aplicações web e mobile de alta qualidade.',
+  keywords: 'desenvolvimento software, aplicações web, mobile, soluções tecnológicas, programação, React, Node.js',
+  image: 'https://www.srluissimon.com/og-image.jpg',
+  url: 'https://www.srluissimon.com',
+  type: 'website',
 };
 
 export const SEOHead: React.FC<SEOHeadProps> = ({
@@ -83,8 +83,8 @@ export const SCHEMA_TEMPLATES = {
     "@context": "https://schema.org",
     "@type": "Organization",
     "name": "TechFlow Solutions",
-    "url": "https://techflow.solutions",
-    "logo": "https://techflow.solutions/logo.png",
+    "url": "https://www.srluissimon.com",
+    "logo": "https://www.srluissimon.com/logo.png",
     "description": "Empresa especializada em desenvolvimento de software e soluções tecnológicas",
     "foundingDate": "2023",
     "contactPoint": {
@@ -139,5 +139,27 @@ export const SCHEMA_TEMPLATES = {
       "@type": "Organization",
       "name": "TechFlow Solutions"
     }
-  }
+  },
+
+  organization: {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "TechFlow Solutions",
+    "url": "https://www.srluissimon.com",
+    "logo": "https://www.srluissimon.com/logo.png",
+    "description": "Empresa especializada em desenvolvimento de software e soluções tecnológicas",
+    "foundingDate": "2023",
+    "address": {
+      "@type": "PostalAddress",
+      "addressCountry": "BR",
+      "addressRegion": "SP",
+      "addressLocality": "São Paulo"
+    },
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+55-11-99999-9999",
+      "contactType": "customer service",
+      "availableLanguage": ["Portuguese", "English"]
+    }
+  },
 }; 

@@ -46,7 +46,7 @@ Se o render.yaml não for reconhecido:
    PORT=10000
    MONGODB_URI=[sua-connection-string-mongodb]
    JWT_SECRET=[sua-chave-jwt-segura]
-   CORS_ORIGIN=https://techflow-solutions.vercel.app,http://localhost:3000
+   CORS_ORIGIN=https://www.srluissimon.com,http://localhost:3000
    RENDER=true
    RENDER_EXTERNAL_URL=https://techflow-solutions-backend.onrender.com
    ```
@@ -68,7 +68,7 @@ JWT_SECRET=uma-chave-super-secreta-e-longa-para-jwt-2025
 # Outras (já configuradas)
 NODE_ENV=production
 PORT=10000
-CORS_ORIGIN=https://techflow-solutions.vercel.app,http://localhost:3000
+CORS_ORIGIN=https://www.srluissimon.com,http://localhost:3000
 RENDER=true
 RENDER_EXTERNAL_URL=https://techflow-solutions-backend.onrender.com
 ```

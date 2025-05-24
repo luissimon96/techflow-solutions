@@ -26,7 +26,7 @@ Site institucional da TechFlow Solutions, uma empresa especializada em desenvolv
 
 ## 🌐 URLs de Produção
 
-- **Frontend**: <https://techflow-solutions.vercel.app>
+- **Frontend**: <https://www.srluissimon.com>
 - **Backend API**: <https://techflow-solutions-backend.onrender.com>
 - **Documentação da API**: <https://techflow-solutions-backend.onrender.com/docs>
 
@@ -143,7 +143,7 @@ NODE_ENV=production
 MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/techflow
 JWT_SECRET=your-super-secret-jwt-key
 JWT_EXPIRES_IN=7d
-CORS_ORIGIN=https://techflow-solutions.vercel.app,http://localhost:3000
+CORS_ORIGIN=https://www.srluissimon.com,http://localhost:3000
 RENDER=true
 RENDER_EXTERNAL_URL=https://techflow-solutions-backend.onrender.com
 ```
@@ -209,7 +209,7 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 
 ## 👥 Autores
 
-- **TechFlow Solutions** - *Desenvolvimento* - [TechFlow Solutions](https://techflow.solutions)
+- **TechFlow Solutions** - *Desenvolvimento* - [TechFlow Solutions](https://www.srluissimon.com)
 
 ## 🙏 Agradecimentos
 

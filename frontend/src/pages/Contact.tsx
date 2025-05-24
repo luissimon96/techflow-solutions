@@ -162,7 +162,7 @@ export default function Contact() {
         title="Contato"
         description="Entre em contato com a TechFlow Solutions. Estamos prontos para ajudar você a transformar seu negócio com soluções tecnológicas inovadoras."
         keywords="contato, TechFlow Solutions, orçamento, consultoria, desenvolvimento software"
-        url="https://techflow.solutions/contact"
+        url="https://www.srluissimon.com/contact"
         schema={SCHEMA_TEMPLATES.contact}
       />
 
