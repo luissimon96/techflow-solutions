@@ -8,7 +8,7 @@ import theme from '../../theme';
 
 // Mock do getWhatsAppUrl
 jest.mock('@/lib/whatsapp', () => ({
-  getWhatsAppUrl: jest.fn(() => 'https://wa.me/5511999999999'),
+  getWhatsAppUrl: jest.fn(() => 'https://wa.me/5554997109051'),
 }));
 
 // Wrapper para providers
@@ -183,7 +183,7 @@ describe('Contact Page', () => {
       await user.type(screen.getByLabelText('Nome'), 'João Silva');
       await user.type(screen.getByLabelText('E-mail'), 'joao@example.com');
       await user.type(screen.getByLabelText('Empresa (opcional)'), 'Empresa Teste');
-      await user.type(screen.getByLabelText('Telefone (opcional)'), '11999999999');
+      await user.type(screen.getByLabelText('Telefone (opcional)'), '54997109051');
       await user.type(screen.getByLabelText('Assunto'), 'Assunto de teste');
       await user.type(screen.getByLabelText('Mensagem'), 'Esta é uma mensagem de teste com mais de 10 caracteres');
 

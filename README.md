@@ -221,7 +221,8 @@ O projeto está configurado para deploy automático no **Render**:
 
 Para dúvidas ou suporte:
 
-- 📧 Email: <contato@techflowsolutions.com>
+- 📧 Email: <luissimonazure@gmail.com>
+- 📱 WhatsApp: [(54) 99710-9051](https://wa.me/5554997109051)
 - 🐛 Issues: [GitHub Issues](https://github.com/luissimon96/techflow-solutions/issues)
 
 ---

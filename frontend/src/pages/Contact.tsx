@@ -351,12 +351,12 @@ export default function Contact() {
                   <VStack spacing={6} align="start">
                     <Stack direction="row" align="center" spacing={4}>
                       <Icon as={FaEnvelope} boxSize={6} color="brand.500" aria-hidden="true" />
-                      <Text>contato@techflow.com.br</Text>
+                      <Text>luissimonazure@gmail.com</Text>
                     </Stack>
 
                     <Stack direction="row" align="center" spacing={4}>
                       <Icon as={FaPhone} boxSize={6} color="brand.500" aria-hidden="true" />
-                      <Text>(11) 99999-9999</Text>
+                      <Text>(54) 99710-9051</Text>
                     </Stack>
 
                     <Stack direction="row" align="center" spacing={4}>

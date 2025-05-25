@@ -89,7 +89,7 @@ export const SCHEMA_TEMPLATES = {
     "foundingDate": "2023",
     "contactPoint": {
       "@type": "ContactPoint",
-      "telephone": "+55-11-99999-9999",
+      "telephone": "+55-54-99710-9051",
       "contactType": "customer service",
       "availableLanguage": "Portuguese"
     },
@@ -124,7 +124,7 @@ export const SCHEMA_TEMPLATES = {
       "name": "TechFlow Solutions",
       "contactPoint": {
         "@type": "ContactPoint",
-        "telephone": "+55-11-99999-9999",
+        "telephone": "+55-54-99710-9051",
         "contactType": "customer service"
       }
     }
@@ -157,7 +157,7 @@ export const SCHEMA_TEMPLATES = {
     },
     "contactPoint": {
       "@type": "ContactPoint",
-      "telephone": "+55-11-99999-9999",
+      "telephone": "+55-54-99710-9051",
       "contactType": "customer service",
       "availableLanguage": ["Portuguese", "English"]
     }

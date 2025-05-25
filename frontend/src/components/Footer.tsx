@@ -17,8 +17,8 @@ export default function Footer() {
             <Text fontSize="lg" fontWeight="bold" mb={4}>
               Contato
             </Text>
-            <Text>contato@techflow.com.br</Text>
-            <Text>(11) 99999-9999</Text>
+            <Text>luissimonazure@gmail.com</Text>
+            <Text>(54) 99710-9051</Text>
           </Box>
 
           <Box>
