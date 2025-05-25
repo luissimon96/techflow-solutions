@@ -1,6 +1,8 @@
-# Guia de Deploy - TechFlow Solutions
+# Deploy Guide - TechFlow Solutions
 
-## Princípios de Deploy
+Este guia apresenta as melhores práticas de deploy para a aplicação TechFlow Solutions.
+
+## Principios
 
 1. **Simplicidade**: Processos diretos e fáceis de manter
 2. **Confiabilidade**: Deploy consistente e estável
@@ -16,11 +18,11 @@
 # ✅ Correto
 # .env.development
 VITE_API_URL=http://localhost:3000
-VITE_MONGODB_URI=mongodb+srv://user:pass@cluster.mongodb.net/dev
 VITE_ENV=development
 
 # ❌ Evitar
 # Hardcoding de URLs e credenciais
+# VITE_MONGODB_URI - MongoDB não deve ser acessado diretamente do frontend
 ```
 
 ### Production
@@ -29,11 +31,11 @@ VITE_ENV=development
 # ✅ Correto
 # .env.production
 VITE_API_URL=https://api.techflow.com
-VITE_MONGODB_URI=mongodb+srv://user:pass@cluster.mongodb.net/prod
 VITE_ENV=production
 
 # ❌ Evitar
 # Hardcoding de URLs e credenciais
+# VITE_MONGODB_URI - MongoDB não deve ser acessado diretamente do frontend
 ```
 
 ## CI/CD com Vercel
@@ -50,7 +52,7 @@ VITE_ENV=production
       "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "dist"
+        "distDir": "frontend/dist"
       }
     }
   ],
@@ -104,43 +106,42 @@ jobs:
 # Sem pipeline de CI
 ```
 
-## MongoDB Cloud
+## Segurança e Arquitetura
 
-### Configuração da Conexão
+### Acesso ao MongoDB
 
 ```typescript
-// ✅ Correto
-// src/lib/mongodb.ts
+// ✅ Correto - No backend (API)
+// backend/src/lib/mongodb.ts
 import { MongoClient } from 'mongodb';
 
-const uri = import.meta.env.VITE_MONGODB_URI;
+const uri = process.env.MONGODB_URI; // Não VITE_MONGODB_URI
 const options = {
   useUnifiedTopology: true,
   useNewUrlParser: true,
 };
 
-let client;
-let clientPromise: Promise<MongoClient>;
-
-if (!uri) {
-  throw new Error('Por favor, defina a variável de ambiente VITE_MONGODB_URI');
-}
-
-if (process.env.NODE_ENV === 'development') {
-  if (!global._mongoClientPromise) {
-    client = new MongoClient(uri, options);
-    global._mongoClientPromise = client.connect();
-  }
-  clientPromise = global._mongoClientPromise;
-} else {
-  client = new MongoClient(uri, options);
-  clientPromise = client.connect();
-}
-
+// O MongoDB deve ser acessado apenas no backend
 export default clientPromise;
 
 // ❌ Evitar
-// Conexão direta sem variáveis de ambiente
+// Nunca acesse MongoDB diretamente do frontend
+// Nunca use VITE_MONGODB_URI (expõe credenciais)
+```
+
+### Frontend para API
+
+```typescript
+// ✅ Correto - No frontend
+// src/lib/api.ts
+const API_URL = import.meta.env.VITE_API_URL;
+
+export async function fetchData() {
+  const response = await fetch(`${API_URL}/api/data`);
+  return response.json();
+}
+
+// O frontend sempre acessa dados através da API do backend
 ```
 
 ## Monitoramento
@@ -169,8 +170,8 @@ export function AnalyticsWrapper({ children }) {
 
 ### Preparação
 
-- [ ] Variáveis de ambiente configuradas
-- [ ] MongoDB Cloud configurado
+- [ ] Variáveis de ambiente configuradas (apenas as necessárias para o frontend)
+- [ ] MongoDB Cloud configurado no backend
 - [ ] Domínio configurado (opcional)
 - [ ] SSL configurado (automático na Vercel)
 
@@ -197,7 +198,8 @@ export function AnalyticsWrapper({ children }) {
 
 ### Segurança
 
-- [ ] Variáveis de ambiente seguras
+- [ ] Variáveis de ambiente seguras (sem credenciais de DB no frontend)
 - [ ] CORS configurado
 - [ ] Headers de segurança
 - [ ] Rate limiting (se necessário)
+- [ ] MongoDB acessado apenas via API backend
