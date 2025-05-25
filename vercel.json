@@ -3,43 +3,41 @@
   "builds": [
     {
       "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "frontend/dist"
-      }
+      "use": "@vercel/static-build"
     }
-  ],
-  "rewrites": [
-    {
-      "source": "/api/:path*",
-      "destination": "https://api.techflow.com.br/:path*"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
-  ],
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        },
-        {
-          "key": "X-Frame-Options",
-          "value": "DENY"
-        },
-        {
-          "key": "X-XSS-Protection",
-          "value": "1; mode=block"
-        }
-      ]
-    }
-  ],
-  "env": {
-    "VITE_API_URL": "https://techflow-solutions-backend.onrender.com"
+  }
+],
+"rewrites": [
+  {
+    "source": "/api/:path*",
+    "destination": "https://api.techflow.com.br/:path*"
   },
-  "buildCommand": "npm run build:frontend"
+  {
+    "source": "/(.*)",
+    "destination": "/index.html"
+  }
+],
+"headers": [
+  {
+    "source": "/(.*)",
+    "headers": [
+      {
+        "key": "X-Content-Type-Options",
+        "value": "nosniff"
+      },
+      {
+        "key": "X-Frame-Options",
+        "value": "DENY"
+      },
+      {
+        "key": "X-XSS-Protection",
+        "value": "1; mode=block"
+      }
+    ]
+  }
+],
+"env": {
+  "VITE_API_URL": "https://techflow-solutions-backend.onrender.com"
+},
+"buildCommand": "npm run build:frontend"
 }
