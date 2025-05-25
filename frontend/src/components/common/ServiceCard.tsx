@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   Box,
   VStack,
@@ -15,6 +16,7 @@ import {
 import { IconType } from 'react-icons';
 import { FaArrowRight, FaStar } from 'react-icons/fa';
 import { motion } from 'framer-motion';
+import { asChakraIcon } from '../../utils/iconUtils';
 
 // Motion wrapper para Chakra UI
 const MotionBox = motion(Box);
@@ -116,7 +118,7 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
               fontWeight="bold"
             >
               <HStack spacing={1}>
-                <Icon as={FaStar} boxSize={3} />
+                <Icon as={FaStar as React.ElementType} boxSize={3} />
                 <Text>Popular</Text>
               </HStack>
             </Badge>
@@ -128,7 +130,7 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
           <VStack spacing={3} align="start">
             <Box>
               <Icon
-                as={icon}
+                as={icon as React.ElementType}
                 boxSize={12}
                 color={featured ? 'brand.500' : 'brand.400'}
                 mb={2}
@@ -220,7 +222,7 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
               colorScheme="brand"
               size="md"
               width="full"
-              rightIcon={<FaArrowRight />}
+              rightIcon={React.createElement(asChakraIcon(FaArrowRight))}
               onClick={handleGetQuoteClick}
               fontWeight="semibold"
               _hover={{

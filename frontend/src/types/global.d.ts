@@ -1,3 +1,5 @@
+import { IconType } from 'react-icons';
+
 declare global {
   interface Window {
     gtag: (
@@ -11,6 +13,26 @@ declare global {
         custom_parameter?: any;
       }
     ) => void;
+  }
+}
+
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      // Extend JSX elements if needed
+    }
+  }
+}
+
+// Extend IconType to be compatible with Chakra UI
+declare module 'react-icons' {
+  interface IconType extends React.ComponentType<any> { }
+}
+
+// Extend React to include bigint in ReactNode (newer React versions)
+declare module 'react' {
+  interface ReactNode {
+    bigint?: never;
   }
 }
 
