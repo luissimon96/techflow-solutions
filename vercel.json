@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "frontend/package.json",
+      "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
         "distDir": "frontend/dist"
@@ -15,11 +15,37 @@
       "dest": "/index.html"
     }
   ],
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://api.techflow.com.br/:path*"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        }
+      ]
+    }
+  ],
   "env": {
     "VITE_API_URL": "https://techflow-solutions-backend.onrender.com",
     "VITE_ANALYTICS_ID": "@analytics_id",
     "VITE_WHATSAPP_NUMBER": "@whatsapp_number",
     "VITE_LINKEDIN_URL": "@linkedin_url",
     "VITE_INSTAGRAM_URL": "@instagram_url"
-  }
+  },
+  "buildCommand": "npm run build:frontend"
 }
