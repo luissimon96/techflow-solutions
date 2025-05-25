@@ -361,7 +361,7 @@ export default function Contact() {
 
                     <Stack direction="row" align="center" spacing={4}>
                       <Icon as={FaMapMarkerAlt} boxSize={6} color="brand.500" aria-hidden="true" />
-                      <Text>São Paulo, SP - Brasil</Text>
+                      <Text>Carazinho, RS - Brasil</Text>
                     </Stack>
                   </VStack>
                 </Box>

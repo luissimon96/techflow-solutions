@@ -96,7 +96,7 @@ export const SCHEMA_TEMPLATES = {
     "address": {
       "@type": "PostalAddress",
       "addressCountry": "BR",
-      "addressLocality": "São Paulo"
+      "addressLocality": "Carazinho"
     },
     "sameAs": [
       "https://www.linkedin.com/company/techflow-solutions",
@@ -152,8 +152,8 @@ export const SCHEMA_TEMPLATES = {
     "address": {
       "@type": "PostalAddress",
       "addressCountry": "BR",
-      "addressRegion": "SP",
-      "addressLocality": "São Paulo"
+      "addressRegion": "RS",
+      "addressLocality": "Carazinho"
     },
     "contactPoint": {
       "@type": "ContactPoint",
