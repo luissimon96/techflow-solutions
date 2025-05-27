@@ -99,8 +99,8 @@ export const SCHEMA_TEMPLATES = {
       "addressLocality": "Carazinho"
     },
     "sameAs": [
-      "https://www.linkedin.com/company/techflow-solutions",
-      "https://github.com/techflow-solutions"
+      "https://www.linkedin.com/in/luis-eduardo-simon/",
+      "https://www.instagram.com/sr.luissimon/"
     ]
   },
 

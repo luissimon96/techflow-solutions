@@ -27,7 +27,7 @@ export default function Footer() {
             </Text>
             <Box>
               <Link
-                href="https://linkedin.com/company/techflow"
+                href="https://www.linkedin.com/in/luis-eduardo-simon/"
                 isExternal
                 mr={4}
                 _hover={{ color: 'brand.500' }}
@@ -35,7 +35,7 @@ export default function Footer() {
                 <Icon as={FaLinkedin} boxSize={6} />
               </Link>
               <Link
-                href="https://instagram.com/techflow"
+                href="https://www.instagram.com/sr.luissimon/"
                 isExternal
                 _hover={{ color: 'brand.500' }}
               >
