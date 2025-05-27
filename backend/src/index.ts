@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
@@ -6,6 +6,19 @@ import { healthRouter } from './routes/health';
 import { contactRouter } from './routes/contact';
 import { quoteRouter } from './routes/quotes';
 import { errorHandler } from './middleware/errorHandler';
+import {
+  helmetConfig,
+  compressionConfig,
+  securityMorgan,
+  generalRateLimit,
+  strictRateLimit,
+  speedLimiter,
+  attackDetection,
+  originValidation,
+  sanitizeHeaders,
+  auditLog,
+  securityLogger
+} from './middleware/security';
 
 // Configuração do ambiente
 dotenv.config();
@@ -14,56 +27,223 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Middlewares
-app.use(cors({
-  origin: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : 'http://localhost:5173',
-  credentials: true,
-}));
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+// Trust proxy para obter IP real em produção
+app.set('trust proxy', 1);
 
-// Routes
+// Middlewares de segurança (ordem importa!)
+app.use(helmetConfig); // Headers de segurança
+app.use(compressionConfig); // Compressão de resposta
+app.use(securityMorgan); // Logs de requisições
+app.use(sanitizeHeaders); // Sanitização de headers
+app.use(attackDetection); // Detecção de ataques
+app.use(speedLimiter); // Slow down para requests frequentes
+
+// CORS configurado com segurança
+const allowedOrigins = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.split(',').map(origin => origin.trim())
+  : ['http://localhost:5173'];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    // Permitir requests sem origin em desenvolvimento (ex: Postman)
+    if (!origin && process.env.NODE_ENV !== 'production') {
+      return callback(null, true);
+    }
+
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      securityLogger.error('CORS blocked request from unauthorized origin', {
+        origin,
+        allowedOrigins
+      });
+      callback(new Error('Não permitido pelo CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  maxAge: 86400 // Cache preflight por 24h
+}));
+
+// Middlewares de parsing com limites de segurança
+app.use(express.json({
+  limit: '5mb', // Reduzido de 10mb para 5mb
+  verify: (req: Request, res: Response, buf: Buffer) => {
+    // Verificar se o JSON é válido
+    try {
+      JSON.parse(buf.toString());
+    } catch (e) {
+      securityLogger.warn('Invalid JSON received', {
+        ip: req.ip,
+        userAgent: req.get('User-Agent'),
+        contentLength: req.get('Content-Length')
+      });
+      throw new Error('JSON inválido');
+    }
+  }
+}));
+
+app.use(express.urlencoded({
+  extended: true,
+  limit: '5mb',
+  parameterLimit: 100 // Limitar número de parâmetros
+}));
+
+// Rate limiting geral para todas as rotas
+app.use(generalRateLimit);
+
+// Validação de origem adicional
+app.use(originValidation);
+
+// Routes com rate limiting específico
 app.use('/health', healthRouter);
 app.use('/api/health', healthRouter);
-app.use('/api/contact', contactRouter);
-app.use('/api/quotes', quoteRouter);
+
+// Rotas de contato com rate limiting mais restritivo
+app.use('/api/contact',
+  strictRateLimit,
+  auditLog('contact_submission'),
+  contactRouter
+);
+
+// Rotas de orçamento com rate limiting mais restritivo
+app.use('/api/quotes',
+  strictRateLimit,
+  auditLog('quote_submission'),
+  quoteRouter
+);
+
+// Middleware para capturar rotas não encontradas
+app.use('*', (req, res) => {
+  securityLogger.warn('404 - Route not found', {
+    ip: req.ip,
+    userAgent: req.get('User-Agent'),
+    url: req.originalUrl,
+    method: req.method
+  });
+
+  res.status(404).json({
+    success: false,
+    message: 'Rota não encontrada',
+    error: 'NOT_FOUND'
+  });
+});
 
 // Error handling
 app.use(errorHandler);
 
-// Conexão com o MongoDB
+// Conexão com o MongoDB com configurações de segurança
 const mongoUri = process.env.MONGODB_URI;
 
 console.log('🔗 Tentando conectar ao MongoDB...');
 console.log('📍 Database: techflowdb');
-console.log('📦 Collection: user');
+console.log('🔒 Configurações de segurança ativadas');
 
 if (mongoUri) {
   console.log('🔑 MongoDB URI encontrada, conectando...');
-  mongoose.connect(mongoUri)
+
+  // Configurações de conexão seguras
+  const mongoOptions: mongoose.ConnectOptions = {
+    maxPoolSize: 10, // Limitar pool de conexões
+    serverSelectionTimeoutMS: 5000, // Timeout de 5s
+    socketTimeoutMS: 45000, // Timeout de socket
+    retryWrites: true
+  };
+
+  mongoose.connect(mongoUri, mongoOptions)
     .then(() => {
       console.log('✅ Conectado ao MongoDB Atlas');
       console.log('🗄️  Database: techflowdb');
-      console.log('📋 Collection: user');
+      console.log('🔒 Conexão segura estabelecida');
+
+      // Log de inicialização
+      securityLogger.info('Application started successfully', {
+        port,
+        environment: process.env.NODE_ENV || 'development',
+        corsOrigins: allowedOrigins,
+        mongoConnected: true
+      });
+
       startServer();
     })
     .catch((error) => {
-      console.error('❌ Erro ao conectar ao MongoDB:', error);
-      console.error('🔍 URI de conexão:', mongoUri?.substring(0, 20) + '...');
-      process.exit(1);
+      console.error('❌ Erro ao conectar ao MongoDB:', error.message);
+
+      // Em desenvolvimento, permitir rodar sem MongoDB para testar segurança
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('⚠️  Modo desenvolvimento: continuando sem MongoDB...');
+        console.log('🔒 Testando apenas melhorias de segurança');
+
+        securityLogger.warn('MongoDB connection failed in development - continuing without DB', {
+          error: error.message,
+          mongoUri: mongoUri?.substring(0, 20) + '...'
+        });
+
+        startServer();
+      } else {
+        securityLogger.error('MongoDB connection failed', {
+          error: error.message,
+          mongoUri: mongoUri?.substring(0, 20) + '...'
+        });
+        process.exit(1);
+      }
     });
 } else {
   console.error('❌ MONGODB_URI não encontrada nas variáveis de ambiente');
-  console.error('⚠️  O servidor não funcionará corretamente sem banco de dados');
-  process.exit(1);
+
+  // Em desenvolvimento, permitir rodar sem MongoDB
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('⚠️  Modo desenvolvimento: continuando sem MongoDB...');
+    console.log('🔒 Testando apenas melhorias de segurança');
+
+    securityLogger.warn('Missing MongoDB URI in development - continuing without DB');
+    startServer();
+  } else {
+    securityLogger.error('Missing MongoDB URI', {
+      environment: process.env.NODE_ENV || 'development'
+    });
+    process.exit(1);
+  }
 }
 
 function startServer() {
-  app.listen(port, () => {
+  const server = app.listen(port, () => {
     console.log(`🚀 Servidor rodando na porta ${port}`);
     console.log(`🏥 Health check: http://localhost:${port}/health`);
     console.log(`📧 API Contact: http://localhost:${port}/api/contact`);
     console.log(`💼 API Quotes: http://localhost:${port}/api/quotes`);
-    console.log(`🌐 CORS configurado para: ${process.env.CORS_ORIGIN || 'localhost'}`);
+    console.log(`🌐 CORS configurado para: ${allowedOrigins.join(', ')}`);
+    console.log(`🔒 Middlewares de segurança ativados`);
+    console.log(`📊 Rate limiting: 100 req/15min (geral), 20 req/15min (APIs)`);
+    console.log(`🛡️  Headers de segurança configurados`);
+    console.log(`📝 Logs de segurança ativados`);
+  });
+
+  // Graceful shutdown
+  process.on('SIGTERM', () => {
+    console.log('🔄 SIGTERM recebido, encerrando servidor...');
+    securityLogger.info('Server shutdown initiated', { signal: 'SIGTERM' });
+
+    server.close(() => {
+      console.log('✅ Servidor encerrado graciosamente');
+      mongoose.connection.close();
+      console.log('✅ Conexão MongoDB encerrada');
+      securityLogger.info('Application shutdown completed');
+      process.exit(0);
+    });
+  });
+
+  process.on('SIGINT', () => {
+    console.log('🔄 SIGINT recebido, encerrando servidor...');
+    securityLogger.info('Server shutdown initiated', { signal: 'SIGINT' });
+
+    server.close(() => {
+      console.log('✅ Servidor encerrado graciosamente');
+      mongoose.connection.close();
+      console.log('✅ Conexão MongoDB encerrada');
+      securityLogger.info('Application shutdown completed');
+      process.exit(0);
+    });
   });
 } 

@@ -253,12 +253,32 @@ const quoteSchema = new Schema<IQuote>({
   toObject: { virtuals: true }
 });
 
-// Índices para performance
-quoteSchema.index({ clientEmail: 1 });
-quoteSchema.index({ status: 1 });
-quoteSchema.index({ projectType: 1 });
-quoteSchema.index({ createdAt: -1 });
-quoteSchema.index({ 'clientEmail': 1, 'createdAt': -1 });
+// Índices para otimização de performance
+quoteSchema.index({ email: 1 }); // Busca por email
+quoteSchema.index({ status: 1 }); // Filtro por status
+quoteSchema.index({ createdAt: -1 }); // Ordenação por data (mais recente primeiro)
+quoteSchema.index({ projectType: 1, budget: 1 }); // Busca composta por tipo e orçamento
+quoteSchema.index({ 'contact.phone': 1 }); // Busca por telefone
+quoteSchema.index({ urgent: 1, createdAt: -1 }); // Priorização de urgentes
+
+// Índice de texto para busca full-text
+quoteSchema.index({
+  'project.description': 'text',
+  'project.goals': 'text',
+  'contact.name': 'text',
+  'contact.company': 'text'
+}, {
+  name: 'quote_text_search',
+  weights: {
+    'project.description': 10,
+    'project.goals': 8,
+    'contact.name': 5,
+    'contact.company': 3
+  }
+});
+
+// TTL index para limpeza automática de quotes antigas (opcional)
+// quoteSchema.index({ createdAt: 1 }, { expireAfterSeconds: 31536000 }); // 1 ano
 
 // Virtual para calcular tempo de resposta
 quoteSchema.virtual('responseTime').get(function (this: IQuote) {
