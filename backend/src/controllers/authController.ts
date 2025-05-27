@@ -35,9 +35,12 @@ export const changePasswordValidation = [
 // Login
 export const login = async (req: Request, res: Response) => {
   try {
+    console.log('🔍 Login attempt:', req.body);
+
     // Verificar validações
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      console.log('❌ Validation errors:', errors.array());
       return res.status(400).json({
         success: false,
         message: 'Dados inválidos',
@@ -46,18 +49,27 @@ export const login = async (req: Request, res: Response) => {
     }
 
     const { email, password } = req.body;
+    console.log('📧 Email:', email);
+    console.log('🔑 Password length:', password?.length);
 
     // Buscar admin com senha
     const admin = await Admin.findOne({ email }).select('+password');
+    console.log('👤 Admin found:', !!admin);
+
     if (!admin) {
+      console.log('❌ Admin not found for email:', email);
       return res.status(401).json({
         success: false,
         message: 'Credenciais inválidas'
       });
     }
 
+    console.log('🔒 Admin locked:', admin.isLocked());
+    console.log('✅ Admin active:', admin.isActive);
+
     // Verificar se a conta está bloqueada
     if (admin.isLocked()) {
+      console.log('🔒 Account locked');
       return res.status(423).json({
         success: false,
         message: 'Conta temporariamente bloqueada devido a muitas tentativas de login'
@@ -66,6 +78,7 @@ export const login = async (req: Request, res: Response) => {
 
     // Verificar se está ativo
     if (!admin.isActive) {
+      console.log('❌ Account inactive');
       return res.status(401).json({
         success: false,
         message: 'Conta desativada'
@@ -73,8 +86,12 @@ export const login = async (req: Request, res: Response) => {
     }
 
     // Verificar senha
+    console.log('🔍 Comparing password...');
     const isPasswordValid = await admin.comparePassword(password);
+    console.log('🔑 Password valid:', isPasswordValid);
+
     if (!isPasswordValid) {
+      console.log('❌ Invalid password');
       // Incrementar tentativas de login
       await admin.incLoginAttempts();
 
@@ -96,7 +113,7 @@ export const login = async (req: Request, res: Response) => {
     await admin.save();
 
     // Log de auditoria
-    console.log(`Admin login successful: ${admin.email} at ${new Date().toISOString()}`);
+    console.log(`✅ Admin login successful: ${admin.email} at ${new Date().toISOString()}`);
 
     res.json({
       success: true,
@@ -116,7 +133,7 @@ export const login = async (req: Request, res: Response) => {
     });
 
   } catch (error) {
-    console.error('Erro no login:', error);
+    console.error('❌ Erro no login:', error);
     res.status(500).json({
       success: false,
       message: 'Erro interno do servidor'

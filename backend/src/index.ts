@@ -69,20 +69,7 @@ app.use(cors({
 
 // Middlewares de parsing com limites de segurança
 app.use(express.json({
-  limit: '5mb', // Reduzido de 10mb para 5mb
-  verify: (req: Request, res: Response, buf: Buffer) => {
-    // Verificar se o JSON é válido
-    try {
-      JSON.parse(buf.toString());
-    } catch (e) {
-      securityLogger.warn('Invalid JSON received', {
-        ip: req.ip,
-        userAgent: req.get('User-Agent'),
-        contentLength: req.get('Content-Length')
-      });
-      throw new Error('JSON inválido');
-    }
-  }
+  limit: '5mb'
 }));
 
 app.use(express.urlencoded({

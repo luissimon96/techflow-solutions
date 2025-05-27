@@ -45,17 +45,19 @@ export default function Footer() {
                 isExternal
                 mr={4}
                 _hover={{ color: 'brand.500' }}
-                display="inline-block"
+                display="inline-flex"
+                alignItems="center"
               >
-                <Box as={FaLinkedin} boxSize={6} />
+                <FaLinkedin size={24} />
               </Link>
               <Link
                 href="https://www.instagram.com/sr.luissimon/"
                 isExternal
                 _hover={{ color: 'brand.500' }}
-                display="inline-block"
+                display="inline-flex"
+                alignItems="center"
               >
-                <Box as={FaInstagram} boxSize={6} />
+                <FaInstagram size={24} />
               </Link>
             </Box>
           </Box>
