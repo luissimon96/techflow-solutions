@@ -11,12 +11,12 @@ export default defineConfig({
     },
   },
   server: {
-    port: 3000,
+    port: 3001,
     proxy: {
       '/api': {
         target: process.env.NODE_ENV === 'production'
           ? 'https://techflow-solutions-backend.onrender.com'
-          : 'http://localhost:5000', // Backend local para desenvolvimento
+          : 'http://localhost:3000',
         changeOrigin: true,
         secure: true,
         configure: (proxy, _options) => {

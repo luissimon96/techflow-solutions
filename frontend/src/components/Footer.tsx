@@ -1,5 +1,6 @@
 import { Box, Container, SimpleGrid, Text, Icon, Link } from '@chakra-ui/react';
 import { FaLinkedin, FaInstagram } from 'react-icons/fa';
+import { Link as RouterLink } from 'react-router-dom';
 
 export default function Footer() {
   return (
@@ -11,6 +12,19 @@ export default function Footer() {
               TechFlow Solutions
             </Text>
             <Text>Transformando negócios através da tecnologia</Text>
+
+            {/* Link discreto para admin */}
+            <Link
+              as={RouterLink}
+              to="/admin/login"
+              fontSize="xs"
+              color="gray.600"
+              _hover={{ color: 'gray.400' }}
+              mt={4}
+              display="block"
+            >
+              Admin
+            </Link>
           </Box>
 
           <Box>
