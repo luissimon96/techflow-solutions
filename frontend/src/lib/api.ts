@@ -3,8 +3,15 @@
  */
 
 // URL base da API configurada através das variáveis de ambiente
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://techflow-solutions-backend.onrender.com/api';
-export const API_URL = import.meta.env.VITE_API_URL || 'https://techflow-solutions-backend.onrender.com';
+// Em desenvolvimento, usa o proxy do Vite (/api)
+// Em produção, usa a URL completa do backend
+export const API_BASE_URL = import.meta.env.PROD
+  ? 'https://techflow-solutions-backend.onrender.com/api'
+  : '/api';
+
+export const API_URL = import.meta.env.PROD
+  ? 'https://techflow-solutions-backend.onrender.com'
+  : '';
 
 /**
  * Endpoints da API

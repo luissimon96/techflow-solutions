@@ -1,4 +1,4 @@
-import { Box, Container, SimpleGrid, Text, Icon, Link } from '@chakra-ui/react';
+import { Box, Container, SimpleGrid, Text, Link } from '@chakra-ui/react';
 import { FaLinkedin, FaInstagram } from 'react-icons/fa';
 import { Link as RouterLink } from 'react-router-dom';
 
@@ -45,15 +45,17 @@ export default function Footer() {
                 isExternal
                 mr={4}
                 _hover={{ color: 'brand.500' }}
+                display="inline-block"
               >
-                <Icon as={FaLinkedin} boxSize={6} />
+                <Box as={FaLinkedin} boxSize={6} />
               </Link>
               <Link
                 href="https://www.instagram.com/sr.luissimon/"
                 isExternal
                 _hover={{ color: 'brand.500' }}
+                display="inline-block"
               >
-                <Icon as={FaInstagram} boxSize={6} />
+                <Box as={FaInstagram} boxSize={6} />
               </Link>
             </Box>
           </Box>

@@ -159,14 +159,14 @@ AdminSchema.methods.generateAccessToken = function (): string {
 // Método para gerar refresh token
 AdminSchema.methods.generateRefreshToken = function (): string {
   const admin = this as IAdmin;
-  const refreshSecret = process.env.JWT_REFRESH_SECRET || 'fallback-refresh-secret-key';
+  const secret = process.env.JWT_SECRET || 'fallback-secret-key';
 
   return jwt.sign(
     {
       id: admin._id.toString(),
       type: 'refresh'
     },
-    refreshSecret,
+    secret,
     { expiresIn: '7d' }
   );
 };
