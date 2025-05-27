@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 import { healthRouter } from './routes/health';
 import { contactRouter } from './routes/contact';
 import { quoteRouter } from './routes/quotes';
+import authRouter from './routes/auth';
 import { errorHandler } from './middleware/errorHandler';
 import {
   helmetConfig,
@@ -114,6 +115,12 @@ app.use('/api/quotes',
   quoteRouter
 );
 
+// Rotas de autenticação admin com rate limiting específico
+app.use('/api/admin/auth',
+  auditLog('admin_auth'),
+  authRouter
+);
+
 // Middleware para capturar rotas não encontradas
 app.use('*', (req, res) => {
   securityLogger.warn('404 - Route not found', {
@@ -213,6 +220,7 @@ function startServer() {
     console.log(`🏥 Health check: http://localhost:${port}/health`);
     console.log(`📧 API Contact: http://localhost:${port}/api/contact`);
     console.log(`💼 API Quotes: http://localhost:${port}/api/quotes`);
+    console.log(`🔐 Admin Auth: http://localhost:${port}/api/admin/auth`);
     console.log(`🌐 CORS configurado para: ${allowedOrigins.join(', ')}`);
     console.log(`🔒 Middlewares de segurança ativados`);
     console.log(`📊 Rate limiting: 100 req/15min (geral), 20 req/15min (APIs)`);
