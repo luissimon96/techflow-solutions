@@ -1,10 +1,27 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
+import { visualizer } from 'rollup-plugin-visualizer'
+
+// 🚀 Vite Config - Performance Optimized Build
+// ✅ Bundle analysis with rollup-plugin-visualizer
+// ✅ Enhanced code splitting configuration
+// ✅ Build optimizations for production
+// ✅ Security headers and CSP
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    // Bundle analysis in production builds
+    process.env.NODE_ENV === 'production' && visualizer({
+      filename: 'dist/bundle-analysis.html',
+      open: false,
+      gzipSize: true,
+      brotliSize: true,
+      template: 'treemap',
+    }),
+  ].filter(Boolean),
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -48,22 +65,62 @@ export default defineConfig({
     minify: 'terser',
     terserOptions: {
       compress: {
-        drop_console: true,
+        drop_console: process.env.NODE_ENV === 'production',
         drop_debugger: true,
+        pure_funcs: ['console.log', 'console.info', 'console.debug', 'console.warn'],
+        passes: 2,
+      },
+      mangle: {
+        safari10: true,
+      },
+      format: {
+        comments: false,
       },
     },
+    
+    // ✅ Performance: Chunk size warnings and asset optimization
+    chunkSizeWarningLimit: 1000, // 1MB warning threshold
+    assetsInlineLimit: 4096, // 4KB inline threshold
     rollupOptions: {
       output: {
         manualChunks: {
+          // ✅ Performance: Optimized chunk splitting
           vendor: ['react', 'react-dom'],
-          chakra: ['@chakra-ui/react', '@emotion/react', '@emotion/styled'],
-          utils: ['@tanstack/react-query', 'framer-motion']
+          ui: ['@chakra-ui/react', '@emotion/react', '@emotion/styled', 'framer-motion'],
+          router: ['react-router-dom', 'react-helmet-async'],
+          forms: ['react-hook-form', '@hookform/resolvers', 'zod'],
+          query: ['@tanstack/react-query'],
+          icons: ['react-icons'],
+        },
+        
+        // ✅ Performance: Optimize asset naming
+        chunkFileNames: 'assets/js/[name]-[hash].js',
+        assetFileNames: (assetInfo) => {
+          const info = assetInfo.name?.split('.') || [];
+          let extType = info[info.length - 1];
+          
+          if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(extType)) {
+            extType = 'images';
+          } else if (/woff2?|eot|ttf|otf/i.test(extType)) {
+            extType = 'fonts';
+          }
+          
+          return `assets/${extType}/[name]-[hash].[ext]`;
         },
       },
     },
     sourcemap: process.env.NODE_ENV === 'development',
   },
+  // ✅ Performance: Development optimizations
   optimizeDeps: {
-    include: ['react', 'react-dom', '@chakra-ui/react'],
+    include: [
+      'react',
+      'react-dom',
+      '@chakra-ui/react',
+      'framer-motion',
+      'react-router-dom',
+      'zod',
+      '@tanstack/react-query',
+    ],
   },
 })

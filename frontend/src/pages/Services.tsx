@@ -169,4 +169,9 @@ export default function Services() {
       />
     </>
   );
-} 
+});
+
+// ✅ Performance: Display name for debugging
+Services.displayName = 'Services';
+
+export default Services;

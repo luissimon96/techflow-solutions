@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import {
   Box,
   VStack,
@@ -8,8 +8,6 @@ import {
   Icon,
   Badge,
   Button,
-  useColorModeValue,
-  Flex,
   Wrap,
   WrapItem,
 } from '@chakra-ui/react';
@@ -17,8 +15,16 @@ import { IconType } from 'react-icons';
 import { FaArrowRight, FaStar } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { asChakraIcon } from '../../utils/iconUtils';
+import { useAnalytics } from '../../hooks/useAnalytics';
+import { useServiceCardTheme } from '../../hooks/useTheme';
+import { cardAnimationVariants } from '../../constants/animations';
 
-// Motion wrapper para Chakra UI
+// 🎮 ServiceCard - Refactored with SOLID Principles
+// ✅ Single Responsibility: Only handles service card UI rendering
+// ✅ Open/Closed: Extensible through props, closed for modification
+// ✅ Dependency Inversion: Depends on hooks abstractions
+// ✅ Performance: React.memo for re-render optimization
+
 const MotionBox = motion(Box);
 
 interface ServiceCardProps {
@@ -34,7 +40,7 @@ interface ServiceCardProps {
   onGetQuote?: () => void;
 }
 
-export const ServiceCard: React.FC<ServiceCardProps> = ({
+export const ServiceCard: React.FC<ServiceCardProps> = memo(({
   title,
   subtitle,
   description,
@@ -46,40 +52,18 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
   onLearnMore,
   onGetQuote,
 }) => {
-  const bgColor = useColorModeValue('white', 'gray.800');
-  const borderColor = useColorModeValue('gray.200', 'gray.600');
-  const featuredBorderColor = useColorModeValue('brand.500', 'brand.300');
-  const textColor = useColorModeValue('gray.600', 'gray.300');
-  const subtitleColor = useColorModeValue('gray.500', 'gray.400');
+  // ✅ Dependency Inversion: Using abstractions instead of concrete implementations
+  const { trackServiceInteraction } = useAnalytics();
+  const theme = useServiceCardTheme();
 
-  // Animações sutis para performance
-  const cardVariants = {
-    initial: { opacity: 0, y: 20 },
-    animate: { opacity: 1, y: 0 },
-    hover: { y: -4, transition: { duration: 0.2 } },
-  };
-
+  // ✅ Single Responsibility: Clean event handlers focused only on coordination
   const handleLearnMoreClick = () => {
-    // Analytics tracking
-    if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('event', 'service_learn_more_click', {
-        event_category: 'Services',
-        event_label: title,
-        value: 1,
-      });
-    }
+    trackServiceInteraction('learn_more', title);
     onLearnMore?.();
   };
 
   const handleGetQuoteClick = () => {
-    // Analytics tracking
-    if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('event', 'service_quote_request', {
-        event_category: 'Conversion',
-        event_label: title,
-        value: 1,
-      });
-    }
+    trackServiceInteraction('quote_request', title);
     onGetQuote?.();
   };
 
@@ -88,16 +72,15 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
       initial="initial"
       animate="animate"
       whileHover="hover"
-      variants={cardVariants}
-      transition={{ duration: 0.2 }}
+      variants={cardAnimationVariants}
     >
       <Box
         p={6}
-        bg={bgColor}
+        bg={theme.bgColor}
         borderRadius="xl"
         boxShadow={featured ? 'xl' : 'md'}
         border="2px solid"
-        borderColor={featured ? featuredBorderColor : borderColor}
+        borderColor={featured ? theme.featuredBorderColor : theme.borderColor}
         position="relative"
         h="full"
         _hover={{
@@ -141,20 +124,20 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
               <Heading size="lg" mb={1} lineHeight="short">
                 {title}
               </Heading>
-              <Text color={subtitleColor} fontSize="md" fontWeight="medium">
+              <Text color={theme.subtitleColor} fontSize="md" fontWeight="medium">
                 {subtitle}
               </Text>
             </Box>
           </VStack>
 
           {/* Description */}
-          <Text color={textColor} lineHeight="tall" flex="1">
+          <Text color={theme.textColor} lineHeight="tall" flex="1">
             {description}
           </Text>
 
           {/* Technologies */}
           <Box>
-            <Text fontSize="sm" fontWeight="semibold" mb={2} color={textColor}>
+            <Text fontSize="sm" fontWeight="semibold" mb={2} color={theme.textColor}>
               Tecnologias:
             </Text>
             <Wrap spacing={1}>
@@ -192,12 +175,19 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
           {/* Features & Duration */}
           <VStack spacing={3} align="stretch">
             <Box>
-              <Text fontSize="sm" fontWeight="semibold" mb={2} color={textColor}>
+              <Text 
+                fontSize="sm" 
+                fontWeight="semibold" 
+                mb={2} 
+                color={theme.textColor}
+                id={featuresId}
+                as="h4"
+              >
                 Inclui:
               </Text>
-              <VStack spacing={1} align="start">
+              <VStack spacing={1} align="start" role="list" aria-labelledby={featuresId}>
                 {features.slice(0, 3).map((feature, index) => (
-                  <Text key={index} fontSize="sm" color={textColor}>
+                  <Text key={index} fontSize="sm" color={theme.textColor}>
                     • {feature}
                   </Text>
                 ))}
@@ -210,8 +200,8 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
             </Box>
 
             <Box>
-              <Text fontSize="sm" color={textColor}>
-                <Text as="span" fontWeight="semibold">Prazo típico:</Text> {duration}
+              <Text fontSize="sm" color={theme.textColor}>
+                <Text as="span" fontWeight="semibold" aria-label="Prazo estimado para conclusão">Prazo típico:</Text> {duration}
               </Text>
             </Box>
           </VStack>
@@ -238,7 +228,7 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
               size="sm"
               width="full"
               onClick={handleLearnMoreClick}
-              color={textColor}
+              color={theme.textColor}
               _hover={{
                 color: 'brand.500',
                 bg: 'brand.50',
@@ -251,4 +241,7 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
       </Box>
     </MotionBox>
   );
-}; 
+});
+
+// ✅ Performance: Display name for debugging
+ServiceCard.displayName = 'ServiceCard';
