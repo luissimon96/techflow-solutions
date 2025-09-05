@@ -12,9 +12,13 @@ import { blacklistToken, verifyRefreshToken } from '../middleware/auth';
 // ✅ Dependency Inversion: depende de abstrações (services)
 // ✅ Clean Code: funções menores, logging estruturado
 
-// 🏭 Service instances
-const authService = new AuthService();
-const tokenService = new TokenService();
+// 🏭 Service instances via DI Container
+import { ServiceLocator } from '../container/ServiceRegistry';
+
+// ✅ Dependency Inversion: Controllers depend on service abstractions
+const getAuthService = () => ServiceLocator.getAuthService();
+const getTokenService = () => ServiceLocator.getTokenService();
+const getValidationService = () => ServiceLocator.getValidationService();
 
 // ✅ Validações extraídas para ValidationService
 export const loginValidation = ValidationService.getLoginValidation();

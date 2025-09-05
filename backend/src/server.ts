@@ -3,6 +3,8 @@ import { createApp } from './config/app';
 import { connectDatabase, disconnectDatabase } from './config/database';
 import { getCorsOrigins } from './config/cors';
 import { log } from './lib/logger';
+import { ServiceRegistry } from './container/ServiceRegistry';
+import { setupGlobalErrorHandlers } from './lib/errors';
 
 // 🚀 Server Module
 // Extraído do index.ts para seguir Single Responsibility Principle
@@ -15,10 +17,25 @@ const PORT = process.env.PORT || 3000;
 
 export async function startServer(): Promise<void> {
   try {
-    // Conectar ao banco de dados
+    // 🔧 Setup global error handlers
+    setupGlobalErrorHandlers();
+    
+    // 🏭 Register all services in DI container
+    ServiceRegistry.registerServices();
+    
+    log.info('Phase 2 Architecture initialized', {
+      features: [
+        'Repository Pattern',
+        'Dependency Injection Container', 
+        'Standardized Error Handling',
+        'Unit Test Framework'
+      ]
+    });
+    
+    // 🗄️ Connect to database
     await connectDatabase();
     
-    // Criar aplicação Express
+    // 🏗️ Create Express application
     const app = createApp();
     
     // Iniciar servidor

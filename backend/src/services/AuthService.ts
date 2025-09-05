@@ -1,4 +1,5 @@
-import { Admin, IAdmin } from '../models/Admin';
+import { IAdmin } from '../models/Admin';
+import { IAdminRepository } from '../repositories/IAdminRepository';
 import { log } from '../lib/logger';
 
 // 🔐 Authentication Service
@@ -25,7 +26,12 @@ export interface AuthCredentials {
   password: string;
 }
 
+// ✅ SOLID: Dependency Inversion - depende de abstração (IAdminRepository)
+// ✅ Clean Architecture: Service não conhece detalhes de persistência
+
 export class AuthService {
+  constructor(private adminRepository: IAdminRepository) {}
+
   async authenticateAdmin(credentials: AuthCredentials): Promise<LoginResult> {
     const { email, password } = credentials;
 
@@ -35,8 +41,8 @@ export class AuthService {
         timestamp: new Date().toISOString()
       });
 
-      // Buscar admin com senha
-      const admin = await Admin.findOne({ email }).select('+password');
+      // ✅ Repository Pattern: abstração de dados
+      const admin = await this.adminRepository.findByEmail(email, true);
       
       if (!admin) {
         log.warn('Authentication failed - admin not found', { email });
@@ -79,8 +85,8 @@ export class AuthService {
           adminId: admin._id.toString()
         });
         
-        // Incrementar tentativas de login
-        await admin.incLoginAttempts();
+        // ✅ Repository Pattern: operação através da abstração
+        await this.adminRepository.incrementLoginAttempts(admin._id.toString());
         
         return {
           success: false,
@@ -88,16 +94,15 @@ export class AuthService {
         };
       }
 
-      // Login bem-sucedido - resetar tentativas
-      await admin.resetLoginAttempts();
+      // ✅ Repository Pattern: operação através da abstração
+      await this.adminRepository.resetLoginAttempts(admin._id.toString());
 
       // Gerar tokens
       const accessToken = admin.generateAccessToken();
       const refreshToken = admin.generateRefreshToken();
 
-      // Salvar refresh token no banco
-      admin.refreshTokens.push(refreshToken);
-      await admin.save();
+      // ✅ Repository Pattern: operação através da abstração
+      await this.adminRepository.addRefreshToken(admin._id.toString(), refreshToken);
 
       // Log de auditoria
       log.auth('admin_login_success', {
@@ -160,14 +165,8 @@ export class AuthService {
   async logoutAdmin(adminId: string, refreshToken?: string): Promise<{ success: boolean; message: string }> {
     try {
       if (refreshToken) {
-        const admin = await Admin.findById(adminId);
-        if (admin) {
-          // Remover refresh token específico
-          admin.refreshTokens = admin.refreshTokens.filter(
-            token => token !== refreshToken
-          );
-          await admin.save();
-        }
+        // ✅ Repository Pattern: operação através da abstração
+        await this.adminRepository.removeRefreshToken(adminId, refreshToken);
       }
 
       log.auth('admin_logout', {
@@ -196,7 +195,7 @@ export class AuthService {
 
   async logoutAllSessions(adminId: string): Promise<{ success: boolean; message: string }> {
     try {
-      const admin = await Admin.findById(adminId);
+      const admin = await this.adminRepository.findById(adminId);
       if (!admin) {
         return {
           success: false,
@@ -204,13 +203,14 @@ export class AuthService {
         };
       }
 
-      // Limpar todos os refresh tokens
-      admin.refreshTokens = [];
-      await admin.save();
+      // ✅ Repository Pattern: operação através da abstração
+      await this.adminRepository.clearAllRefreshTokens(adminId);
+
+      const adminData = admin;
 
       log.auth('admin_logout_all_sessions', {
         adminId,
-        email: admin.email,
+        email: adminData.email,
         timestamp: new Date().toISOString()
       });
 
