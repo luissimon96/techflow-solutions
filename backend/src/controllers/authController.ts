@@ -1,36 +1,25 @@
 import { Request, Response } from 'express';
-import { Admin, IAdmin } from '../models/Admin';
+import { AuthService } from '../services/AuthService';
+import { TokenService } from '../services/TokenService';
+import { ValidationService } from '../services/ValidationService';
+import { Admin } from '../models/Admin';
+import { log } from '../lib/logger';
+import { validationResult } from 'express-validator';
 import { blacklistToken, verifyRefreshToken } from '../middleware/auth';
-import { body, validationResult } from 'express-validator';
-import crypto from 'crypto';
 
-// Validações
-export const loginValidation = [
-  body('email')
-    .isEmail()
-    .normalizeEmail()
-    .withMessage('Email deve ter um formato válido'),
-  body('password')
-    .isLength({ min: 8 })
-    .withMessage('Senha deve ter no mínimo 8 caracteres'),
-];
+// 🎮 Auth Controller - Refatorado seguindo SOLID principles
+// ✅ Single Responsibility: apenas controla fluxo HTTP
+// ✅ Dependency Inversion: depende de abstrações (services)
+// ✅ Clean Code: funções menores, logging estruturado
 
-export const changePasswordValidation = [
-  body('currentPassword')
-    .notEmpty()
-    .withMessage('Senha atual é obrigatória'),
-  body('newPassword')
-    .isLength({ min: 8 })
-    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/)
-    .withMessage('Nova senha deve ter no mínimo 8 caracteres, incluindo maiúscula, minúscula, número e símbolo'),
-  body('confirmPassword')
-    .custom((value, { req }) => {
-      if (value !== req.body.newPassword) {
-        throw new Error('Confirmação de senha não confere');
-      }
-      return true;
-    }),
-];
+// 🏭 Service instances
+const authService = new AuthService();
+const tokenService = new TokenService();
+
+// ✅ Validações extraídas para ValidationService
+export const loginValidation = ValidationService.getLoginValidation();
+
+export const changePasswordValidation = ValidationService.getChangePasswordValidation();
 
 // Login
 export const login = async (req: Request, res: Response) => {

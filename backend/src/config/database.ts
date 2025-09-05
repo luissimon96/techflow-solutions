@@ -1,38 +1,87 @@
-import { MongoClient } from 'mongodb';
+import mongoose from 'mongoose';
+import { log } from '../lib/logger';
 
-const MONGODB_URI = process.env.MONGODB_URI;
+// 🗄️ Database Configuration Module
+// Extraído do index.ts para seguir Single Responsibility Principle
+// Responsável pela conexão e configuração do MongoDB
 
-if (!MONGODB_URI) {
-  throw new Error('Please define the MONGODB_URI environment variable');
+interface MongoConnectionOptions extends mongoose.ConnectOptions {
+  maxPoolSize: number;
+  serverSelectionTimeoutMS: number;
+  socketTimeoutMS: number;
+  retryWrites: boolean;
 }
 
-let client: MongoClient | null = null;
+export async function connectDatabase(): Promise<void> {
+  const mongoUri = process.env.MONGODB_URI;
 
-export const connectToDatabase = async (): Promise<MongoClient> => {
-  if (client) {
-    return client;
+  log.info('Database connection attempt started', {
+    database: 'techflowdb',
+    securityEnabled: true
+  });
+
+  if (!mongoUri) {
+    const message = 'MONGODB_URI não encontrada nas variáveis de ambiente';
+    
+    if (process.env.NODE_ENV !== 'production') {
+      log.warn('MongoDB URI missing in development mode', {
+        environment: process.env.NODE_ENV || 'development',
+        continuingWithoutDB: true
+      });
+      return;
+    }
+    
+    log.error(message, {
+      environment: process.env.NODE_ENV || 'development'
+    });
+    throw new Error(message);
   }
+
+  const mongoOptions: MongoConnectionOptions = {
+    maxPoolSize: 10,
+    serverSelectionTimeoutMS: 5000,
+    socketTimeoutMS: 45000,
+    retryWrites: true
+  };
 
   try {
-    client = new MongoClient(MONGODB_URI);
-    await client.connect();
-    console.log('Connected to MongoDB');
-    return client;
+    await mongoose.connect(mongoUri, mongoOptions);
+    
+    log.info('MongoDB connection established successfully', {
+      database: 'techflowdb',
+      secure: true,
+      poolSize: mongoOptions.maxPoolSize,
+      timeout: mongoOptions.serverSelectionTimeoutMS
+    });
+
   } catch (error) {
-    console.error('Failed to connect to MongoDB:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    
+    if (process.env.NODE_ENV !== 'production') {
+      log.warn('MongoDB connection failed in development', {
+        error: errorMessage,
+        mongoUri: mongoUri.substring(0, 20) + '...',
+        continuingWithoutDB: true
+      });
+      return;
+    }
+
+    log.error('MongoDB connection failed in production', {
+      error: errorMessage,
+      mongoUri: mongoUri.substring(0, 20) + '...'
+    });
+    
     throw error;
   }
-};
+}
 
-export const disconnectFromDatabase = async (): Promise<void> => {
-  if (client) {
-    await client.close();
-    client = null;
-    console.log('Disconnected from MongoDB');
+export async function disconnectDatabase(): Promise<void> {
+  try {
+    await mongoose.connection.close();
+    log.info('MongoDB connection closed successfully');
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    log.error('Error closing MongoDB connection', { error: errorMessage });
+    throw error;
   }
-};
-
-export const getDatabase = async () => {
-  const client = await connectToDatabase();
-  return client.db();
-}; 
+} 
