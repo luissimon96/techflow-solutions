@@ -14,8 +14,8 @@ import {
   useDisclosure,
   useBreakpointValue,
   Divider,
-  keyframes,
 } from '@chakra-ui/react';
+import { keyframes } from '@emotion/react';
 import { HamburgerIcon } from '@chakra-ui/icons';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 import { Logo } from './common/Logo';

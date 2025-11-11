@@ -118,8 +118,8 @@ export default function Contact() {
       });
 
       toast({
-        title: 'Mensagem enviada com sucesso!',
-        description: 'Entraremos em contato em breve.',
+        title: 'Dados processados com sucesso! 📱',
+        description: 'Você será redirecionado para o WhatsApp para continuar a conversa.',
         status: 'success',
         duration: 5000,
         isClosable: true,

@@ -234,8 +234,8 @@ export default function QuoteRequest() {
       }
 
       toast({
-        title: 'Solicitação enviada com sucesso!',
-        description: 'Analisaremos seu projeto e entraremos em contato em até 24 horas.',
+        title: 'Orçamento processado com sucesso! 📱',
+        description: 'Você será redirecionado para o WhatsApp para enviar sua solicitação detalhada.',
         status: 'success',
         duration: 5000,
         isClosable: true,
