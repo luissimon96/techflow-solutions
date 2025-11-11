@@ -78,6 +78,27 @@ export default function Contact() {
     }
   };
 
+  const createFallbackWhatsAppMessage = (data: ContactFormData): string => {
+    let message = `🏢 *TechFlow Solutions - Contato via Site*\n\n`;
+    message += `👤 *Nome:* ${data.name}\n`;
+    message += `📧 *Email:* ${data.email}\n`;
+    
+    if (data.company) {
+      message += `🏢 *Empresa:* ${data.company}\n`;
+    }
+    
+    if (data.phone) {
+      message += `📞 *Telefone:* ${data.phone}\n`;
+    }
+    
+    message += `📋 *Assunto:* ${data.subject}\n\n`;
+    message += `💬 *Mensagem:*\n${data.message}\n\n`;
+    message += `⏰ *Enviado em:* ${new Date().toLocaleString('pt-BR')}\n\n`;
+    message += `ℹ️ *Nota: Formulário enviado com problema técnico - continuando pelo WhatsApp*`;
+    
+    return message;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -135,14 +156,56 @@ export default function Contact() {
         });
         setErrors(fieldErrors);
       } else {
-        const errorMessage = handleApiError(error);
-        toast({
-          title: 'Erro ao enviar mensagem',
-          description: errorMessage,
-          status: 'error',
-          duration: 7000,
-          isClosable: true,
-        });
+        // ✅ ENHANCED ERROR HANDLING
+        const isNetworkError = error.message?.includes('fetch') || 
+                              error.name === 'TypeError' || 
+                              error.message?.includes('Failed to fetch');
+        
+        if (isNetworkError) {
+          // Offer direct WhatsApp fallback for network errors
+          const fallbackMessage = createFallbackWhatsAppMessage(formData);
+          const fallbackUrl = getWhatsAppUrl(fallbackMessage);
+          
+          toast({
+            title: 'Problema de conexão detectado',
+            description: 'Clique no botão abaixo para continuar pelo WhatsApp diretamente.',
+            status: 'warning',
+            duration: 10000,
+            isClosable: true,
+            action: (
+              <Button 
+                size="sm" 
+                colorScheme="green" 
+                onClick={() => {
+                  window.open(fallbackUrl, '_blank');
+                  // Clear form after successful fallback
+                  setFormData({
+                    name: '',
+                    email: '',
+                    company: '',
+                    phone: '',
+                    subject: '',
+                    message: '',
+                    consent: false,
+                  });
+                  setSubmitSuccess(true);
+                }}
+              >
+                Abrir WhatsApp
+              </Button>
+            )
+          });
+        } else {
+          // Handle other API errors
+          const errorMessage = handleApiError(error);
+          toast({
+            title: 'Erro ao enviar mensagem',
+            description: errorMessage,
+            status: 'error',
+            duration: 7000,
+            isClosable: true,
+          });
+        }
       }
     } finally {
       setIsSubmitting(false);
@@ -385,4 +448,4 @@ export default function Contact() {
       </Box>
     </>
   );
-} 
+}

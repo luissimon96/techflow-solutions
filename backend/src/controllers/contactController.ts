@@ -14,7 +14,7 @@ interface ContactData {
 
 // Função para gerar URL do WhatsApp
 function generateWhatsAppUrl(contactData: ContactData): string {
-  const phoneNumber = '5511999999999'; // Substitua pelo número do WhatsApp da empresa
+  const phoneNumber = '5554997109051'; // ✅ FIXED: Updated to match frontend
   
   let message = `🏢 *TechFlow Solutions - Novo Contato*\n\n`;
   message += `👤 *Nome:* ${contactData.name}\n`;
