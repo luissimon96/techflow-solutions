@@ -51,10 +51,16 @@ export default defineConfig({
     },
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-          chakra: ['@chakra-ui/react', '@emotion/react', '@emotion/styled'],
-          utils: ['@tanstack/react-query', 'framer-motion']
+        manualChunks: (id) => {
+          if (id.includes('react') || id.includes('react-dom')) {
+            return 'vendor';
+          }
+          if (id.includes('@chakra-ui') || id.includes('@emotion')) {
+            return 'chakra';
+          }
+          if (id.includes('@tanstack/react-query') || id.includes('framer-motion')) {
+            return 'utils';
+          }
         },
       },
     },
