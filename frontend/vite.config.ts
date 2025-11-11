@@ -51,19 +51,11 @@ export default defineConfig({
     },
     rollupOptions: {
       output: {
-        manualChunks: (id) => {
-          // Agrupar todas as dependências relacionadas ao React no mesmo chunk
-          if (id.includes('react') || 
-              id.includes('react-dom') || 
-              id.includes('@chakra-ui') || 
-              id.includes('@emotion') || 
-              id.includes('framer-motion')) {
-            return 'react-libs';
-          }
-          // Outras bibliotecas
-          if (id.includes('node_modules')) {
-            return 'vendor';
-          }
+        manualChunks: {
+          'react-core': ['react', 'react-dom'],
+          'react-router': ['react-router-dom'],
+          'ui-libs': ['@chakra-ui/react', '@emotion/react', '@emotion/styled', 'framer-motion'],
+          'utils': ['@tanstack/react-query', 'zod']
         },
       },
     },
