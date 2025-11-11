@@ -49,7 +49,7 @@
     "typescript",
     "nodejs",
     "express",
-    "mongodb"
+    "whatsapp-integration"
   ],
   "author": "TechFlow Solutions",
   "license": "ISC",

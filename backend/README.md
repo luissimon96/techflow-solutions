@@ -1,13 +1,13 @@
 # TechFlow API
 
-Backend da aplicação TechFlow Solutions, desenvolvido com Node.js, Express, TypeScript e MongoDB.
+Backend da aplicação TechFlow Solutions, desenvolvido com Node.js, Express e TypeScript com integração WhatsApp.
 
 ## Tecnologias Utilizadas
 
 - Node.js
 - Express
 - TypeScript
-- MongoDB
+- WhatsApp API Integration
 - Jest
 - ESLint
 - Prettier
@@ -15,7 +15,6 @@ Backend da aplicação TechFlow Solutions, desenvolvido com Node.js, Express, Ty
 ## Requisitos
 
 - Node.js 18 ou superior
-- MongoDB 6 ou superior
 - npm ou yarn
 
 ## Instalação
@@ -48,7 +47,6 @@ Backend da aplicação TechFlow Solutions, desenvolvido com Node.js, Express, Ty
 
 - `PORT`: Porta do servidor (padrão: 3000)
 - `NODE_ENV`: Ambiente de execução (development, test, production)
-- `MONGODB_URI`: URI de conexão com o MongoDB
 - `JWT_SECRET`: Chave secreta para geração de tokens JWT
 - `CORS_ORIGIN`: Origem permitida para requisições CORS
 
@@ -58,7 +56,7 @@ Backend da aplicação TechFlow Solutions, desenvolvido com Node.js, Express, Ty
 src/
   ├── config/         # Configurações da aplicação
   ├── middleware/     # Middlewares
-  ├── models/         # Modelos do MongoDB
+  ├── controllers/    # Controllers da API
   ├── routes/         # Rotas da API
   ├── services/       # Serviços
   ├── types/          # Definições de tipos

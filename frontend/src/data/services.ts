@@ -28,7 +28,7 @@ export const services: Service[] = [
     subtitle: 'Sites e aplicações web modernas e responsivas',
     description: 'Criamos sites e aplicações web utilizando as tecnologias mais modernas do mercado, com foco em performance, SEO e experiência do usuário. Desde landing pages até sistemas complexos.',
     icon: FaLaptopCode,
-    technologies: ['React', 'TypeScript', 'Node.js', 'MongoDB', 'Next.js', 'Chakra UI'],
+    technologies: ['React', 'TypeScript', 'Node.js', 'Next.js', 'Chakra UI', 'WhatsApp Integration'],
     duration: '2-8 semanas',
     features: [
       'Design responsivo e moderno',

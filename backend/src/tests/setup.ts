@@ -29,12 +29,4 @@ process.env.NODE_ENV = 'test';
 process.env.JWT_SECRET = 'test-secret-key';
 process.env.CORS_ORIGIN = 'http://localhost:5173,http://localhost:3000';
 
-// Mock do MongoDB para testes
-jest.mock('mongoose', () => ({
-  connect: jest.fn().mockResolvedValue({}),
-  connection: {
-    close: jest.fn().mockResolvedValue({})
-  },
-  model: jest.fn(),
-  Schema: jest.fn()
-})); 
+// No database mocks needed - WhatsApp integration only 

@@ -41,7 +41,7 @@ app.get('/test', (req, res) => {
   });
 });
 
-// Iniciar servidor sem MongoDB para teste
+// Iniciar servidor de teste com integração WhatsApp
 function startTestServer() {
   app.listen(port, () => {
     console.log('🚀 Servidor de TESTE rodando na porta', port);
@@ -50,7 +50,7 @@ function startTestServer() {
     console.log('📧 API Contact: http://localhost:' + port + '/api/contact');
     console.log('💼 API Quotes: http://localhost:' + port + '/api/quotes');
     console.log('🌐 CORS configurado para:', process.env.CORS_ORIGIN || 'localhost');
-    console.log('⚠️  MODO TESTE - MongoDB desabilitado');
+    console.log('⚠️  MODO TESTE - Sistema integrado com WhatsApp');
   });
 }
 
