@@ -179,10 +179,15 @@ export default function QuoteRequest() {
   };
 
   const addTechnology = (tech: string) => {
-    if (!formData.technologies.includes(tech)) {
+    if (Array.isArray(formData.technologies) && !formData.technologies.includes(tech)) {
       setFormData(prev => ({
         ...prev,
-        technologies: [...prev.technologies, tech]
+        technologies: [...(prev.technologies || []), tech]
+      }));
+    } else if (!Array.isArray(formData.technologies)) {
+      setFormData(prev => ({
+        ...prev,
+        technologies: [tech]
       }));
     }
   };
@@ -190,7 +195,9 @@ export default function QuoteRequest() {
   const removeTechnology = (tech: string) => {
     setFormData(prev => ({
       ...prev,
-      technologies: prev.technologies.filter(t => t !== tech)
+      technologies: Array.isArray(prev.technologies) 
+        ? prev.technologies.filter(t => t !== tech)
+        : []
     }));
   };
 
@@ -532,10 +539,10 @@ export default function QuoteRequest() {
                             <WrapItem key={tech}>
                               <Button
                                 size="sm"
-                                variant={formData.technologies.includes(tech) ? 'solid' : 'outline'}
-                                colorScheme={formData.technologies.includes(tech) ? 'brand' : 'gray'}
+                                variant={Array.isArray(formData.technologies) && formData.technologies.includes(tech) ? 'solid' : 'outline'}
+                                colorScheme={Array.isArray(formData.technologies) && formData.technologies.includes(tech) ? 'brand' : 'gray'}
                                 onClick={() =>
-                                  formData.technologies.includes(tech)
+                                  Array.isArray(formData.technologies) && formData.technologies.includes(tech)
                                     ? removeTechnology(tech)
                                     : addTechnology(tech)
                                 }
@@ -546,7 +553,7 @@ export default function QuoteRequest() {
                             </WrapItem>
                           ))}
                         </Wrap>
-                        {formData.technologies.length > 0 && (
+                        {Array.isArray(formData.technologies) && formData.technologies.length > 0 && (
                           <Wrap mt={2}>
                             {formData.technologies.map(tech => (
                               <WrapItem key={tech}>
