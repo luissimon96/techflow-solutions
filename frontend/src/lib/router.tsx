@@ -6,8 +6,6 @@ import Clients from '@/pages/Clients';
 import Blog from '@/pages/Blog';
 import Contact from '@/pages/Contact';
 import QuoteRequest from '@/pages/QuoteRequest';
-import AdminLogin from '@/pages/admin/Login';
-import AdminDashboard from '@/pages/admin/Dashboard';
 
 export const router = createBrowserRouter([
   {
@@ -39,14 +37,5 @@ export const router = createBrowserRouter([
         element: <QuoteRequest />,
       },
     ],
-  },
-  // Rotas Admin (sem layout principal)
-  {
-    path: '/admin/login',
-    element: <AdminLogin />,
-  },
-  {
-    path: '/admin/dashboard',
-    element: <AdminDashboard />,
   },
 ]); 
