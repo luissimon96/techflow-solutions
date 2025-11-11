@@ -229,24 +229,40 @@ class RateLimiter {
   private attempts: Map<string, number[]> = new Map();
 
   isAllowed(key: string, maxAttempts: number = 5, windowMs: number = 60000): boolean {
-    const now = Date.now();
-    const attempts = this.attempts.get(key) || [];
+    try {
+      const now = Date.now();
+      const attempts = this.attempts.get(key) || [];
 
-    // Remove tentativas antigas
-    const recentAttempts = attempts.filter(time => now - time < windowMs);
+      // Remove tentativas antigas - Add defensive check
+      const recentAttempts = Array.isArray(attempts) 
+        ? attempts.filter(time => now - time < windowMs)
+        : [];
 
-    if (recentAttempts.length >= maxAttempts) {
-      return false;
+      if (recentAttempts.length >= maxAttempts) {
+        return false;
+      }
+
+      // Ensure recentAttempts is an array before calling push
+      if (Array.isArray(recentAttempts)) {
+        recentAttempts.push(now);
+        this.attempts.set(key, recentAttempts);
+      }
+      
+      return true;
+    } catch (error) {
+      // Fallback: allow the operation if rate limiting fails
+      console.warn('Rate limiting error:', error);
+      return true;
     }
-
-    recentAttempts.push(now);
-    this.attempts.set(key, recentAttempts);
-    return true;
   }
 
   reset(key: string): void {
-    this.attempts.delete(key);
+    try {
+      this.attempts.delete(key);
+    } catch (error) {
+      console.warn('Rate limiter reset error:', error);
+    }
   }
 }
 
-export const rateLimiter = new RateLimiter(); 
+export const rateLimiter = new RateLimiter();
