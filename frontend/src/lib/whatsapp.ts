@@ -281,4 +281,11 @@ export const sendWhatsAppText = (message: string) =>
 export const configureWhatsApp = (config: Partial<WhatsAppConfig>) => 
   whatsappService.updateConfig(config);
 
+// Legacy function for backward compatibility
+export const getWhatsAppUrl = (message: string): string => {
+  const phoneNumber = '5554997109051';
+  const encodedMessage = encodeURIComponent(message);
+  return `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+};
+
 export default whatsappService;
