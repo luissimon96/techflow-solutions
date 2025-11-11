@@ -49,6 +49,7 @@ import {
   validateAndSanitize
 } from '@/lib/validation';
 import { sendQuoteRequest, handleApiError } from '@/lib/api';
+import { sendWhatsAppQuote, type WhatsAppQuote } from '@/lib/whatsapp';
 
 type FormErrors = Partial<Record<keyof QuoteRequestData, string>>;
 
@@ -281,14 +282,41 @@ export default function QuoteRequest() {
         });
         setErrors(fieldErrors);
       } else {
-        const errorMessage = handleApiError(error);
-        toast({
-          title: 'Erro ao enviar solicitação',
-          description: errorMessage,
-          status: 'error',
-          duration: 7000,
-          isClosable: true,
-        });
+        // Check for network errors and offer WhatsApp fallback
+        const isNetworkError = error.message?.includes('fetch') || 
+                              error.name === 'TypeError' || 
+                              error.message?.includes('Failed to fetch');
+        
+        if (isNetworkError) {
+          toast({
+            title: 'Problema de conexão detectado',
+            description: 'Clique no botão abaixo para continuar pelo WhatsApp diretamente.',
+            status: 'warning',
+            duration: 10000,
+            isClosable: true,
+            action: (
+              <Button 
+                size="sm" 
+                colorScheme="green" 
+                onClick={() => {
+                  createWhatsAppFallback(formData);
+                  setSubmitSuccess(true);
+                }}
+              >
+                Ir para WhatsApp
+              </Button>
+            ),
+          });
+        } else {
+          const errorMessage = handleApiError(error);
+          toast({
+            title: 'Erro ao enviar solicitação',
+            description: errorMessage,
+            status: 'error',
+            duration: 7000,
+            isClosable: true,
+          });
+        }
       }
     } finally {
       setIsSubmitting(false);
@@ -300,6 +328,32 @@ export default function QuoteRequest() {
     const clientId = `quote_${formData.clientEmail}`;
     rateLimiter.reset(clientId);
     setRateLimitExceeded(false);
+  };
+
+  const createWhatsAppFallback = (data: QuoteRequestData): void => {
+    const whatsappData: WhatsAppQuote = {
+      clientName: data.clientName,
+      clientEmail: data.clientEmail,
+      clientPhone: data.clientPhone,
+      clientCompany: data.clientCompany,
+      clientPosition: data.clientPosition,
+      projectName: data.projectName,
+      projectDescription: data.projectDescription + '\n\n⚠️ Nota: Formulário enviado com problema técnico - continuando pelo WhatsApp',
+      projectType: data.projectType,
+      projectCategory: data.projectCategory,
+      technologies: data.technologies,
+      timeline: data.timeline,
+      budget: data.budget,
+      features: data.features,
+      integrations: data.integrations,
+      platforms: data.platforms,
+      mainGoals: data.mainGoals,
+      targetAudience: data.targetAudience,
+      hasExistingSystem: data.hasExistingSystem,
+      existingSystemDetails: data.existingSystemDetails
+    };
+    
+    sendWhatsAppQuote(whatsappData);
   };
 
   return (

@@ -25,7 +25,6 @@ import {
 } from '@chakra-ui/react';
 import { FaEnvelope, FaPhone, FaMapMarkerAlt, FaCheckCircle } from 'react-icons/fa';
 import { SEOHead, SCHEMA_TEMPLATES } from '@/components/common/SEOHead';
-import { getWhatsAppUrl } from '@/lib/whatsapp';
 import {
   contactFormSchema,
   type ContactFormData,
@@ -33,6 +32,7 @@ import {
   validateAndSanitize
 } from '@/lib/validation';
 import { sendContactData, handleApiError } from '@/lib/api';
+import { sendWhatsAppContact, sendWhatsAppText, type WhatsAppContact } from '@/lib/whatsapp';
 
 type FormErrors = Partial<Record<keyof ContactFormData, string>>;
 
@@ -78,25 +78,17 @@ export default function Contact() {
     }
   };
 
-  const createFallbackWhatsAppMessage = (data: ContactFormData): string => {
-    let message = `🏢 *TechFlow Solutions - Contato via Site*\n\n`;
-    message += `👤 *Nome:* ${data.name}\n`;
-    message += `📧 *Email:* ${data.email}\n`;
+  const createWhatsAppFallback = (data: ContactFormData): void => {
+    const whatsappData: WhatsAppContact = {
+      name: data.name,
+      email: data.email,
+      company: data.company,
+      phone: data.phone,
+      subject: data.subject,
+      message: `${data.message}\n\n⚠️ Nota: Formulário enviado com problema técnico - continuando pelo WhatsApp`
+    };
     
-    if (data.company) {
-      message += `🏢 *Empresa:* ${data.company}\n`;
-    }
-    
-    if (data.phone) {
-      message += `📞 *Telefone:* ${data.phone}\n`;
-    }
-    
-    message += `📋 *Assunto:* ${data.subject}\n\n`;
-    message += `💬 *Mensagem:*\n${data.message}\n\n`;
-    message += `⏰ *Enviado em:* ${new Date().toLocaleString('pt-BR')}\n\n`;
-    message += `ℹ️ *Nota: Formulário enviado com problema técnico - continuando pelo WhatsApp*`;
-    
-    return message;
+    sendWhatsAppContact(whatsappData);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -163,8 +155,6 @@ export default function Contact() {
         
         if (isNetworkError) {
           // Offer direct WhatsApp fallback for network errors
-          const fallbackMessage = createFallbackWhatsAppMessage(formData);
-          const fallbackUrl = getWhatsAppUrl(fallbackMessage);
           
           toast({
             title: 'Problema de conexão detectado',
@@ -177,7 +167,7 @@ export default function Contact() {
                 size="sm" 
                 colorScheme="green" 
                 onClick={() => {
-                  window.open(fallbackUrl, '_blank');
+                  createWhatsAppFallback(formData);
                   // Clear form after successful fallback
                   setFormData({
                     name: '',
@@ -430,10 +420,7 @@ export default function Contact() {
                 </Box>
 
                 <Button
-                  as="a"
-                  href={getWhatsAppUrl('Olá! Gostaria de saber mais sobre os serviços da TechFlow Solutions.')}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  onClick={() => sendWhatsAppText('Olá! Gostaria de saber mais sobre os serviços da TechFlow Solutions.')}
                   colorScheme="green"
                   size="lg"
                   leftIcon={<Icon as={FaPhone} />}
