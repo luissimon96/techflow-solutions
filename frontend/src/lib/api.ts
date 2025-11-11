@@ -68,7 +68,7 @@ export const buildApiUrl = (endpoint: string): string => {
 };
 
 /**
- * Função para enviar dados de contato
+ * Função para enviar dados de contato (agora redireciona para WhatsApp)
  */
 export const sendContactData = async (data: {
   name: string;
@@ -87,10 +87,20 @@ export const sendContactData = async (data: {
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || `Erro ao enviar contato: ${response.statusText}`);
+    throw new Error(errorData.message || `Erro ao processar contato: ${response.statusText}`);
   }
 
-  return response.json();
+  const result = await response.json();
+  
+  // Redirecionar automaticamente para o WhatsApp se a URL foi fornecida
+  if (result.data?.whatsappUrl) {
+    // Aguardar um momento para mostrar o feedback ao usuário
+    setTimeout(() => {
+      window.open(result.data.whatsappUrl, '_blank');
+    }, 1500);
+  }
+  
+  return result;
 };
 
 /**
@@ -172,7 +182,7 @@ export const api = {
 };
 
 /**
- * Função para enviar solicitação de orçamento
+ * Função para enviar solicitação de orçamento (agora redireciona para WhatsApp)
  */
 export const sendQuoteRequest = async (data: {
   clientName: string;
@@ -204,8 +214,18 @@ export const sendQuoteRequest = async (data: {
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || `Erro ao enviar orçamento: ${response.statusText}`);
+    throw new Error(errorData.message || `Erro ao processar orçamento: ${response.statusText}`);
   }
 
-  return response.json();
+  const result = await response.json();
+  
+  // Redirecionar automaticamente para o WhatsApp se a URL foi fornecida
+  if (result.data?.whatsappUrl) {
+    // Aguardar um momento para mostrar o feedback ao usuário
+    setTimeout(() => {
+      window.open(result.data.whatsappUrl, '_blank');
+    }, 2000); // Um pouco mais de tempo para orçamentos (mais dados)
+  }
+  
+  return result;
 }; 

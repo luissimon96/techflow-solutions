@@ -1,11 +1,9 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import mongoose from 'mongoose';
 import { healthRouter } from './routes/health';
 import { contactRouter } from './routes/contact';
 import { quoteRouter } from './routes/quotes';
-import authRouter from './routes/auth';
 import { errorHandler } from './middleware/errorHandler';
 import {
   helmetConfig,
@@ -102,12 +100,6 @@ app.use('/api/quotes',
   quoteRouter
 );
 
-// Rotas de autenticação admin com rate limiting específico
-app.use('/api/admin/auth',
-  auditLog('admin_auth'),
-  authRouter
-);
-
 // Middleware para capturar rotas não encontradas
 app.use('*', (req, res) => {
   securityLogger.warn('404 - Route not found', {
@@ -127,79 +119,21 @@ app.use('*', (req, res) => {
 // Error handling
 app.use(errorHandler);
 
-// Conexão com o MongoDB com configurações de segurança
-const mongoUri = process.env.MONGODB_URI;
-
-console.log('🔗 Tentando conectar ao MongoDB...');
-console.log('📍 Database: techflowdb');
+// Inicialização simplificada - sem banco de dados
+console.log('🚀 Inicializando TechFlow Solutions API...');
+console.log('📱 Sistema simplificado com integração WhatsApp');
 console.log('🔒 Configurações de segurança ativadas');
 
-if (mongoUri) {
-  console.log('🔑 MongoDB URI encontrada, conectando...');
+// Log de inicialização
+securityLogger.info('Application started successfully', {
+  port,
+  environment: process.env.NODE_ENV || 'development',
+  corsOrigins: allowedOrigins,
+  databaseType: 'None - WhatsApp Integration'
+});
 
-  // Configurações de conexão seguras
-  const mongoOptions: mongoose.ConnectOptions = {
-    maxPoolSize: 10, // Limitar pool de conexões
-    serverSelectionTimeoutMS: 5000, // Timeout de 5s
-    socketTimeoutMS: 45000, // Timeout de socket
-    retryWrites: true
-  };
-
-  mongoose.connect(mongoUri, mongoOptions)
-    .then(() => {
-      console.log('✅ Conectado ao MongoDB Atlas');
-      console.log('🗄️  Database: techflowdb');
-      console.log('🔒 Conexão segura estabelecida');
-
-      // Log de inicialização
-      securityLogger.info('Application started successfully', {
-        port,
-        environment: process.env.NODE_ENV || 'development',
-        corsOrigins: allowedOrigins,
-        mongoConnected: true
-      });
-
-      startServer();
-    })
-    .catch((error) => {
-      console.error('❌ Erro ao conectar ao MongoDB:', error.message);
-
-      // Em desenvolvimento, permitir rodar sem MongoDB para testar segurança
-      if (process.env.NODE_ENV !== 'production') {
-        console.log('⚠️  Modo desenvolvimento: continuando sem MongoDB...');
-        console.log('🔒 Testando apenas melhorias de segurança');
-
-        securityLogger.warn('MongoDB connection failed in development - continuing without DB', {
-          error: error.message,
-          mongoUri: mongoUri?.substring(0, 20) + '...'
-        });
-
-        startServer();
-      } else {
-        securityLogger.error('MongoDB connection failed', {
-          error: error.message,
-          mongoUri: mongoUri?.substring(0, 20) + '...'
-        });
-        process.exit(1);
-      }
-    });
-} else {
-  console.error('❌ MONGODB_URI não encontrada nas variáveis de ambiente');
-
-  // Em desenvolvimento, permitir rodar sem MongoDB
-  if (process.env.NODE_ENV !== 'production') {
-    console.log('⚠️  Modo desenvolvimento: continuando sem MongoDB...');
-    console.log('🔒 Testando apenas melhorias de segurança');
-
-    securityLogger.warn('Missing MongoDB URI in development - continuing without DB');
-    startServer();
-  } else {
-    securityLogger.error('Missing MongoDB URI', {
-      environment: process.env.NODE_ENV || 'development'
-    });
-    process.exit(1);
-  }
-}
+// Inicializar servidor
+startServer();
 
 function startServer() {
   const server = app.listen(port, () => {
@@ -207,12 +141,12 @@ function startServer() {
     console.log(`🏥 Health check: http://localhost:${port}/health`);
     console.log(`📧 API Contact: http://localhost:${port}/api/contact`);
     console.log(`💼 API Quotes: http://localhost:${port}/api/quotes`);
-    console.log(`🔐 Admin Auth: http://localhost:${port}/api/admin/auth`);
     console.log(`🌐 CORS configurado para: ${allowedOrigins.join(', ')}`);
     console.log(`🔒 Middlewares de segurança ativados`);
     console.log(`📊 Rate limiting: 100 req/15min (geral), 20 req/15min (APIs)`);
     console.log(`🛡️  Headers de segurança configurados`);
     console.log(`📝 Logs de segurança ativados`);
+    console.log(`📱 Integração WhatsApp ativada`);
   });
 
   // Graceful shutdown
@@ -222,8 +156,7 @@ function startServer() {
 
     server.close(() => {
       console.log('✅ Servidor encerrado graciosamente');
-      mongoose.connection.close();
-      console.log('✅ Conexão MongoDB encerrada');
+      console.log('✅ Servidor encerrado');
       securityLogger.info('Application shutdown completed');
       process.exit(0);
     });
@@ -235,8 +168,7 @@ function startServer() {
 
     server.close(() => {
       console.log('✅ Servidor encerrado graciosamente');
-      mongoose.connection.close();
-      console.log('✅ Conexão MongoDB encerrada');
+      console.log('✅ Servidor encerrado');
       securityLogger.info('Application shutdown completed');
       process.exit(0);
     });

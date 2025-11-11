@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { User, IUser } from '../models/User';
 import { validationResult } from 'express-validator';
 
 // Interface para dados de contato
@@ -13,12 +12,41 @@ interface ContactData {
   consent: boolean;
 }
 
-// Criar novo contato
+// Função para gerar URL do WhatsApp
+function generateWhatsAppUrl(contactData: ContactData): string {
+  const phoneNumber = '5511999999999'; // Substitua pelo número do WhatsApp da empresa
+  
+  let message = `🏢 *TechFlow Solutions - Novo Contato*\n\n`;
+  message += `👤 *Nome:* ${contactData.name}\n`;
+  message += `📧 *Email:* ${contactData.email}\n`;
+  
+  if (contactData.company) {
+    message += `🏢 *Empresa:* ${contactData.company}\n`;
+  }
+  
+  if (contactData.phone) {
+    message += `📞 *Telefone:* ${contactData.phone}\n`;
+  }
+  
+  message += `📋 *Assunto:* ${contactData.subject}\n\n`;
+  message += `💬 *Mensagem:*\n${contactData.message}\n\n`;
+  message += `⏰ *Enviado em:* ${new Date().toLocaleString('pt-BR')}`;
+  
+  // Codificar a mensagem para URL
+  const encodedMessage = encodeURIComponent(message);
+  
+  return `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+}
+
+// Processar contato e gerar URL do WhatsApp
 export const createContact = async (req: Request, res: Response): Promise<void> => {
   try {
+    console.log('📞 Processando novo contato para WhatsApp...');
+    
     // Verificar erros de validação
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      console.log('❌ Validation errors:', errors.array());
       res.status(400).json({
         success: false,
         message: 'Dados inválidos',
@@ -28,53 +56,38 @@ export const createContact = async (req: Request, res: Response): Promise<void> 
     }
 
     const contactData: ContactData = req.body;
-
-    // Verificar se já existe um contato com o mesmo email recentemente (últimas 24h)
-    const existingContact = await User.findOne({
+    
+    console.log('📧 Novo contato:', {
+      name: contactData.name,
       email: contactData.email,
-      createdAt: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) },
+      subject: contactData.subject
     });
 
-    if (existingContact) {
-      res.status(429).json({
-        success: false,
-        message: 'Você já enviou uma mensagem recentemente. Aguarde 24 horas para enviar outra.',
-      });
-      return;
-    }
-
-    // Criar novo contato
-    const newContact = new User(contactData);
-    const savedContact = await newContact.save();
-
-    res.status(201).json({
-      success: true,
-      message: 'Mensagem enviada com sucesso! Entraremos em contato em breve.',
-      data: {
-        id: savedContact._id,
-        name: savedContact.name,
-        email: savedContact.email,
-        subject: savedContact.subject,
-        createdAt: savedContact.createdAt,
-      },
-    });
-  } catch (error: any) {
-    console.error('Erro ao criar contato:', error);
-
-    // Tratar erros de validação do Mongoose
-    if (error.name === 'ValidationError') {
-      const validationErrors = Object.values(error.errors).map((err: any) => ({
-        field: err.path,
-        message: err.message,
-      }));
-
+    // Verificar consentimento
+    if (!contactData.consent) {
       res.status(400).json({
         success: false,
-        message: 'Dados inválidos',
-        errors: validationErrors,
+        message: 'É necessário aceitar os termos de privacidade.',
       });
       return;
     }
+
+    // Gerar URL do WhatsApp
+    const whatsappUrl = generateWhatsAppUrl(contactData);
+    
+    console.log('✅ URL do WhatsApp gerada com sucesso');
+
+    res.status(200).json({
+      success: true,
+      message: 'Dados processados com sucesso! Você será redirecionado para o WhatsApp.',
+      data: {
+        whatsappUrl,
+        redirectMessage: 'Clique no link para continuar a conversa no WhatsApp'
+      },
+    });
+    
+  } catch (error: any) {
+    console.error('❌ Erro ao processar contato:', error);
 
     res.status(500).json({
       success: false,
@@ -83,90 +96,30 @@ export const createContact = async (req: Request, res: Response): Promise<void> 
   }
 };
 
-// Listar contatos (para admin - futuro)
+// Health check para contatos (sem funcionalidades de banco)
 export const getContacts = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const page = parseInt(req.query.page as string) || 1;
-    const limit = parseInt(req.query.limit as string) || 10;
-    const skip = (page - 1) * limit;
-
-    const contacts = await User.find()
-      .select('-__v') // Excluir campo __v
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit);
-
-    const total = await User.countDocuments();
-
-    res.status(200).json({
-      success: true,
-      data: contacts,
-      pagination: {
-        page,
-        limit,
-        total,
-        pages: Math.ceil(total / limit),
-      },
-    });
-  } catch (error: any) {
-    console.error('Erro ao buscar contatos:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Erro interno do servidor',
-    });
-  }
+  res.status(200).json({
+    success: true,
+    message: 'Sistema de contatos funcionando',
+    info: 'Contatos são redirecionados para WhatsApp - sem armazenamento em banco de dados',
+    whatsappIntegration: true
+  });
 };
 
-// Buscar contato por ID
+// Não há busca por ID (sem banco de dados)
 export const getContactById = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { id } = req.params;
-    const contact = await User.findById(id).select('-__v');
-
-    if (!contact) {
-      res.status(404).json({
-        success: false,
-        message: 'Contato não encontrado',
-      });
-      return;
-    }
-
-    res.status(200).json({
-      success: true,
-      data: contact,
-    });
-  } catch (error: any) {
-    console.error('Erro ao buscar contato:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Erro interno do servidor',
-    });
-  }
+  res.status(404).json({
+    success: false,
+    message: 'Funcionalidade não disponível',
+    info: 'Contatos são redirecionados para WhatsApp - sem armazenamento em banco de dados'
+  });
 };
 
-// Deletar contato (para admin - futuro)
+// Não há deleção (sem banco de dados)
 export const deleteContact = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { id } = req.params;
-    const deletedContact = await User.findByIdAndDelete(id);
-
-    if (!deletedContact) {
-      res.status(404).json({
-        success: false,
-        message: 'Contato não encontrado',
-      });
-      return;
-    }
-
-    res.status(200).json({
-      success: true,
-      message: 'Contato deletado com sucesso',
-    });
-  } catch (error: any) {
-    console.error('Erro ao deletar contato:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Erro interno do servidor',
-    });
-  }
-}; 
+  res.status(404).json({
+    success: false,
+    message: 'Funcionalidade não disponível',
+    info: 'Contatos são redirecionados para WhatsApp - sem armazenamento em banco de dados'
+  });
+};

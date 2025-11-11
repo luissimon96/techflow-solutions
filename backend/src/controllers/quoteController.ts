@@ -1,9 +1,7 @@
 import { Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
-import DOMPurify from 'isomorphic-dompurify';
-import Quote from '../models/Quote';
 
-// Rate limiting - 2 solicitações por email por hora
+// Rate limiting em memória - 2 solicitações por email por hora
 const rateLimitMap = new Map<string, number[]>();
 
 const isRateLimited = (email: string): boolean => {
@@ -31,7 +29,7 @@ const addRateLimit = (email: string): void => {
   rateLimitMap.get(email)!.push(now);
 };
 
-// Validações para criação de orçamento
+// Validações para criação de orçamento (mantidas para garantir qualidade dos dados)
 export const quoteValidation = [
   // Dados do Cliente
   body('clientName')
@@ -110,11 +108,6 @@ export const quoteValidation = [
     .isArray()
     .withMessage('Tecnologias deve ser um array'),
 
-  body('technologies.*')
-    .optional()
-    .trim()
-    .escape(),
-
   body('timeline')
     .trim()
     .isIn([
@@ -140,42 +133,6 @@ export const quoteValidation = [
     ])
     .withMessage('Faixa de orçamento inválida'),
 
-  // Arrays opcionais
-  body('features')
-    .optional()
-    .isArray(),
-
-  body('integrations')
-    .optional()
-    .isArray(),
-
-  body('platforms')
-    .optional()
-    .isArray(),
-
-  // Informações adicionais
-  body('hasExistingSystem')
-    .isBoolean()
-    .withMessage('hasExistingSystem deve ser um boolean'),
-
-  body('existingSystemDetails')
-    .optional()
-    .trim()
-    .isLength({ max: 1000 })
-    .withMessage('Detalhes do sistema existente deve ter no máximo 1000 caracteres'),
-
-  body('mainGoals')
-    .optional()
-    .trim()
-    .isLength({ max: 500 })
-    .withMessage('Objetivos principais deve ter no máximo 500 caracteres'),
-
-  body('targetAudience')
-    .optional()
-    .trim()
-    .isLength({ max: 500 })
-    .withMessage('Público-alvo deve ter no máximo 500 caracteres'),
-
   // LGPD
   body('consent')
     .isBoolean()
@@ -187,12 +144,72 @@ export const quoteValidation = [
     })
 ];
 
-// Criar nova solicitação de orçamento
+// Função para gerar mensagem do WhatsApp para orçamento
+function generateWhatsAppQuoteMessage(quoteData: any): string {
+  const phoneNumber = '5511999999999'; // Substitua pelo número do WhatsApp da empresa
+
+  let message = `💼 *TechFlow Solutions - Solicitação de Orçamento*\n\n`;
+  
+  // Dados do Cliente
+  message += `👤 *DADOS DO CLIENTE*\n`;
+  message += `Nome: ${quoteData.clientName}\n`;
+  message += `Email: ${quoteData.clientEmail}\n`;
+  if (quoteData.clientPhone) message += `Telefone: ${quoteData.clientPhone}\n`;
+  if (quoteData.clientCompany) message += `Empresa: ${quoteData.clientCompany}\n`;
+  if (quoteData.clientPosition) message += `Cargo: ${quoteData.clientPosition}\n`;
+  
+  message += `\n🚀 *DADOS DO PROJETO*\n`;
+  message += `Nome: ${quoteData.projectName}\n`;
+  message += `Tipo: ${quoteData.projectType}\n`;
+  message += `Categoria: ${quoteData.projectCategory}\n`;
+  message += `Prazo: ${quoteData.timeline}\n`;
+  message += `Orçamento: ${quoteData.budget}\n\n`;
+  
+  message += `📝 *DESCRIÇÃO*\n${quoteData.projectDescription}\n\n`;
+  
+  if (quoteData.technologies && quoteData.technologies.length > 0) {
+    message += `💻 *TECNOLOGIAS*\n${quoteData.technologies.join(', ')}\n\n`;
+  }
+  
+  if (quoteData.features && quoteData.features.length > 0) {
+    message += `⚡ *FUNCIONALIDADES*\n${quoteData.features.join(', ')}\n\n`;
+  }
+  
+  if (quoteData.platforms && quoteData.platforms.length > 0) {
+    message += `📱 *PLATAFORMAS*\n${quoteData.platforms.join(', ')}\n\n`;
+  }
+  
+  if (quoteData.integrations && quoteData.integrations.length > 0) {
+    message += `🔗 *INTEGRAÇÕES*\n${quoteData.integrations.join(', ')}\n\n`;
+  }
+  
+  if (quoteData.hasExistingSystem && quoteData.existingSystemDetails) {
+    message += `🏢 *SISTEMA EXISTENTE*\n${quoteData.existingSystemDetails}\n\n`;
+  }
+  
+  if (quoteData.mainGoals) {
+    message += `🎯 *OBJETIVOS PRINCIPAIS*\n${quoteData.mainGoals}\n\n`;
+  }
+  
+  if (quoteData.targetAudience) {
+    message += `👥 *PÚBLICO-ALVO*\n${quoteData.targetAudience}\n\n`;
+  }
+  
+  message += `⏰ *Solicitado em:* ${new Date().toLocaleString('pt-BR')}`;
+
+  const encodedMessage = encodeURIComponent(message);
+  return `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+}
+
+// Criar nova solicitação de orçamento (redirecionar para WhatsApp)
 export const createQuote = async (req: Request, res: Response): Promise<void> => {
   try {
+    console.log('💼 Processando nova solicitação de orçamento para WhatsApp...');
+
     // Verificar validações
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      console.log('❌ Validation errors:', errors.array());
       res.status(400).json({
         success: false,
         message: 'Dados inválidos',
@@ -212,47 +229,48 @@ export const createQuote = async (req: Request, res: Response): Promise<void> =>
       return;
     }
 
-    // Sanitizar dados textuais
-    const sanitizedData = {
-      ...req.body,
-      projectDescription: DOMPurify.sanitize(req.body.projectDescription),
-      existingSystemDetails: req.body.existingSystemDetails ?
-        DOMPurify.sanitize(req.body.existingSystemDetails) : undefined,
-      mainGoals: req.body.mainGoals ?
-        DOMPurify.sanitize(req.body.mainGoals) : undefined,
-      targetAudience: req.body.targetAudience ?
-        DOMPurify.sanitize(req.body.targetAudience) : undefined
-    };
+    console.log('📊 Nova solicitação de orçamento:', {
+      cliente: req.body.clientName,
+      projeto: req.body.projectName,
+      tipo: req.body.projectType,
+      orçamento: req.body.budget
+    });
 
-    // Criar nova solicitação
-    const newQuote = new Quote(sanitizedData);
-    const savedQuote = await newQuote.save();
+    // Verificar consentimento
+    if (!req.body.consent) {
+      res.status(400).json({
+        success: false,
+        message: 'É necessário aceitar os termos de privacidade.'
+      });
+      return;
+    }
 
+    // Gerar URL do WhatsApp com a mensagem formatada
+    const whatsappUrl = generateWhatsAppQuoteMessage(req.body);
+    
     // Adicionar ao rate limiting
     addRateLimit(clientEmail);
 
-    res.status(201).json({
+    console.log('✅ URL do WhatsApp gerada com sucesso para orçamento');
+
+    res.status(200).json({
       success: true,
-      message: 'Solicitação de orçamento enviada com sucesso!',
+      message: 'Solicitação de orçamento processada! Você será redirecionado para o WhatsApp.',
       data: {
-        id: savedQuote._id,
-        clientName: savedQuote.clientName,
-        projectName: savedQuote.projectName,
-        status: savedQuote.status,
-        createdAt: savedQuote.createdAt
+        whatsappUrl,
+        redirectMessage: 'Clique no link para enviar sua solicitação via WhatsApp',
+        projectSummary: {
+          clientName: req.body.clientName,
+          projectName: req.body.projectName,
+          projectType: req.body.projectType,
+          budget: req.body.budget,
+          timeline: req.body.timeline
+        }
       }
     });
 
   } catch (error: any) {
-    console.error('Erro ao criar solicitação de orçamento:', error);
-
-    if (error.code === 11000) {
-      res.status(400).json({
-        success: false,
-        message: 'Dados duplicados detectados'
-      });
-      return;
-    }
+    console.error('❌ Erro ao processar solicitação de orçamento:', error);
 
     res.status(500).json({
       success: false,
@@ -261,181 +279,45 @@ export const createQuote = async (req: Request, res: Response): Promise<void> =>
   }
 };
 
-// Listar solicitações (admin apenas - a implementar)
+// Health check para orçamentos (sem funcionalidades de banco)
 export const getQuotes = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const {
-      page = 1,
-      limit = 10,
-      status,
-      projectType,
-      sortBy = 'createdAt',
-      sortOrder = 'desc'
-    } = req.query;
-
-    // Construir filtros
-    const filters: any = {};
-    if (status && status !== 'all') {
-      filters.status = status;
-    }
-    if (projectType && projectType !== 'all') {
-      filters.projectType = projectType;
-    }
-
-    // Construir ordenação
-    const sort: any = {};
-    sort[sortBy as string] = sortOrder === 'desc' ? -1 : 1;
-
-    // Buscar com paginação
-    const quotes = await Quote.find(filters)
-      .sort(sort)
-      .limit(Number(limit))
-      .skip((Number(page) - 1) * Number(limit))
-      .select('-clientEmail -clientPhone') // Remover dados sensíveis
-      .exec();
-
-    const total = await Quote.countDocuments(filters);
-
-    res.json({
-      success: true,
-      data: quotes,
-      pagination: {
-        current: Number(page),
-        pages: Math.ceil(total / Number(limit)),
-        total
-      }
-    });
-
-  } catch (error) {
-    console.error('Erro ao buscar solicitações:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Erro interno do servidor'
-    });
-  }
+  res.status(200).json({
+    success: true,
+    message: 'Sistema de orçamentos funcionando',
+    info: 'Orçamentos são redirecionados para WhatsApp - sem armazenamento em banco de dados',
+    whatsappIntegration: true
+  });
 };
 
-// Buscar solicitação específica (admin apenas)
+// Não há busca por ID (sem banco de dados)
 export const getQuoteById = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { id } = req.params;
-
-    const quote = await Quote.findById(id);
-    if (!quote) {
-      res.status(404).json({
-        success: false,
-        message: 'Solicitação não encontrada'
-      });
-      return;
-    }
-
-    res.json({
-      success: true,
-      data: quote
-    });
-
-  } catch (error) {
-    console.error('Erro ao buscar solicitação:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Erro interno do servidor'
-    });
-  }
+  res.status(404).json({
+    success: false,
+    message: 'Funcionalidade não disponível',
+    info: 'Orçamentos são redirecionados para WhatsApp - sem armazenamento em banco de dados'
+  });
 };
 
-// Atualizar status da solicitação (admin apenas)
+// Não há atualização de status (sem banco de dados)
 export const updateQuoteStatus = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { id } = req.params;
-    const { status, notes, proposalValue, proposalTimeline, proposalNotes } = req.body;
-
-    const quote = await Quote.findById(id);
-    if (!quote) {
-      res.status(404).json({
-        success: false,
-        message: 'Solicitação não encontrada'
-      });
-      return;
-    }
-
-    // Atualizar status usando método do modelo
-    await (quote as any).updateStatus(status, notes);
-
-    // Atualizar dados da proposta se fornecidos
-    if (proposalValue !== undefined) {
-      (quote as any).proposalValue = proposalValue;
-    }
-    if (proposalTimeline !== undefined) {
-      (quote as any).proposalTimeline = proposalTimeline;
-    }
-    if (proposalNotes !== undefined) {
-      (quote as any).proposalNotes = proposalNotes;
-    }
-
-    await quote.save();
-
-    res.json({
-      success: true,
-      message: 'Status atualizado com sucesso',
-      data: quote
-    });
-
-  } catch (error) {
-    console.error('Erro ao atualizar status:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Erro interno do servidor'
-    });
-  }
+  res.status(404).json({
+    success: false,
+    message: 'Funcionalidade não disponível',
+    info: 'Orçamentos são redirecionados para WhatsApp - sem armazenamento em banco de dados'
+  });
 };
 
-// Estatísticas de solicitações (admin apenas)
+// Não há estatísticas (sem banco de dados)
 export const getQuoteStats = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const stats = await Quote.aggregate([
-      {
-        $group: {
-          _id: null,
-          total: { $sum: 1 },
-          pending: { $sum: { $cond: [{ $eq: ['$status', 'pending'] }, 1, 0] } },
-          in_analysis: { $sum: { $cond: [{ $eq: ['$status', 'in_analysis'] }, 1, 0] } },
-          proposal_sent: { $sum: { $cond: [{ $eq: ['$status', 'proposal_sent'] }, 1, 0] } },
-          accepted: { $sum: { $cond: [{ $eq: ['$status', 'accepted'] }, 1, 0] } },
-          rejected: { $sum: { $cond: [{ $eq: ['$status', 'rejected'] }, 1, 0] } }
-        }
+  res.status(200).json({
+    success: true,
+    message: 'Sistema de orçamentos funcionando com WhatsApp',
+    data: {
+      overview: {
+        info: 'Todos os orçamentos são redirecionados para WhatsApp',
+        databaseIntegration: false,
+        whatsappIntegration: true
       }
-    ]);
-
-    const projectTypeStats = await Quote.aggregate([
-      {
-        $group: {
-          _id: '$projectType',
-          count: { $sum: 1 }
-        }
-      },
-      { $sort: { count: -1 } }
-    ]);
-
-    res.json({
-      success: true,
-      data: {
-        overview: stats[0] || {
-          total: 0,
-          pending: 0,
-          in_analysis: 0,
-          proposal_sent: 0,
-          accepted: 0,
-          rejected: 0
-        },
-        projectTypes: projectTypeStats
-      }
-    });
-
-  } catch (error) {
-    console.error('Erro ao buscar estatísticas:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Erro interno do servidor'
-    });
-  }
-}; 
+    }
+  });
+};
