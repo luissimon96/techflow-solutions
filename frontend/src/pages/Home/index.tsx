@@ -93,7 +93,7 @@ export function Home() {
               <Image
                 src="/hero-image.svg"
                 alt="TechFlow Solutions"
-                fallbackSrc="https://via.placeholder.com/600x400"
+                fallbackSrc="https://picsum.photos/600/400?grayscale"
                 maxW="100%"
                 h="auto"
               />
@@ -218,7 +218,7 @@ export function Home() {
                         alt={cliente.nome}
                         maxH="80px"
                         objectFit="contain"
-                        fallbackSrc="https://via.placeholder.com/200x80"
+                        fallbackSrc="https://picsum.photos/200/80?grayscale"
                       />
                     </Flex>
                     <VStack spacing={2}>

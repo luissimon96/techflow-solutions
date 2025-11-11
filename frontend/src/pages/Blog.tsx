@@ -52,7 +52,7 @@ export default function Blog() {
                 <Image
                   src={post.image}
                   alt={post.title}
-                  fallbackSrc="https://via.placeholder.com/400x300"
+                  fallbackSrc="https://picsum.photos/400/300?grayscale"
                   height="200px"
                   width="100%"
                   objectFit="cover"
