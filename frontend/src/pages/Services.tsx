@@ -1,172 +1,120 @@
-import {
-  Box,
-  Container,
-  Heading,
-  Text,
-  SimpleGrid,
-  VStack,
-  useToast,
-  Flex,
-  Badge,
-  Button,
-  useDisclosure
-} from '@chakra-ui/react';
-import { useState } from 'react';
-import { ServiceCard } from '../components/common/ServiceCard';
-import { ServiceModal } from '../components/common/ServiceModal';
-import { SEOHead } from '../components/common/SEOHead';
-import { services, getFeaturedServices, Service } from '../data/services';
-import { useNavigate } from 'react-router-dom';
+import { Box, Container, Heading, Text, SimpleGrid, VStack, Icon, Stack, Badge } from '@chakra-ui/react';
+import { FaLaptopCode, FaMobileAlt, FaShoppingCart, FaChartLine, FaCogs, FaTools } from 'react-icons/fa';
+
+const services = [
+  {
+    title: 'Desenvolvimento Web',
+    subtitle: 'Sites e aplicações web modernas',
+    description: 'Criamos sites e aplicações web utilizando as tecnologias mais modernas do mercado, com foco em performance, SEO e experiência do usuário.',
+    icon: FaLaptopCode,
+    technologies: ['React', 'TypeScript', 'Node.js', 'Next.js'],
+    featured: true,
+  },
+  {
+    title: 'Aplicações Mobile',
+    subtitle: 'Apps nativos e híbridos',
+    description: 'Desenvolvemos aplicativos móveis nativos e híbridos com React Native, garantindo performance e experiência nativa em ambas as plataformas.',
+    icon: FaMobileAlt,
+    technologies: ['React Native', 'Expo', 'Firebase', 'TypeScript'],
+  },
+  {
+    title: 'E-commerce',
+    subtitle: 'Lojas online completas',
+    description: 'Desenvolvemos lojas online completas com foco em conversão e experiência do usuário. Integração com gateways de pagamento e sistemas de gestão.',
+    icon: FaShoppingCart,
+    technologies: ['Next.js', 'Stripe', 'PayPal', 'WooCommerce'],
+  },
+  {
+    title: 'Dashboards & Analytics',
+    subtitle: 'Painéis de controle e análise',
+    description: 'Criamos dashboards interativos e sistemas de análise de dados para ajudar na tomada de decisões estratégicas do seu negócio.',
+    icon: FaChartLine,
+    technologies: ['React', 'D3.js', 'Chart.js', 'PostgreSQL'],
+  },
+  {
+    title: 'Consultoria Técnica',
+    subtitle: 'Arquitetura e code review',
+    description: 'Oferecemos consultoria especializada em arquitetura de software, code review, otimização de performance e melhores práticas de desenvolvimento.',
+    icon: FaCogs,
+    technologies: ['Arquitetura', 'DevOps', 'AWS', 'Docker'],
+  },
+  {
+    title: 'Manutenção & Suporte',
+    subtitle: 'Suporte técnico contínuo',
+    description: 'Mantemos seus sistemas sempre atualizados e funcionando perfeitamente com nosso serviço de manutenção e suporte técnico especializado.',
+    icon: FaTools,
+    technologies: ['Monitoring', 'Updates', 'Backup', 'Security'],
+  },
+];
 
 export default function Services() {
-  const toast = useToast();
-  const navigate = useNavigate();
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [selectedService, setSelectedService] = useState<Service | null>(null);
-  const featuredServices = getFeaturedServices();
-
-  const handleLearnMore = (serviceId: string) => {
-    const service = services.find(s => s.id === serviceId);
-    if (service) {
-      setSelectedService(service);
-      onOpen();
-    }
-
-    // Analytics tracking
-    if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('event', 'service_detail_view', {
-        event_category: 'Services',
-        event_label: serviceId,
-        value: 1,
-      });
-    }
-  };
-
-  const handleGetQuote = (serviceTitle: string) => {
-    // Analytics tracking
-    if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('event', 'quote_request_click', {
-        event_category: 'Conversion',
-        event_label: serviceTitle,
-        value: 1,
-      });
-    }
-
-    // Navigate to quote request with service pre-selected
-    navigate('/orcamento', {
-      state: {
-        serviceType: serviceTitle,
-        prefilledService: serviceTitle
-      }
-    });
-  };
-
-  const handleContactFromModal = () => {
-    navigate('/contato');
-  };
-
   return (
-    <>
-      <SEOHead
-        title="Serviços | TechFlow Solutions"
-        description="Conheça nossos serviços de desenvolvimento web, mobile, e-commerce, dashboards, consultoria técnica e suporte. Soluções tecnológicas completas para seu negócio."
-        url="https://www.srluissimon.com/services"
-        keywords="desenvolvimento web, aplicativo mobile, e-commerce, dashboard, consultoria técnica, react, node.js"
-      />
+    <Box py={20}>
+      <Container>
+        <VStack spacing={12}>
+          <Box textAlign="center">
+            <Heading mb={4}>Nossos Serviços</Heading>
+            <Text fontSize="lg" color="gray.600" maxW="2xl">
+              Oferecemos soluções tecnológicas completas para impulsionar o crescimento do seu negócio
+            </Text>
+          </Box>
 
-      <Box py={20}>
-        <Container maxW="7xl">
-          <VStack spacing={12}>
-            {/* Header Section */}
-            <Box textAlign="center" maxW="4xl">
-              <Heading size="2xl" mb={4} lineHeight="shorter">
-                Nossos Serviços
-              </Heading>
-              <Text fontSize="xl" color="gray.600" lineHeight="tall">
-                Oferecemos soluções tecnológicas completas para impulsionar o crescimento do seu negócio.
-                Do desenvolvimento web até consultoria especializada, temos a expertise para transformar suas ideias em realidade.
-              </Text>
-            </Box>
-
-            {/* Featured Services Badge */}
-            {featuredServices.length > 0 && (
-              <Flex justify="center">
-                <Badge
-                  colorScheme="brand"
-                  variant="solid"
-                  px={4}
-                  py={2}
-                  borderRadius="full"
-                  fontSize="sm"
-                  fontWeight="bold"
-                >
-                  ⭐ {featuredServices.length} Serviço{featuredServices.length > 1 ? 's' : ''} em Destaque
-                </Badge>
-              </Flex>
-            )}
-
-            {/* Services Grid */}
-            <SimpleGrid
-              columns={{ base: 1, lg: 2 }}
-              spacing={8}
-              w="full"
-            >
-              {services.map((service) => (
-                <ServiceCard
-                  key={service.id}
-                  title={service.title}
-                  subtitle={service.subtitle}
-                  description={service.description}
-                  icon={service.icon}
-                  technologies={service.technologies}
-                  duration={service.duration}
-                  features={service.features}
-                  featured={service.featured}
-                  onLearnMore={() => handleLearnMore(service.id)}
-                  onGetQuote={() => handleGetQuote(service.title)}
-                />
-              ))}
-            </SimpleGrid>
-
-            {/* Call-to-Action Section */}
-            <Box
-              textAlign="center"
-              p={8}
-              bg="brand.50"
-              borderRadius="xl"
-              maxW="4xl"
-              w="full"
-            >
-              <Heading size="lg" mb={4}>
-                Não encontrou o que procura?
-              </Heading>
-              <Text fontSize="lg" color="gray.600" mb={6}>
-                Desenvolvemos soluções personalizadas para atender às necessidades específicas do seu negócio.
-              </Text>
-              <Button
-                colorScheme="brand"
-                size="lg"
-                onClick={() => navigate('/contato')}
-                _hover={{
-                  transform: 'translateY(-2px)',
-                }}
+          <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={8}>
+            {services.map((service, index) => (
+              <Box
+                key={index}
+                p={6}
+                bg="white"
+                borderRadius="lg"
+                boxShadow="md"
+                _hover={{ transform: 'translateY(-4px)', boxShadow: 'lg' }}
                 transition="all 0.2s"
+                position="relative"
               >
-                Fale Conosco
-              </Button>
-            </Box>
-          </VStack>
-        </Container>
-      </Box>
-
-      {/* Service Modal */}
-      <ServiceModal
-        isOpen={isOpen}
-        onClose={onClose}
-        service={selectedService}
-        onGetQuote={handleGetQuote}
-        onContact={handleContactFromModal}
-      />
-    </>
+                {service.featured && (
+                  <Badge
+                    colorScheme="brand"
+                    variant="solid"
+                    position="absolute"
+                    top={4}
+                    right={4}
+                    borderRadius="full"
+                    px={2}
+                    py={1}
+                    fontSize="xs"
+                  >
+                    Popular
+                  </Badge>
+                )}
+                <Stack spacing={4}>
+                  <Icon
+                    as={service.icon}
+                    boxSize={12}
+                    color="brand.500"
+                  />
+                  <Heading size="md">{service.title}</Heading>
+                  <Text color="gray.500" fontSize="sm" fontWeight="medium">
+                    {service.subtitle}
+                  </Text>
+                  <Text color="gray.600">{service.description}</Text>
+                  <Box>
+                    <Text fontSize="sm" fontWeight="semibold" mb={2}>
+                      Tecnologias:
+                    </Text>
+                    <Stack direction="row" flexWrap="wrap" spacing={1}>
+                      {service.technologies.map((tech, techIndex) => (
+                        <Badge key={techIndex} variant="outline" fontSize="xs">
+                          {tech}
+                        </Badge>
+                      ))}
+                    </Stack>
+                  </Box>
+                </Stack>
+              </Box>
+            ))}
+          </SimpleGrid>
+        </VStack>
+      </Container>
+    </Box>
   );
 } 
