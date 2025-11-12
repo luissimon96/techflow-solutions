@@ -37,12 +37,16 @@ interface NavItemProps {
   children: React.ReactNode;
   isActive?: boolean;
   onClick?: () => void;
+  isExternal?: boolean;
 }
 
-const NavItem = ({ to, children, isActive, onClick }: NavItemProps) => (
+const NavItem = ({ to, children, isActive, onClick, isExternal }: NavItemProps) => (
   <Button
-    as={RouterLink}
-    to={to}
+    as={isExternal ? 'a' : RouterLink}
+    to={!isExternal ? to : undefined}
+    href={isExternal ? to : undefined}
+    target={isExternal ? '_blank' : undefined}
+    rel={isExternal ? 'noopener noreferrer' : undefined}
     variant="ghost"
     size="md"
     fontWeight={isActive ? 'bold' : 'medium'}
@@ -121,7 +125,7 @@ export default function Header() {
 
   const navigationItems = [
     { path: '/servicos', label: 'Serviços', description: 'Nossos serviços especializados' },
-    { path: '/portfolio', label: 'Portfólio', description: 'Projetos desenvolvidos' },
+    { path: 'https://www.srluissimon.com/clientes', label: 'Portfólio', description: 'Projetos desenvolvidos', isExternal: true },
     { path: '/sobre', label: 'Sobre', description: 'Nossa história e missão' },
     { path: '/blog', label: 'Blog', description: 'Artigos e insights' },
   ];
@@ -163,7 +167,8 @@ export default function Header() {
                   <NavItem
                     key={item.path}
                     to={item.path}
-                    isActive={location.pathname === item.path}
+                    isActive={!item.isExternal && location.pathname === item.path}
+                    isExternal={item.isExternal}
                   >
                     {item.label}
                   </NavItem>
@@ -218,7 +223,8 @@ export default function Header() {
                 <Box key={item.path}>
                   <NavItem
                     to={item.path}
-                    isActive={location.pathname === item.path}
+                    isActive={!item.isExternal && location.pathname === item.path}
+                    isExternal={item.isExternal}
                     onClick={onClose}
                   >
                     {item.label}
