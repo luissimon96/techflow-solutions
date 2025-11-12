@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Box,
   Container,
@@ -43,6 +43,7 @@ interface QuoteFormData {
 
 export default function QuoteRequest() {
   const navigate = useNavigate();
+  const location = useLocation();
   const toast = useToast();
   
   const [formData, setFormData] = useState<QuoteFormData>({
@@ -58,6 +59,23 @@ export default function QuoteRequest() {
     mainGoals: '',
     consent: false,
   });
+
+  // Pre-fill form data if coming from Services page
+  useEffect(() => {
+    if (location.state) {
+      const { projectName, projectType, timeline, budget, projectDescription, mainGoals } = location.state as any;
+      
+      setFormData(prev => ({
+        ...prev,
+        projectName: projectName || prev.projectName,
+        projectType: projectType || prev.projectType,
+        timeline: timeline || prev.timeline,
+        budget: budget || prev.budget,
+        projectDescription: projectDescription || prev.projectDescription,
+        mainGoals: mainGoals || prev.mainGoals,
+      }));
+    }
+  }, [location.state]);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
