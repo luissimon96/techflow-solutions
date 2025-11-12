@@ -101,6 +101,7 @@ export default function QuoteRequest() {
   };
 
   const sendToWhatsApp = (data: QuoteFormData) => {
+    console.log('sendToWhatsApp function called with data:', data);
     let message = `🏢 *TechFlow Solutions - Solicitação de Orçamento*\n\n`;
     
     // Client Information
@@ -145,6 +146,10 @@ export default function QuoteRequest() {
     
     const encodedMessage = encodeURIComponent(message);
     const whatsappUrl = `https://wa.me/5554997109051?text=${encodedMessage}`;
+    
+    console.log('Generated WhatsApp URL:', whatsappUrl);
+    console.log('Opening WhatsApp window...');
+    
     window.open(whatsappUrl, '_blank');
   };
 
@@ -166,22 +171,25 @@ export default function QuoteRequest() {
 
     setIsSubmitting(true);
 
-    try {
-      // Send via WhatsApp
-      sendToWhatsApp(formData);
+    // Show success and immediately try to open WhatsApp
+    setSubmitSuccess(true);
+    setIsSubmitting(false);
+    
+    console.log('About to send to WhatsApp with data:', formData);
+    
+    // Try to send immediately
+    sendToWhatsApp(formData);
+    
+    toast({
+      title: 'Redirecionando para WhatsApp... 📱',
+      description: 'Se o WhatsApp não abrir automaticamente, clique no botão abaixo.',
+      status: 'success',
+      duration: 5000,
+      isClosable: true,
+    });
 
-      // Show success
-      setSubmitSuccess(true);
-      
-      toast({
-        title: 'Orçamento enviado com sucesso! 📱',
-        description: 'Você será redirecionado para o WhatsApp para finalizar sua solicitação.',
-        status: 'success',
-        duration: 5000,
-        isClosable: true,
-      });
-
-      // Reset form
+    // Reset form after a delay
+    setTimeout(() => {
       setFormData({
         clientName: '',
         clientEmail: '',
@@ -195,19 +203,7 @@ export default function QuoteRequest() {
         mainGoals: '',
         consent: false,
       });
-
-    } catch (error) {
-      console.error('Error sending quote:', error);
-      toast({
-        title: 'Erro ao enviar solicitação',
-        description: 'Tente novamente ou entre em contato diretamente conosco.',
-        status: 'error',
-        duration: 7000,
-        isClosable: true,
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
+    }, 3000);
   };
 
   return (
@@ -230,7 +226,27 @@ export default function QuoteRequest() {
                 <AlertIcon />
                 <AlertTitle>Solicitação enviada!</AlertTitle>
                 <AlertDescription>
-                  Recebemos sua solicitação e analisaremos seu projeto. Entraremos em contato em até 24 horas.
+                  <VStack spacing={3} align="stretch">
+                    <Text>
+                      Recebemos sua solicitação e analisaremos seu projeto. Entraremos em contato em até 24 horas.
+                    </Text>
+                    <Button
+                      colorScheme="green"
+                      size="sm"
+                      leftIcon={<Icon as={FaUser} />}
+                      onClick={() => {
+                        console.log('Manual WhatsApp button clicked - using last submitted data');
+                        // Create a basic message if form was reset
+                        const basicMessage = 'Olá! Acabei de enviar uma solicitação de orçamento pelo site da TechFlow Solutions. Gostaria de conversar sobre meu projeto.';
+                        const encodedMessage = encodeURIComponent(basicMessage);
+                        const whatsappUrl = `https://wa.me/5554997109051?text=${encodedMessage}`;
+                        console.log('Manual WhatsApp URL:', whatsappUrl);
+                        window.open(whatsappUrl, '_blank');
+                      }}
+                    >
+                      Abrir WhatsApp Manualmente
+                    </Button>
+                  </VStack>
                 </AlertDescription>
               </Alert>
             )}
