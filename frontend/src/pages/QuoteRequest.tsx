@@ -26,8 +26,6 @@ import {
   AlertDescription,
 } from '@chakra-ui/react';
 import { FaLaptopCode, FaUser, FaDollarSign } from 'react-icons/fa';
-import { SEOHead } from '@/components/common/SEOHead';
-import { sendWhatsAppQuote, type WhatsAppQuote } from '@/lib/whatsapp';
 
 interface QuoteFormData {
   clientName: string;
@@ -102,6 +100,54 @@ export default function QuoteRequest() {
     setFormData(prev => ({ ...prev, [name]: fieldValue }));
   };
 
+  const sendToWhatsApp = (data: QuoteFormData) => {
+    let message = `🏢 *TechFlow Solutions - Solicitação de Orçamento*\n\n`;
+    
+    // Client Information
+    message += `👤 *DADOS DO CLIENTE*\n`;
+    message += `Nome: ${data.clientName}\n`;
+    message += `Email: ${data.clientEmail}\n`;
+    
+    if (data.clientPhone) {
+      message += `Telefone: ${data.clientPhone}\n`;
+    }
+    
+    if (data.clientCompany) {
+      message += `Empresa: ${data.clientCompany}\n`;
+    }
+    
+    // Project Information
+    message += `\n🚀 *DETALHES DO PROJETO*\n`;
+    message += `Nome: ${data.projectName}\n`;
+    message += `Tipo: ${data.projectType}\n`;
+    message += `Descrição: ${data.projectDescription}\n`;
+    
+    // Timeline & Budget
+    if (data.timeline || data.budget) {
+      message += `\n💰 *CRONOGRAMA E ORÇAMENTO*\n`;
+      
+      if (data.timeline) {
+        message += `Prazo: ${data.timeline}\n`;
+      }
+      
+      if (data.budget) {
+        message += `Orçamento: ${data.budget}\n`;
+      }
+    }
+    
+    // Additional Information
+    if (data.mainGoals) {
+      message += `\n🎯 *OBJETIVOS PRINCIPAIS*\n${data.mainGoals}\n`;
+    }
+    
+    message += `\n⏰ *Solicitado em:* ${new Date().toLocaleString('pt-BR')}\n\n`;
+    message += `📋 Nossa equipe analisará sua solicitação e retornará em até 24 horas com uma proposta detalhada!`;
+    
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappUrl = `https://wa.me/5554997109051?text=${encodedMessage}`;
+    window.open(whatsappUrl, '_blank');
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -121,31 +167,8 @@ export default function QuoteRequest() {
     setIsSubmitting(true);
 
     try {
-      // Prepare WhatsApp data
-      const whatsappData: WhatsAppQuote = {
-        clientName: formData.clientName,
-        clientEmail: formData.clientEmail,
-        clientPhone: formData.clientPhone,
-        clientCompany: formData.clientCompany,
-        clientPosition: '', // Not in simplified form
-        projectName: formData.projectName,
-        projectDescription: formData.projectDescription,
-        projectType: formData.projectType,
-        projectCategory: '', // Not in simplified form
-        technologies: [], // Not in simplified form
-        timeline: formData.timeline,
-        budget: formData.budget,
-        features: [], // Not in simplified form
-        integrations: [], // Not in simplified form
-        platforms: [], // Not in simplified form
-        mainGoals: formData.mainGoals,
-        targetAudience: '', // Not in simplified form
-        hasExistingSystem: false, // Not in simplified form
-        existingSystemDetails: '', // Not in simplified form
-      };
-
       // Send via WhatsApp
-      sendWhatsAppQuote(whatsappData);
+      sendToWhatsApp(formData);
 
       // Show success
       setSubmitSuccess(true);
@@ -157,15 +180,6 @@ export default function QuoteRequest() {
         duration: 5000,
         isClosable: true,
       });
-
-      // Analytics tracking
-      if (typeof window !== 'undefined' && window.gtag) {
-        window.gtag('event', 'quote_request_submitted', {
-          event_category: 'Conversion',
-          event_label: formData.projectType,
-          value: 1,
-        });
-      }
 
       // Reset form
       setFormData({
@@ -197,15 +211,7 @@ export default function QuoteRequest() {
   };
 
   return (
-    <>
-      <SEOHead
-        title="Solicitar Orçamento"
-        description="Solicite um orçamento personalizado para seu projeto. Preencha o formulário e receba uma proposta em até 24 horas."
-        keywords="orçamento, proposta, desenvolvimento software, TechFlow Solutions"
-        url="https://www.srluissimon.com/orcamento"
-      />
-
-      <Box py={20}>
+    <Box py={20}>
         <Container maxW="4xl">
           <VStack spacing={12}>
             <Box textAlign="center">
@@ -432,7 +438,6 @@ export default function QuoteRequest() {
             </Box>
           </VStack>
         </Container>
-      </Box>
-    </>
+    </Box>
   );
 }
