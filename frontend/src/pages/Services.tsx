@@ -1,6 +1,6 @@
 import { Box, Container, Heading, Text, SimpleGrid, VStack, Icon, Stack, Badge, Button } from '@chakra-ui/react';
 import { FaLaptopCode, FaMobileAlt, FaShoppingCart, FaChartLine, FaCogs, FaTools } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link as RouterLink } from 'react-router-dom';
 
 const services = [
   {
@@ -72,76 +72,186 @@ export default function Services() {
   };
 
   return (
-    <Box py={20}>
-      <Container>
-        <VStack spacing={12}>
-          <Box textAlign="center">
-            <Heading mb={4}>Nossos Serviços</Heading>
-            <Text fontSize="lg" color="gray.600" maxW="2xl">
+    <Box 
+      as="section" 
+      minH="100vh"
+      pt={{ base: 32, md: 40, lg: 44 }}
+      pb={{ base: 16, md: 20, lg: 24 }}
+      bg="gradient-to-b"
+      bgGradient="linear(to-br, gray.50, white, gray.50)"
+    >
+      <Container maxW={{ base: "container.sm", md: "container.md", lg: "container.lg", xl: "container.xl" }}>
+        <VStack spacing={{ base: 12, md: 16, lg: 20 }}>
+          {/* Hero Section */}
+          <Box textAlign="center" maxW="5xl" mx="auto" px={{ base: 4, md: 6 }}>
+            <Heading 
+              as="h1"
+              size={{ base: "2xl", md: "3xl", lg: "4xl" }}
+              mb={{ base: 6, md: 8 }}
+              bgGradient="linear(to-r, brand.600, brand.400)"
+              bgClip="text"
+              fontWeight="extrabold"
+              lineHeight="shorter"
+              textShadow="0 2px 4px rgba(0,0,0,0.1)"
+              letterSpacing="tight"
+            >
+              Nossos Serviços
+            </Heading>
+            <Text 
+              fontSize={{ base: "lg", md: "xl", lg: "2xl" }}
+              color="gray.600" 
+              maxW="3xl"
+              mx="auto"
+              lineHeight="tall"
+              fontWeight="medium"
+            >
               Oferecemos soluções tecnológicas completas para impulsionar o crescimento do seu negócio
             </Text>
           </Box>
 
-          <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={8}>
+          {/* Services Grid */}
+          <SimpleGrid 
+            columns={{ base: 1, md: 2, lg: 3 }} 
+            spacing={{ base: 6, md: 8, lg: 10 }}
+            w="full"
+          >
             {services.map((service, index) => (
               <Box
                 key={index}
-                p={6}
+                p={{ base: 6, md: 8 }}
                 bg="white"
-                borderRadius="lg"
-                boxShadow="md"
-                _hover={{ transform: 'translateY(-4px)', boxShadow: 'lg' }}
-                transition="all 0.2s"
+                borderRadius="2xl"
+                boxShadow="xl"
+                border="1px solid"
+                borderColor="gray.100"
+                _hover={{ 
+                  transform: 'translateY(-8px)', 
+                  boxShadow: '2xl',
+                  borderColor: 'brand.200'
+                }}
+                transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
                 position="relative"
+                overflow="hidden"
+                minH="520px"
               >
+                {/* Background Pattern */}
+                <Box
+                  position="absolute"
+                  top={0}
+                  right={0}
+                  w="100px"
+                  h="100px"
+                  bgGradient="linear(135deg, brand.50, transparent)"
+                  borderBottomLeftRadius="full"
+                  opacity={0.6}
+                />
+                
                 {service.featured && (
                   <Badge
                     colorScheme="brand"
                     variant="solid"
                     position="absolute"
-                    top={4}
-                    right={4}
+                    top={6}
+                    right={6}
                     borderRadius="full"
-                    px={2}
+                    px={3}
                     py={1}
                     fontSize="xs"
+                    fontWeight="bold"
+                    textTransform="uppercase"
+                    letterSpacing="wide"
                   >
                     Popular
                   </Badge>
                 )}
-                <Stack spacing={4}>
-                  <Icon
-                    as={service.icon}
-                    boxSize={12}
-                    color="brand.500"
-                  />
-                  <Heading size="md">{service.title}</Heading>
-                  <Text color="gray.500" fontSize="sm" fontWeight="medium">
-                    {service.subtitle}
-                  </Text>
-                  <Text color="gray.600">{service.description}</Text>
+                
+                <Stack spacing={6} h="full">
+                  {/* Icon */}
                   <Box>
-                    <Text fontSize="sm" fontWeight="semibold" mb={2}>
+                    <Icon
+                      as={service.icon}
+                      boxSize={{ base: 14, md: 16 }}
+                      color="brand.500"
+                      filter="drop-shadow(0 4px 6px rgba(59, 130, 246, 0.1))"
+                    />
+                  </Box>
+                  
+                  {/* Content */}
+                  <Box flex="1">
+                    <Heading 
+                      size={{ base: "md", md: "lg" }} 
+                      mb={2}
+                      color="gray.800"
+                      lineHeight="short"
+                    >
+                      {service.title}
+                    </Heading>
+                    
+                    <Text 
+                      color="brand.600" 
+                      fontSize="sm" 
+                      fontWeight="semibold"
+                      mb={4}
+                      textTransform="uppercase"
+                      letterSpacing="wide"
+                    >
+                      {service.subtitle}
+                    </Text>
+                    
+                    <Text 
+                      color="gray.600" 
+                      lineHeight="relaxed"
+                      fontSize="sm"
+                      mb={6}
+                    >
+                      {service.description}
+                    </Text>
+                  </Box>
+                  
+                  {/* Technologies */}
+                  <Box>
+                    <Text 
+                      fontSize="sm" 
+                      fontWeight="semibold" 
+                      mb={3}
+                      color="gray.700"
+                    >
                       Tecnologias:
                     </Text>
-                    <Stack direction="row" flexWrap="wrap" spacing={1}>
+                    <Stack direction="row" flexWrap="wrap" spacing={2}>
                       {service.technologies.map((tech, techIndex) => (
-                        <Badge key={techIndex} variant="outline" fontSize="xs">
+                        <Badge 
+                          key={techIndex} 
+                          variant="subtle"
+                          colorScheme="brand"
+                          fontSize="xs"
+                          px={2}
+                          py={1}
+                          borderRadius="md"
+                        >
                           {tech}
                         </Badge>
                       ))}
                     </Stack>
                   </Box>
+                  
+                  {/* CTA Button */}
                   <Button
                     colorScheme="brand"
-                    size="md"
+                    size="lg"
                     width="full"
                     onClick={() => handleQuoteRequest(service)}
                     _hover={{
                       transform: 'translateY(-2px)',
-                      boxShadow: 'lg',
+                      boxShadow: 'xl',
+                      bg: 'brand.600'
                     }}
-                    transition="all 0.2s"
+                    _active={{
+                      transform: 'translateY(0px)',
+                    }}
+                    transition="all 0.2s cubic-bezier(0.4, 0, 0.2, 1)"
+                    fontWeight="bold"
+                    borderRadius="xl"
                   >
                     Solicitar Orçamento
                   </Button>
@@ -149,6 +259,81 @@ export default function Services() {
               </Box>
             ))}
           </SimpleGrid>
+
+          {/* Bottom CTA Section */}
+          <Box
+            textAlign="center"
+            bg="brand.50"
+            borderRadius="3xl"
+            p={{ base: 8, md: 12, lg: 16 }}
+            maxW="4xl"
+            mx="auto"
+            border="1px solid"
+            borderColor="brand.100"
+          >
+            <Heading
+              as="h2"
+              size={{ base: "lg", md: "xl" }}
+              mb={4}
+              color="brand.700"
+            >
+              Pronto para transformar sua ideia em realidade?
+            </Heading>
+            <Text
+              fontSize={{ base: "md", md: "lg" }}
+              color="gray.600"
+              mb={8}
+              maxW="2xl"
+              mx="auto"
+            >
+              Nossa equipe especializada está pronta para desenvolver a solução perfeita para o seu negócio.
+              Entre em contato e receba uma proposta personalizada.
+            </Text>
+            <Stack
+              direction={{ base: "column", sm: "row" }}
+              spacing={4}
+              justify="center"
+              align="center"
+            >
+              <Button
+                as={RouterLink}
+                to="/orcamento"
+                size="lg"
+                colorScheme="brand"
+                px={8}
+                py={6}
+                fontSize="lg"
+                fontWeight="bold"
+                borderRadius="xl"
+                _hover={{
+                  transform: 'translateY(-3px)',
+                  boxShadow: 'xl',
+                }}
+                transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
+              >
+                Solicitar Orçamento Gratuito
+              </Button>
+              <Button
+                as={RouterLink}
+                to="/contato"
+                size="lg"
+                variant="outline"
+                colorScheme="brand"
+                px={8}
+                py={6}
+                fontSize="lg"
+                fontWeight="semibold"
+                borderRadius="xl"
+                _hover={{
+                  transform: 'translateY(-3px)',
+                  boxShadow: 'md',
+                }}
+                transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
+              >
+                Falar com Especialista
+              </Button>
+            </Stack>
+          </Box>
         </VStack>
       </Container>
     </Box>
