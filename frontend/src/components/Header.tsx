@@ -77,7 +77,7 @@ const NavItem = ({ to, children, isActive, onClick }: NavItemProps) => (
 const CTAButton = ({ onClick }: { onClick?: () => void }) => (
   <Button
     as={RouterLink}
-    to="/contato"
+    to="/orcamento"
     colorScheme="brand"
     size="md"
     fontWeight="bold"
@@ -92,7 +92,7 @@ const CTAButton = ({ onClick }: { onClick?: () => void }) => (
     }}
     transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
     onClick={onClick}
-    aria-label="Solicitar orçamento - Entre em contato conosco"
+    aria-label="Solicitar orçamento - Preencha o formulário de orçamento"
   >
     Solicitar Orçamento
   </Button>
