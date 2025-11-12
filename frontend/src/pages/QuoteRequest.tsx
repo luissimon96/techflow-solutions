@@ -102,10 +102,10 @@ export default function QuoteRequest() {
 
   const sendToWhatsApp = (data: QuoteFormData) => {
     console.log('sendToWhatsApp function called with data:', data);
-    let message = `🏢 *TechFlow Solutions - Solicitação de Orçamento*\n\n`;
+    let message = `*TechFlow Solutions - Solicitacao de Orcamento*\n\n`;
     
     // Client Information
-    message += `👤 *DADOS DO CLIENTE*\n`;
+    message += `*DADOS DO CLIENTE*\n`;
     message += `Nome: ${data.clientName}\n`;
     message += `Email: ${data.clientEmail}\n`;
     
@@ -118,31 +118,31 @@ export default function QuoteRequest() {
     }
     
     // Project Information
-    message += `\n🚀 *DETALHES DO PROJETO*\n`;
+    message += `\n*DETALHES DO PROJETO*\n`;
     message += `Nome: ${data.projectName}\n`;
     message += `Tipo: ${data.projectType}\n`;
-    message += `Descrição: ${data.projectDescription}\n`;
+    message += `Descricao: ${data.projectDescription}\n`;
     
     // Timeline & Budget
     if (data.timeline || data.budget) {
-      message += `\n💰 *CRONOGRAMA E ORÇAMENTO*\n`;
+      message += `\n*CRONOGRAMA E ORCAMENTO*\n`;
       
       if (data.timeline) {
         message += `Prazo: ${data.timeline}\n`;
       }
       
       if (data.budget) {
-        message += `Orçamento: ${data.budget}\n`;
+        message += `Orcamento: ${data.budget}\n`;
       }
     }
     
     // Additional Information
     if (data.mainGoals) {
-      message += `\n🎯 *OBJETIVOS PRINCIPAIS*\n${data.mainGoals}\n`;
+      message += `\n*OBJETIVOS PRINCIPAIS*\n${data.mainGoals}\n`;
     }
     
-    message += `\n⏰ *Solicitado em:* ${new Date().toLocaleString('pt-BR')}\n\n`;
-    message += `📋 Nossa equipe analisará sua solicitação e retornará em até 24 horas com uma proposta detalhada!`;
+    message += `\n*Solicitado em:* ${new Date().toLocaleString('pt-BR')}\n\n`;
+    message += `Nossa equipe analisara sua solicitacao e retornara em ate 24 horas com uma proposta detalhada!`;
     
     const encodedMessage = encodeURIComponent(message);
     const whatsappUrl = `https://wa.me/5554997109051?text=${encodedMessage}`;
