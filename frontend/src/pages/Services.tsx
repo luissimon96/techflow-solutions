@@ -6,7 +6,7 @@ const services = [
   {
     title: 'Desenvolvimento Web',
     subtitle: 'Sites e aplicações web modernas',
-    description: 'Criamos sites e aplicações web utilizando as tecnologias mais modernas do mercado, com foco em performance, SEO e experiência do usuário.',
+    description: 'Soluções web desenvolvidas com tecnologias modernas, priorizando alta performance, otimização para motores de busca e experiência excepcional do usuário. Arquitetura escalável e responsiva para todos os dispositivos.',
     icon: FaLaptopCode,
     technologies: ['React', 'TypeScript', 'Node.js', 'Next.js'],
     featured: true,
@@ -15,7 +15,7 @@ const services = [
   {
     title: 'Aplicações Mobile',
     subtitle: 'Apps nativos e híbridos',
-    description: 'Desenvolvemos aplicativos móveis nativos e híbridos com React Native, garantindo performance e experiência nativa em ambas as plataformas.',
+    description: 'Aplicações móveis nativas e híbridas com React Native, entregando performance otimizada e experiência consistente em iOS e Android. Integração completa com recursos nativos do dispositivo.',
     icon: FaMobileAlt,
     technologies: ['React Native', 'Expo', 'Firebase', 'TypeScript'],
     objectives: 'Conectar-se diretamente com clientes através de dispositivos móveis, aumentar engagement com notificações push, oferecer conveniência e acesso instantâneo aos serviços, criar fidelização através de experiência personalizada e capturar dados valiosos de comportamento do usuário.',
@@ -23,7 +23,7 @@ const services = [
   {
     title: 'E-commerce',
     subtitle: 'Lojas online completas',
-    description: 'Desenvolvemos lojas online completas com foco em conversão e experiência do usuário. Integração com gateways de pagamento e sistemas de gestão.',
+    description: 'Plataformas de e-commerce robustas e otimizadas para conversão máxima. Integração nativa com gateways de pagamento, gestão de estoque, relatórios avançados e ferramentas de marketing digital.',
     icon: FaShoppingCart,
     technologies: ['Next.js', 'Stripe', 'PayPal', 'WooCommerce'],
     objectives: 'Vender produtos 24 horas por dia sem limitação geográfica, reduzir custos operacionais, automatizar processos de venda, aumentar margem de lucro, acompanhar métricas de conversão em tempo real e escalar o negócio rapidamente.',
@@ -31,7 +31,7 @@ const services = [
   {
     title: 'Dashboards & Analytics',
     subtitle: 'Painéis de controle e análise',
-    description: 'Criamos dashboards interativos e sistemas de análise de dados para ajudar na tomada de decisões estratégicas do seu negócio.',
+    description: 'Dashboards interativos e sistemas de Business Intelligence para análise estratégica de dados. Visualizações em tempo real, relatórios automatizados e insights acionáveis para otimização de processos.',
     icon: FaChartLine,
     technologies: ['React', 'D3.js', 'Chart.js', 'PostgreSQL'],
     objectives: 'Tomar decisões baseadas em dados reais, identificar oportunidades de crescimento, otimizar recursos e custos, monitorar performance em tempo real, prever tendências e comportamentos, e aumentar produtividade da equipe.',
@@ -39,7 +39,7 @@ const services = [
   {
     title: 'Consultoria Técnica',
     subtitle: 'Arquitetura e code review',
-    description: 'Oferecemos consultoria especializada em arquitetura de software, code review, otimização de performance e melhores práticas de desenvolvimento.',
+    description: 'Consultoria especializada em arquitetura de software, auditoria de código, otimização de performance e implementação de melhores práticas. Análise técnica profunda para maximizar eficiência e qualidade.',
     icon: FaCogs,
     technologies: ['Arquitetura', 'DevOps', 'AWS', 'Docker'],
     objectives: 'Evitar retrabalho e custos desnecessários, melhorar qualidade e segurança do código, acelerar desenvolvimento de projetos, reduzir bugs em produção, implementar melhores práticas do mercado e capacitar equipe técnica.',
@@ -47,7 +47,7 @@ const services = [
   {
     title: 'Manutenção & Suporte',
     subtitle: 'Suporte técnico contínuo',
-    description: 'Mantemos seus sistemas sempre atualizados e funcionando perfeitamente com nosso serviço de manutenção e suporte técnico especializado.',
+    description: 'Serviços de manutenção preventiva e corretiva para sistemas em produção. Monitoramento 24/7, atualizações de segurança, backups automatizados e suporte técnico especializado com SLA garantido.',
     icon: FaTools,
     technologies: ['Monitoring', 'Updates', 'Backup', 'Security'],
     objectives: 'Garantir disponibilidade máxima dos sistemas, prevenir perda de dados e receita, manter segurança atualizada contra ameaças, reduzir tempo de inatividade, ter suporte especializado quando precisar e focar no core business sem se preocupar com tecnologia.',
