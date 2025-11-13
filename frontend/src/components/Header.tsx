@@ -40,41 +40,51 @@ interface NavItemProps {
   isExternal?: boolean;
 }
 
-const NavItem = ({ to, children, isActive, onClick, isExternal }: NavItemProps) => (
-  <Button
-    as={isExternal ? 'a' : RouterLink}
-    to={!isExternal ? to : undefined}
-    href={isExternal ? to : undefined}
-    variant="ghost"
-    size="md"
-    fontWeight={isActive ? 'bold' : 'medium'}
-    color={isActive ? 'brand.600' : 'gray.700'}
-    _hover={{
-      color: 'brand.500',
-      transform: 'translateY(-2px)',
-      transition: 'all 0.2s ease-in-out',
-    }}
-    _active={{
-      transform: 'translateY(0px)',
-    }}
-    onClick={onClick}
-    position="relative"
-    _after={isActive ? {
-      content: '""',
-      position: 'absolute',
-      bottom: '-2px',
-      left: '50%',
-      transform: 'translateX(-50%)',
-      width: '80%',
-      height: '2px',
-      bg: 'brand.500',
-      borderRadius: 'full',
-    } : undefined}
-    aria-current={isActive ? 'page' : undefined}
-  >
-    {children}
-  </Button>
-);
+const NavItem = ({ to, children, isActive, onClick, isExternal }: NavItemProps) => {
+  const handleClick = () => {
+    if (isExternal) {
+      window.location.href = to;
+    }
+    if (onClick) {
+      onClick();
+    }
+  };
+
+  return (
+    <Button
+      as={!isExternal ? RouterLink : undefined}
+      to={!isExternal ? to : undefined}
+      onClick={isExternal ? handleClick : onClick}
+      variant="ghost"
+      size="md"
+      fontWeight={isActive ? 'bold' : 'medium'}
+      color={isActive ? 'brand.600' : 'gray.700'}
+      _hover={{
+        color: 'brand.500',
+        transform: 'translateY(-2px)',
+        transition: 'all 0.2s ease-in-out',
+      }}
+      _active={{
+        transform: 'translateY(0px)',
+      }}
+      position="relative"
+      _after={isActive ? {
+        content: '""',
+        position: 'absolute',
+        bottom: '-2px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        width: '80%',
+        height: '2px',
+        bg: 'brand.500',
+        borderRadius: 'full',
+      } : undefined}
+      aria-current={isActive ? 'page' : undefined}
+    >
+      {children}
+    </Button>
+  );
+};
 
 const CTAButton = ({ onClick }: { onClick?: () => void }) => (
   <Button
@@ -123,7 +133,7 @@ export default function Header() {
 
   const navigationItems = [
     { path: '/servicos', label: 'Serviços', description: 'Nossos serviços especializados' },
-    { path: 'https://www.srluissimon.com/clientes', label: 'Portfólio', description: 'Projetos desenvolvidos', isExternal: true },
+    { path: '/portfolio', label: 'Portfólio', description: 'Projetos desenvolvidos' },
     { path: '/sobre', label: 'Sobre', description: 'Nossa história e missão' },
     { path: '/blog', label: 'Blog', description: 'Artigos e insights' },
   ];
