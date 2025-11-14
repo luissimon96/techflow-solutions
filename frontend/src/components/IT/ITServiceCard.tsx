@@ -60,35 +60,17 @@ export const ITServiceCard: React.FC<ITServiceCardProps> = ({
   };
 
   const handleLearnMoreClick = () => {
-    if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('event', 'it_service_learn_more', {
-        event_category: 'IT Services',
-        event_label: service.title,
-        service_category: service.category,
-      });
-    }
+    // Analytics tracking pode ser adicionado aqui no futuro
     onLearnMore?.(service.id);
   };
 
   const handleGetQuoteClick = () => {
-    if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('event', 'it_service_quote_request', {
-        event_category: 'IT Conversion',
-        event_label: service.title,
-        service_category: service.category,
-      });
-    }
+    // Analytics tracking pode ser adicionado aqui no futuro
     onGetQuote?.(service.id);
   };
 
   const handleViewPackagesClick = () => {
-    if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('event', 'it_service_packages_view', {
-        event_category: 'IT Services',
-        event_label: service.title,
-        service_category: service.category,
-      });
-    }
+    // Analytics tracking pode ser adicionado aqui no futuro
     onViewPackages?.(service.id);
   };
 
