@@ -132,10 +132,10 @@ export default function Header() {
   }, [location.pathname, onClose]);
 
   const navigationItems = [
-    { path: '/servicos', label: 'Serviços', description: 'Nossos serviços especializados' },
-    { path: '/portfolio', label: 'Portfólio', description: 'Projetos desenvolvidos' },
-    { path: '/sobre', label: 'Sobre', description: 'Nossa história e missão' },
-    { path: '/blog', label: 'Blog', description: 'Artigos e insights' },
+    { path: '/servicos', label: 'Serviços', description: 'Nossos serviços especializados', isExternal: false },
+    { path: '/portfolio', label: 'Portfólio', description: 'Projetos desenvolvidos', isExternal: false },
+    { path: '/sobre', label: 'Sobre', description: 'Nossa história e missão', isExternal: false },
+    { path: '/blog', label: 'Blog', description: 'Artigos e insights', isExternal: false },
   ];
 
   return (

@@ -81,7 +81,7 @@ export const ServiceModal: React.FC<ServiceModalProps> = ({
           <VStack spacing={3} align="start">
             <HStack spacing={4}>
               <Icon
-                as={service.icon}
+                as={service.icon as any}
                 boxSize={8}
                 color={service.featured ? 'brand.500' : 'brand.400'}
               />
