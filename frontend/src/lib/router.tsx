@@ -2,6 +2,7 @@ import { createBrowserRouter } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import Home from '@/pages/Home';
 import Services from '@/pages/Services';
+import ITServices from '@/pages/ITServices';
 import Portfolio from '@/pages/Portfolio';
 import About from '@/pages/About';
 import Clients from '@/pages/Clients';
@@ -21,6 +22,10 @@ export const router = createBrowserRouter([
       {
         path: 'servicos',
         element: <Services />,
+      },
+      {
+        path: 'servicos-ti',
+        element: <ITServices />,
       },
       {
         path: 'portfolio',

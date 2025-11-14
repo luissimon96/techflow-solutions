@@ -5,6 +5,7 @@ import {
   FaChartLine,
   FaCogs,
   FaTools,
+  FaHeadset,
 } from 'react-icons/fa';
 import { IconType } from 'react-icons';
 
@@ -18,7 +19,7 @@ export interface Service {
   duration: string;
   features: string[];
   featured?: boolean;
-  category: 'web' | 'mobile' | 'ecommerce' | 'dashboard' | 'consultoria' | 'manutencao';
+  category: 'web' | 'mobile' | 'ecommerce' | 'dashboard' | 'consultoria' | 'manutencao' | 'it-support';
 }
 
 export const services: Service[] = [
@@ -131,6 +132,25 @@ export const services: Service[] = [
       'SLA garantido'
     ],
     category: 'manutencao',
+  },
+  {
+    id: 'servicos-ti-completos',
+    title: 'Serviços de TI Completos',
+    subtitle: 'Suporte técnico, segurança digital e infraestrutura',
+    description: 'Soluções completas de TI com monitoramento 24/7, backup automatizado, segurança avançada e suporte técnico especializado. Para pessoas físicas e empresas.',
+    icon: FaHeadset,
+    technologies: ['Suporte 24/7', 'Backup Cloud', 'Segurança Digital', 'Monitoramento', 'Cloud Migration'],
+    duration: 'Contínuo',
+    features: [
+      'Suporte técnico especializado',
+      'Monitoramento proativo 24/7',
+      'Backup automático seguro',
+      'Proteção contra ameaças',
+      'Migração para cloud',
+      'Consultoria estratégica'
+    ],
+    featured: true,
+    category: 'it-support',
   },
 ];
 
