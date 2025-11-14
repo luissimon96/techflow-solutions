@@ -17,11 +17,7 @@ import {
 } from '@chakra-ui/react';
 import { IconType } from 'react-icons';
 import { FaArrowRight, FaStar, FaUsers, FaBuilding, FaHome, FaClock } from 'react-icons/fa';
-import { motion } from 'framer-motion';
 import { ITService } from '../../data/itServices';
-
-// Motion wrapper para Chakra UI
-const MotionBox = motion(Box);
 
 interface ITServiceCardProps {
   service: ITService;
@@ -53,11 +49,6 @@ export const ITServiceCard: React.FC<ITServiceCardProps> = ({
   const businessPackages = service.packages.filter(p => p.targetUsers > 10 || p.targetUsers === 'unlimited');
 
   // Animações
-  const cardVariants = {
-    initial: { opacity: 0, y: 20 },
-    animate: { opacity: 1, y: 0 },
-    hover: { y: -4, transition: { duration: 0.2 } },
-  };
 
   const handleLearnMoreClick = () => {
     // Analytics tracking pode ser adicionado aqui no futuro
@@ -75,13 +66,6 @@ export const ITServiceCard: React.FC<ITServiceCardProps> = ({
   };
 
   return (
-    <MotionBox
-      initial="initial"
-      animate="animate"
-      whileHover="hover"
-      variants={cardVariants}
-      transition={{ duration: 0.3 }}
-    >
       <Box
         p={6}
         bg={bgColor}
@@ -91,11 +75,12 @@ export const ITServiceCard: React.FC<ITServiceCardProps> = ({
         borderColor={service.featured ? featuredBorderColor : borderColor}
         position="relative"
         h="full"
+        transition="all 0.3s ease"
         _hover={{
+          transform: 'translateY(-4px)',
           boxShadow: '2xl',
           borderColor: featuredBorderColor,
         }}
-        transition="all 0.3s ease"
       >
         {/* Featured Badge */}
         {service.featured && (
@@ -300,6 +285,5 @@ export const ITServiceCard: React.FC<ITServiceCardProps> = ({
           </VStack>
         </VStack>
       </Box>
-    </MotionBox>
   );
 };

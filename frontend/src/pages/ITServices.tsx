@@ -24,7 +24,6 @@ import {
   Flex,
 } from '@chakra-ui/react';
 import { FaRocket, FaHeadset, FaLock, FaCogs, FaArrowRight, FaQuestionCircle } from 'react-icons/fa';
-import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 
 import { ITServiceCard } from '../components/IT/ITServiceCard';
@@ -38,8 +37,6 @@ import {
   getIndividualPackages,
   getBusinessPackages 
 } from '../data/itServices';
-
-const MotionBox = motion(Box);
 
 const ITServices: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -103,12 +100,7 @@ const ITServices: React.FC = () => {
         {/* Hero Section */}
         <Box bg={headerBg} color="white" py={20}>
           <Container maxW="6xl">
-            <MotionBox
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              <VStack spacing={6} textAlign="center" maxW="4xl" mx="auto">
+            <VStack spacing={6} textAlign="center" maxW="4xl" mx="auto">
                 <Badge colorScheme="brand" variant="solid" px={4} py={2} borderRadius="full">
                   🔧 Tecnologia + Atendimento Humano
                 </Badge>
@@ -160,8 +152,7 @@ const ITServices: React.FC = () => {
                     <Text fontSize="sm" opacity={0.8}>Monitoramento ativo</Text>
                   </VStack>
                 </HStack>
-              </VStack>
-            </MotionBox>
+            </VStack>
           </Container>
         </Box>
 
@@ -177,19 +168,13 @@ const ITServices: React.FC = () => {
               </VStack>
 
               <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={8} w="full">
-                {featuredServices.map((service, index) => (
-                  <MotionBox
+                {featuredServices.map((service) => (
+                  <ITServiceCard
                     key={service.id}
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                  >
-                    <ITServiceCard
-                      service={service}
-                      onGetQuote={handleGetQuote}
-                      onViewPackages={handleViewPackages}
-                    />
-                  </MotionBox>
+                    service={service}
+                    onGetQuote={handleGetQuote}
+                    onViewPackages={handleViewPackages}
+                  />
                 ))}
               </SimpleGrid>
             </VStack>
@@ -259,19 +244,13 @@ const ITServices: React.FC = () => {
                   </HStack>
 
                   <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={8}>
-                    {filteredServices.map((service, index) => (
-                      <MotionBox
+                    {filteredServices.map((service) => (
+                      <ITServiceCard
                         key={service.id}
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: index * 0.1 }}
-                      >
-                        <ITServiceCard
-                          service={service}
-                          onGetQuote={handleGetQuote}
-                          onViewPackages={handleViewPackages}
-                        />
-                      </MotionBox>
+                        service={service}
+                        onGetQuote={handleGetQuote}
+                        onViewPackages={handleViewPackages}
+                      />
                     ))}
                   </SimpleGrid>
                 </TabPanel>
