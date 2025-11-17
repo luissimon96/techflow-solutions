@@ -26,10 +26,13 @@ import {
   Container,
 } from '@chakra-ui/react';
 import { FaCheck, FaTimes, FaInfo, FaStar, FaCalculator } from 'react-icons/fa';
-import { motion } from 'framer-motion';
+import { motion, isValidMotionProp } from 'framer-motion';
 import { ITPackage } from '../../data/itServices';
+import { chakra } from '@chakra-ui/react';
 
-const MotionBox = motion(Box);
+const MotionBox = chakra(motion.div, {
+  shouldForwardProp: (prop) => isValidMotionProp(prop) || prop === 'children',
+});
 
 interface PackageComparisonProps {
   packages: ITPackage[];
