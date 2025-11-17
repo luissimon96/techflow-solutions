@@ -1,345 +1,675 @@
-import React, { useState } from 'react';
 import {
   Box,
   Container,
-  VStack,
   Heading,
   Text,
+  VStack,
   SimpleGrid,
+  Card,
+  CardBody,
   Button,
-  HStack,
-  Icon,
-  useColorModeValue,
-  Tabs,
-  TabList,
-  TabPanels,
-  Tab,
-  TabPanel,
   Badge,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalCloseButton,
-  useDisclosure,
-  Flex,
+  Stack,
+  Icon,
+  HStack,
+  useColorModeValue
 } from '@chakra-ui/react';
-import { FaRocket, FaHeadset, FaLock, FaCogs, FaArrowRight, FaQuestionCircle } from 'react-icons/fa';
+import {
+  FaRocket,
+  FaHeadset,
+  FaShieldAlt,
+  FaCloud,
+  FaArrowRight,
+  FaStar,
+  FaCheck,
+  FaWhatsapp
+} from 'react-icons/fa';
+import { Link as RouterLink } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-
-import { ITServiceCard } from '../components/IT/ITServiceCard';
-import { PackageComparison } from '../components/IT/PackageComparison';
-import { ITQuoteForm } from '../components/IT/ITQuoteForm';
-import { 
-  itServices, 
-  getITServicesByCategory, 
-  getITServicesByAudience,
-  itServiceCategories,
+import {
+  itServices,
   getIndividualPackages,
-  getBusinessPackages 
+  getBusinessPackages
 } from '../data/itServices';
 
-const ITServices: React.FC = () => {
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [selectedAudience, setSelectedAudience] = useState<'all' | 'individual' | 'business'>('all');
-  const [selectedServiceForQuote, setSelectedServiceForQuote] = useState<string | undefined>();
-  
-  const { isOpen: isQuoteModalOpen, onOpen: onQuoteModalOpen, onClose: onQuoteModalClose } = useDisclosure();
-  const { isOpen: isPackagesModalOpen, onOpen: onPackagesModalOpen, onClose: onPackagesModalClose } = useDisclosure();
-
+const ITServices = () => {
   const bgColor = useColorModeValue('gray.50', 'gray.900');
-  const headerBg = useColorModeValue('brand.600', 'brand.800');
+  const cardBg = useColorModeValue('white', 'gray.800');
   const textColor = useColorModeValue('gray.600', 'gray.300');
+  const borderColor = useColorModeValue('gray.100', 'gray.700');
 
-  // Filtrar serviços baseado na categoria e audiência selecionadas
-  const getFilteredServices = () => {
-    let filtered = itServices;
-    
-    if (selectedCategory !== 'all') {
-      filtered = getITServicesByCategory(selectedCategory as any);
-    }
-    
-    if (selectedAudience !== 'all') {
-      filtered = filtered.filter(service => 
-        service.targetAudience === selectedAudience || service.targetAudience === 'both'
-      );
-    }
-    
-    return filtered;
-  };
+  // Serviços em destaque
+  const featuredServices = itServices.filter(service => service.featured);
 
-  const handleGetQuote = (serviceId?: string) => {
-    setSelectedServiceForQuote(serviceId);
-    onQuoteModalOpen();
-  };
+  // Pacotes para pessoa física e jurídica
+  const individualPackages = getIndividualPackages();
+  const businessPackages = getBusinessPackages();
 
-  const handleViewPackages = (serviceId: string) => {
-    onPackagesModalOpen();
-  };
-
-  const handleQuoteSubmit = async (data: any) => {
-    // Implementar envio do formulário
-    console.log('Quote data:', data);
-    // Aqui você integraria com a API do backend
-  };
-
-  const filteredServices = getFilteredServices();
-  const featuredServices = filteredServices.filter(service => service.featured);
+  // Stats
+  const stats = [
+    { value: '95%', label: 'Problemas resolvidos remotamente' },
+    { value: '<15min', label: 'Tempo médio de resposta' },
+    { value: '24/7', label: 'Monitoramento ativo' },
+    { value: '100%', label: 'Satisfação dos clientes' }
+  ];
 
   return (
     <>
       <Helmet>
         <title>Serviços de TI - TechFlow Solutions</title>
-        <meta 
-          name="description" 
-          content="Suporte técnico especializado, segurança digital e infraestrutura em nuvem. Monitoramento 24/7, backup automatizado e resposta imediata." 
+        <meta
+          name="description"
+          content="Suporte técnico especializado, segurança digital e infraestrutura em nuvem. Monitoramento 24/7, backup automatizado e resposta imediata."
         />
         <meta name="keywords" content="suporte técnico, TI, segurança digital, cloud, backup, monitoramento" />
       </Helmet>
 
-      <Box bg={bgColor} minH="100vh">
-        {/* Hero Section */}
-        <Box bg={headerBg} color="white" py={20}>
-          <Container maxW="6xl">
-            <VStack spacing={6} textAlign="center" maxW="4xl" mx="auto">
-                <Badge colorScheme="brand" variant="solid" px={4} py={2} borderRadius="full">
-                  🔧 Tecnologia + Atendimento Humano
-                </Badge>
-                
-                <Heading size="2xl" fontWeight="bold">
-                  Serviços de TI que Realmente Funcionam
-                </Heading>
-                
-                <Text fontSize="xl" opacity={0.9} maxW="3xl">
-                  Suporte técnico proativo, segurança avançada e infraestrutura moderna. 
-                  Monitore, proteja e otimize sua TI com especialistas dedicados.
-                </Text>
+      <Box
+        as="section"
+        minH="100vh"
+        pt={{ base: 32, md: 40, lg: 44 }}
+        pb={{ base: 16, md: 20, lg: 24 }}
+        bg={bgColor}
+      >
+        <Container maxW={{ base: "container.sm", md: "container.md", lg: "container.lg", xl: "container.xl" }}>
+          <VStack spacing={{ base: 12, md: 16, lg: 20 }}>
 
-                <HStack spacing={4} pt={4}>
-                  <Button
-                    size="lg"
-                    colorScheme="brand"
-                    variant="solid"
-                    rightIcon={<Icon as={FaArrowRight} />}
-                    onClick={() => handleGetQuote()}
-                    _hover={{ transform: 'translateY(-2px)' }}
-                    transition="all 0.2s"
-                  >
-                    Solicitar Orçamento
-                  </Button>
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    colorScheme="whiteAlpha"
-                    leftIcon={<Icon as={FaQuestionCircle} />}
-                    onClick={onPackagesModalOpen}
-                  >
-                    Ver Planos
-                  </Button>
-                </HStack>
+            {/* Hero Section */}
+            <Box textAlign="center" maxW="5xl" mx="auto" px={{ base: 4, md: 6 }}>
+              <Badge
+                colorScheme="brand"
+                variant="solid"
+                px={4}
+                py={2}
+                borderRadius="full"
+                mb={6}
+                fontSize="sm"
+              >
+                🔧 Tecnologia + Atendimento Humano
+              </Badge>
 
-                {/* Stats */}
-                <HStack spacing={8} pt={8}>
-                  <VStack spacing={1}>
-                    <Text fontSize="2xl" fontWeight="bold">95%</Text>
-                    <Text fontSize="sm" opacity={0.8}>Problemas resolvidos remotamente</Text>
-                  </VStack>
-                  <VStack spacing={1}>
-                    <Text fontSize="2xl" fontWeight="bold">&lt;15min</Text>
-                    <Text fontSize="sm" opacity={0.8}>Tempo médio de resposta</Text>
-                  </VStack>
-                  <VStack spacing={1}>
-                    <Text fontSize="2xl" fontWeight="bold">24/7</Text>
-                    <Text fontSize="sm" opacity={0.8}>Monitoramento ativo</Text>
-                  </VStack>
-                </HStack>
-            </VStack>
-          </Container>
-        </Box>
+              <Heading
+                as="h1"
+                size={{ base: "2xl", md: "3xl", lg: "4xl" }}
+                mb={{ base: 6, md: 8 }}
+                bgGradient="linear(to-r, brand.600, brand.400)"
+                bgClip="text"
+                fontWeight="extrabold"
+                lineHeight="shorter"
+                textShadow="0 2px 4px rgba(0,0,0,0.1)"
+                letterSpacing="tight"
+              >
+                Serviços de TI que Realmente Funcionam
+              </Heading>
 
-        {/* Featured Services */}
-        {featuredServices.length > 0 && (
-          <Container maxW="6xl" py={16}>
-            <VStack spacing={8}>
-              <VStack spacing={4} textAlign="center">
-                <Heading size="xl">Serviços em Destaque</Heading>
-                <Text fontSize="lg" color={textColor} maxW="2xl">
-                  Nossas soluções mais procuradas para transformar sua infraestrutura de TI
-                </Text>
-              </VStack>
-
-              <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={8} w="full">
-                {featuredServices.map((service) => (
-                  <ITServiceCard
-                    key={service.id}
-                    service={service}
-                    onGetQuote={handleGetQuote}
-                    onViewPackages={handleViewPackages}
-                  />
-                ))}
-              </SimpleGrid>
-            </VStack>
-          </Container>
-        )}
-
-        {/* All Services */}
-        <Container maxW="6xl" py={16}>
-          <VStack spacing={8}>
-            <VStack spacing={4} textAlign="center">
-              <Heading size="xl">Todos os Serviços</Heading>
-              <Text fontSize="lg" color={textColor} maxW="2xl">
-                Soluções completas para suas necessidades de TI
+              <Text
+                fontSize={{ base: "lg", md: "xl", lg: "2xl" }}
+                color={textColor}
+                maxW="3xl"
+                mx="auto"
+                lineHeight="tall"
+                fontWeight="medium"
+                mb={8}
+              >
+                Suporte técnico proativo, segurança avançada e infraestrutura moderna.
+                Monitore, proteja e otimize sua TI com especialistas dedicados.
               </Text>
-            </VStack>
 
-            {/* Filters */}
-            <Tabs variant="enclosed" colorScheme="brand" align="center">
-              <TabList>
-                <Tab onClick={() => setSelectedCategory('all')}>
-                  Todos
-                </Tab>
-                {itServiceCategories.map((category) => (
-                  <Tab 
-                    key={category.id}
-                    onClick={() => setSelectedCategory(category.id)}
-                  >
-                    <HStack spacing={2}>
-                      <Icon as={category.icon} />
-                      <Text display={{ base: 'none', md: 'block' }}>
-                        {category.name}
-                      </Text>
-                    </HStack>
-                  </Tab>
-                ))}
-              </TabList>
-
-              <TabPanels>
-                <TabPanel>
-                  {/* Audience Filter */}
-                  <HStack spacing={4} justify="center" mb={8}>
-                    <Text fontSize="sm" color={textColor}>Filtrar por:</Text>
-                    <Button
-                      size="sm"
-                      variant={selectedAudience === 'all' ? 'solid' : 'outline'}
-                      colorScheme="brand"
-                      onClick={() => setSelectedAudience('all')}
-                    >
-                      Todos
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant={selectedAudience === 'individual' ? 'solid' : 'outline'}
-                      colorScheme="brand"
-                      onClick={() => setSelectedAudience('individual')}
-                    >
-                      Pessoa Física
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant={selectedAudience === 'business' ? 'solid' : 'outline'}
-                      colorScheme="brand"
-                      onClick={() => setSelectedAudience('business')}
-                    >
-                      Pessoa Jurídica
-                    </Button>
-                  </HStack>
-
-                  <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={8}>
-                    {filteredServices.map((service) => (
-                      <ITServiceCard
-                        key={service.id}
-                        service={service}
-                        onGetQuote={handleGetQuote}
-                        onViewPackages={handleViewPackages}
-                      />
-                    ))}
-                  </SimpleGrid>
-                </TabPanel>
-              </TabPanels>
-            </Tabs>
-          </VStack>
-        </Container>
-
-        {/* CTA Section */}
-        <Box bg="brand.50" py={16}>
-          <Container maxW="4xl">
-            <VStack spacing={6} textAlign="center">
-              <Heading size="xl">Pronto para Transformar sua TI?</Heading>
-              <Text fontSize="lg" color={textColor}>
-                Entre em contato e receba um orçamento personalizado em até 2 horas
-              </Text>
-              <HStack spacing={4}>
+              <Stack
+                direction={{ base: "column", sm: "row" }}
+                spacing={4}
+                justify="center"
+              >
                 <Button
+                  as={RouterLink}
+                  to="/orcamento"
                   size="lg"
                   colorScheme="brand"
                   rightIcon={<Icon as={FaArrowRight} />}
-                  onClick={() => handleGetQuote()}
+                  px={8}
+                  py={6}
+                  fontSize="lg"
+                  fontWeight="bold"
+                  borderRadius="xl"
+                  _hover={{
+                    transform: 'translateY(-3px)',
+                    boxShadow: 'xl',
+                  }}
+                  transition="all 0.3s"
                 >
-                  Solicitar Orçamento Gratuito
+                  Solicitar Orçamento
                 </Button>
                 <Button
+                  as="a"
+                  href="https://wa.me/5554997109051"
+                  target="_blank"
                   size="lg"
                   variant="outline"
                   colorScheme="brand"
-                  leftIcon={<Icon as={FaHeadset} />}
-                  as="a"
-                  href="https://wa.me/5511999999999"
-                  target="_blank"
+                  leftIcon={<Icon as={FaWhatsapp} />}
+                  px={8}
+                  py={6}
+                  fontSize="lg"
+                  fontWeight="semibold"
+                  borderRadius="xl"
+                  _hover={{
+                    transform: 'translateY(-3px)',
+                    boxShadow: 'md',
+                  }}
+                  transition="all 0.3s"
                 >
                   Falar no WhatsApp
                 </Button>
-              </HStack>
-            </VStack>
-          </Container>
-        </Box>
-
-        {/* Quote Modal */}
-        <Modal isOpen={isQuoteModalOpen} onClose={onQuoteModalClose} size="4xl">
-          <ModalOverlay />
-          <ModalContent maxW="90vw">
-            <ModalCloseButton />
-            <ITQuoteForm
-              initialService={selectedServiceForQuote}
-              onSubmit={handleQuoteSubmit}
-              onClose={onQuoteModalClose}
-            />
-          </ModalContent>
-        </Modal>
-
-        {/* Packages Modal */}
-        <Modal isOpen={isPackagesModalOpen} onClose={onPackagesModalClose} size="6xl">
-          <ModalOverlay />
-          <ModalContent maxW="95vw">
-            <ModalCloseButton />
-            <Box p={8}>
-              <Tabs>
-                <TabList>
-                  <Tab>Pessoa Física</Tab>
-                  <Tab>Pessoa Jurídica</Tab>
-                </TabList>
-                <TabPanels>
-                  <TabPanel>
-                    <PackageComparison
-                      packages={getIndividualPackages()}
-                      title="Planos para Pessoa Física"
-                      subtitle="Proteção e suporte para sua casa e família"
-                      showCalculator={false}
-                      onSelectPackage={handleGetQuote}
-                    />
-                  </TabPanel>
-                  <TabPanel>
-                    <PackageComparison
-                      packages={getBusinessPackages()}
-                      title="Planos para Empresas"
-                      subtitle="Soluções escaláveis para seu negócio"
-                      showCalculator={true}
-                      onSelectPackage={handleGetQuote}
-                    />
-                  </TabPanel>
-                </TabPanels>
-              </Tabs>
+              </Stack>
             </Box>
-          </ModalContent>
-        </Modal>
+
+            {/* Stats Section */}
+            <SimpleGrid columns={{ base: 2, md: 4 }} spacing={8} w="full" maxW="4xl">
+              {stats.map((stat, index) => (
+                <VStack key={index} spacing={2}>
+                  <Text fontSize="3xl" fontWeight="bold" color="brand.600">
+                    {stat.value}
+                  </Text>
+                  <Text fontSize="sm" color={textColor} textAlign="center">
+                    {stat.label}
+                  </Text>
+                </VStack>
+              ))}
+            </SimpleGrid>
+
+            {/* Serviços em Destaque */}
+            <Box w="full" maxW="6xl" mx="auto">
+              <Heading
+                size="lg"
+                mb={8}
+                textAlign="center"
+                color="gray.800"
+              >
+                Serviços em Destaque
+              </Heading>
+              <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={8}>
+                {featuredServices.map((service) => (
+                  <Card
+                    key={service.id}
+                    bg={cardBg}
+                    borderRadius="xl"
+                    boxShadow="xl"
+                    border="2px solid"
+                    borderColor="brand.200"
+                    _hover={{
+                      transform: 'translateY(-8px)',
+                      boxShadow: '2xl',
+                      borderColor: 'brand.400'
+                    }}
+                    transition="all 0.3s"
+                    overflow="hidden"
+                  >
+                    <Box position="relative">
+                      <Box
+                        h="120px"
+                        bg="gradient-to-br"
+                        bgGradient="linear(135deg, brand.400, brand.600)"
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                      >
+                        <Icon as={service.icon} boxSize={12} color="white" opacity={0.9} />
+                      </Box>
+                      <Badge
+                        colorScheme="brand"
+                        variant="solid"
+                        position="absolute"
+                        top={4}
+                        right={4}
+                        borderRadius="full"
+                        px={3}
+                        py={1}
+                        fontSize="xs"
+                      >
+                        <Icon as={FaStar} boxSize={2} mr={1} />
+                        Popular
+                      </Badge>
+                    </Box>
+                    <CardBody p={6}>
+                      <VStack spacing={4} align="start">
+                        <VStack spacing={2} align="start" w="full">
+                          <Heading size="md" color="gray.800">
+                            {service.title}
+                          </Heading>
+                          <Text fontSize="sm" fontWeight="semibold" color="brand.600">
+                            {service.subtitle}
+                          </Text>
+                          <Badge
+                            variant="subtle"
+                            colorScheme={
+                              service.category === 'support' ? 'blue' :
+                              service.category === 'security' ? 'red' :
+                              service.category === 'cloud' ? 'purple' : 'green'
+                            }
+                          >
+                            {service.category === 'support' && 'Suporte'}
+                            {service.category === 'security' && 'Segurança'}
+                            {service.category === 'cloud' && 'Cloud'}
+                            {service.category === 'maintenance' && 'Manutenção'}
+                          </Badge>
+                        </VStack>
+
+                        <Text color={textColor} fontSize="sm" lineHeight="relaxed">
+                          {service.description}
+                        </Text>
+
+                        <VStack spacing={2} align="start" w="full">
+                          <Text fontSize="xs" fontWeight="semibold" color={textColor}>
+                            Principais benefícios:
+                          </Text>
+                          {service.benefits.slice(0, 3).map((benefit, idx) => (
+                            <HStack key={idx} spacing={2}>
+                              <Icon as={FaCheck} color="green.500" boxSize={3} />
+                              <Text fontSize="xs" color={textColor}>
+                                {benefit}
+                              </Text>
+                            </HStack>
+                          ))}
+                        </VStack>
+
+                        <Box w="full" pt={2}>
+                          <HStack justify="space-between" align="baseline">
+                            <Text fontSize="sm" fontWeight="semibold" color={textColor}>
+                              A partir de
+                            </Text>
+                            <VStack spacing={0} align="end">
+                              <HStack align="baseline">
+                                <Text fontSize="2xl" fontWeight="bold" color="brand.600">
+                                  R$ {Math.min(...service.packages.map(p => p.price))}
+                                </Text>
+                                <Text fontSize="sm" color={textColor}>
+                                  /mês
+                                </Text>
+                              </HStack>
+                            </VStack>
+                          </HStack>
+                        </Box>
+
+                        <Button
+                          as={RouterLink}
+                          to="/orcamento"
+                          colorScheme="brand"
+                          size="md"
+                          width="full"
+                          rightIcon={<Icon as={FaArrowRight} />}
+                          _hover={{ transform: 'translateY(-2px)' }}
+                          transition="all 0.2s"
+                        >
+                          Solicitar Orçamento
+                        </Button>
+                      </VStack>
+                    </CardBody>
+                  </Card>
+                ))}
+              </SimpleGrid>
+            </Box>
+
+            {/* Todos os Serviços */}
+            <Box w="full" maxW="6xl" mx="auto">
+              <Heading
+                size="lg"
+                mb={8}
+                textAlign="center"
+                color="gray.800"
+              >
+                Todos os Serviços
+              </Heading>
+              <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
+                {itServices.map((service) => (
+                  <Card
+                    key={service.id}
+                    bg={cardBg}
+                    borderRadius="xl"
+                    boxShadow="md"
+                    border="1px solid"
+                    borderColor={borderColor}
+                    _hover={{
+                      transform: 'translateY(-4px)',
+                      boxShadow: 'lg',
+                      borderColor: 'brand.200'
+                    }}
+                    transition="all 0.3s"
+                    overflow="hidden"
+                  >
+                    <Box
+                      h="100px"
+                      bg="gradient-to-br"
+                      bgGradient={service.featured ?
+                        "linear(135deg, brand.400, brand.600)" :
+                        "linear(135deg, gray.400, gray.600)"
+                      }
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                    >
+                      <Icon as={service.icon} boxSize={8} color="white" opacity={0.9} />
+                    </Box>
+                    <CardBody p={4}>
+                      <VStack spacing={3} align="start">
+                        <VStack spacing={1} align="start" w="full">
+                          <Heading size="sm" color="gray.800">
+                            {service.title}
+                          </Heading>
+                          <Text fontSize="xs" color="brand.600" fontWeight="semibold">
+                            {service.subtitle}
+                          </Text>
+                        </VStack>
+
+                        <Text color={textColor} fontSize="xs" lineHeight="relaxed">
+                          {service.description.substring(0, 100)}...
+                        </Text>
+
+                        <HStack justify="space-between" w="full">
+                          <Text fontSize="xs" color={textColor}>
+                            A partir de
+                          </Text>
+                          <Text fontSize="md" fontWeight="bold" color="brand.600">
+                            R$ {Math.min(...service.packages.map(p => p.price))}
+                          </Text>
+                        </HStack>
+
+                        <Button
+                          as={RouterLink}
+                          to="/orcamento"
+                          size="sm"
+                          colorScheme="brand"
+                          width="full"
+                          rightIcon={<Icon as={FaArrowRight} />}
+                        >
+                          Solicitar Orçamento
+                        </Button>
+                      </VStack>
+                    </CardBody>
+                  </Card>
+                ))}
+              </SimpleGrid>
+            </Box>
+
+            {/* Planos - Pessoa Física */}
+            <Box w="full" maxW="6xl" mx="auto">
+              <Heading
+                size="lg"
+                mb={4}
+                textAlign="center"
+                color="gray.800"
+              >
+                Planos para Pessoa Física
+              </Heading>
+              <Text
+                fontSize="md"
+                color={textColor}
+                textAlign="center"
+                mb={8}
+              >
+                Proteção e suporte para sua casa e família
+              </Text>
+              <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6}>
+                {individualPackages.slice(0, 3).map((pkg) => (
+                  <Card
+                    key={pkg.id}
+                    bg={cardBg}
+                    borderRadius="xl"
+                    boxShadow={pkg.popular ? "xl" : "md"}
+                    border="2px solid"
+                    borderColor={pkg.popular ? "brand.400" : borderColor}
+                    _hover={{
+                      transform: 'translateY(-4px)',
+                      boxShadow: 'xl',
+                    }}
+                    transition="all 0.3s"
+                    position="relative"
+                  >
+                    {pkg.popular && (
+                      <Badge
+                        colorScheme="brand"
+                        variant="solid"
+                        position="absolute"
+                        top={-3}
+                        left="50%"
+                        transform="translateX(-50%)"
+                        borderRadius="full"
+                        px={3}
+                        py={1}
+                        fontSize="xs"
+                      >
+                        <Icon as={FaStar} boxSize={2} mr={1} />
+                        Mais Popular
+                      </Badge>
+                    )}
+                    <CardBody p={6}>
+                      <VStack spacing={4} align="stretch">
+                        <VStack spacing={2} align="start">
+                          <Heading size="md" color="gray.800">
+                            {pkg.name}
+                          </Heading>
+                          <HStack align="baseline">
+                            <Text fontSize="3xl" fontWeight="bold" color="brand.600">
+                              R$ {pkg.price}
+                            </Text>
+                            <Text fontSize="md" color={textColor}>
+                              /mês
+                            </Text>
+                          </HStack>
+                        </VStack>
+
+                        <VStack spacing={2} align="start">
+                          <Text fontSize="sm" fontWeight="semibold" color={textColor}>
+                            Inclui:
+                          </Text>
+                          {pkg.features.slice(0, 5).map((feature, idx) => (
+                            feature.included && (
+                              <HStack key={idx} spacing={2}>
+                                <Icon as={FaCheck} color="green.500" boxSize={3} />
+                                <Text fontSize="xs" color={textColor}>
+                                  {feature.name}
+                                </Text>
+                              </HStack>
+                            )
+                          ))}
+                        </VStack>
+
+                        <Button
+                          as={RouterLink}
+                          to="/orcamento"
+                          colorScheme="brand"
+                          size="md"
+                          width="full"
+                          variant={pkg.popular ? "solid" : "outline"}
+                        >
+                          Escolher Plano
+                        </Button>
+                      </VStack>
+                    </CardBody>
+                  </Card>
+                ))}
+              </SimpleGrid>
+            </Box>
+
+            {/* Planos - Pessoa Jurídica */}
+            <Box w="full" maxW="6xl" mx="auto">
+              <Heading
+                size="lg"
+                mb={4}
+                textAlign="center"
+                color="gray.800"
+              >
+                Planos para Empresas
+              </Heading>
+              <Text
+                fontSize="md"
+                color={textColor}
+                textAlign="center"
+                mb={8}
+              >
+                Soluções escaláveis para seu negócio
+              </Text>
+              <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6}>
+                {businessPackages.slice(0, 3).map((pkg) => (
+                  <Card
+                    key={pkg.id}
+                    bg={cardBg}
+                    borderRadius="xl"
+                    boxShadow={pkg.popular ? "xl" : "md"}
+                    border="2px solid"
+                    borderColor={pkg.popular ? "brand.400" : borderColor}
+                    _hover={{
+                      transform: 'translateY(-4px)',
+                      boxShadow: 'xl',
+                    }}
+                    transition="all 0.3s"
+                    position="relative"
+                  >
+                    {pkg.popular && (
+                      <Badge
+                        colorScheme="brand"
+                        variant="solid"
+                        position="absolute"
+                        top={-3}
+                        left="50%"
+                        transform="translateX(-50%)"
+                        borderRadius="full"
+                        px={3}
+                        py={1}
+                        fontSize="xs"
+                      >
+                        <Icon as={FaStar} boxSize={2} mr={1} />
+                        Mais Popular
+                      </Badge>
+                    )}
+                    <CardBody p={6}>
+                      <VStack spacing={4} align="stretch">
+                        <VStack spacing={2} align="start">
+                          <Heading size="md" color="gray.800">
+                            {pkg.name}
+                          </Heading>
+                          <HStack align="baseline">
+                            <Text fontSize="3xl" fontWeight="bold" color="brand.600">
+                              R$ {pkg.price}
+                            </Text>
+                            <Text fontSize="md" color={textColor}>
+                              /mês
+                            </Text>
+                          </HStack>
+                          <Badge colorScheme="purple" variant="subtle" fontSize="xs">
+                            {typeof pkg.targetUsers === 'number' ?
+                              `Até ${pkg.targetUsers} usuários` :
+                              'Usuários ilimitados'
+                            }
+                          </Badge>
+                        </VStack>
+
+                        <VStack spacing={2} align="start">
+                          <Text fontSize="sm" fontWeight="semibold" color={textColor}>
+                            Inclui:
+                          </Text>
+                          {pkg.features.slice(0, 5).map((feature, idx) => (
+                            feature.included && (
+                              <HStack key={idx} spacing={2}>
+                                <Icon as={FaCheck} color="green.500" boxSize={3} />
+                                <Text fontSize="xs" color={textColor}>
+                                  {feature.name}
+                                </Text>
+                              </HStack>
+                            )
+                          ))}
+                        </VStack>
+
+                        <Button
+                          as={RouterLink}
+                          to="/orcamento"
+                          colorScheme="brand"
+                          size="md"
+                          width="full"
+                          variant={pkg.popular ? "solid" : "outline"}
+                        >
+                          Escolher Plano
+                        </Button>
+                      </VStack>
+                    </CardBody>
+                  </Card>
+                ))}
+              </SimpleGrid>
+            </Box>
+
+            {/* CTA Section */}
+            <Box
+              textAlign="center"
+              bg="brand.50"
+              borderRadius="3xl"
+              p={{ base: 8, md: 12, lg: 16 }}
+              maxW="4xl"
+              mx="auto"
+              border="1px solid"
+              borderColor="brand.100"
+              w="full"
+            >
+              <VStack spacing={6}>
+                <Heading size="lg" color="brand.700">
+                  Pronto para Transformar sua TI?
+                </Heading>
+                <Text
+                  fontSize="lg"
+                  color={textColor}
+                  maxW="2xl"
+                  mx="auto"
+                >
+                  Entre em contato e receba um orçamento personalizado em até 2 horas
+                </Text>
+                <Stack
+                  direction={{ base: "column", sm: "row" }}
+                  spacing={4}
+                  justify="center"
+                >
+                  <Button
+                    as={RouterLink}
+                    to="/orcamento"
+                    size="lg"
+                    colorScheme="brand"
+                    px={8}
+                    py={6}
+                    fontSize="lg"
+                    fontWeight="bold"
+                    borderRadius="xl"
+                    rightIcon={<Icon as={FaArrowRight} />}
+                    _hover={{
+                      transform: 'translateY(-3px)',
+                      boxShadow: 'xl',
+                    }}
+                    transition="all 0.3s"
+                  >
+                    Solicitar Orçamento Gratuito
+                  </Button>
+                  <Button
+                    as="a"
+                    href="https://wa.me/5554997109051"
+                    target="_blank"
+                    size="lg"
+                    variant="outline"
+                    colorScheme="brand"
+                    px={8}
+                    py={6}
+                    fontSize="lg"
+                    fontWeight="semibold"
+                    borderRadius="xl"
+                    leftIcon={<Icon as={FaWhatsapp} />}
+                    _hover={{
+                      transform: 'translateY(-3px)',
+                      boxShadow: 'md',
+                    }}
+                    transition="all 0.3s"
+                  >
+                    Falar no WhatsApp
+                  </Button>
+                </Stack>
+              </VStack>
+            </Box>
+          </VStack>
+        </Container>
       </Box>
     </>
   );
