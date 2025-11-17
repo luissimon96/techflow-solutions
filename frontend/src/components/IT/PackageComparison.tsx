@@ -28,10 +28,10 @@ import {
 import { FaCheck, FaTimes, FaInfo, FaStar, FaCalculator } from 'react-icons/fa';
 import { motion, isValidMotionProp } from 'framer-motion';
 import { ITPackage } from '../../data/itServices';
-import { chakra } from '@chakra-ui/react';
+import { chakra, shouldForwardProp } from '@chakra-ui/react';
 
 const MotionBox = chakra(motion.div, {
-  shouldForwardProp: (prop) => isValidMotionProp(prop) || prop === 'children',
+  shouldForwardProp: (prop) => isValidMotionProp(prop) || shouldForwardProp(prop),
 });
 
 interface PackageComparisonProps {
@@ -137,6 +137,7 @@ export const PackageComparison: React.FC<PackageComparisonProps> = ({
                 animate="animate"
                 whileHover="hover"
                 variants={cardVariants}
+                // @ts-ignore - framer-motion transition prop type conflict
                 transition={{ duration: 0.3, delay: index * 0.1 }}
                 w="full"
                 maxW="400px"

@@ -48,10 +48,10 @@ import {
 } from 'react-icons/fa';
 import { motion, isValidMotionProp } from 'framer-motion';
 import { itServices, getIndividualPackages, getBusinessPackages } from '../../data/itServices';
-import { chakra } from '@chakra-ui/react';
+import { chakra, shouldForwardProp } from '@chakra-ui/react';
 
 const MotionBox = chakra(motion.div, {
-  shouldForwardProp: (prop) => isValidMotionProp(prop) || prop === 'children',
+  shouldForwardProp: (prop) => isValidMotionProp(prop) || shouldForwardProp(prop),
 });
 
 interface FormData {
@@ -584,6 +584,7 @@ export const ITQuoteForm: React.FC<ITQuoteFormProps> = ({
     <MotionBox
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
+      // @ts-ignore - framer-motion transition prop type conflict
       transition={{ duration: 0.3 }}
     >
       <Box
