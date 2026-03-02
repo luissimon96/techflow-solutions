@@ -137,6 +137,7 @@ export default function Header() {
     { path: '/portfolio', label: 'Portfólio', description: 'Projetos desenvolvidos', isExternal: false },
     { path: '/sobre', label: 'Sobre', description: 'Nossa história e missão', isExternal: false },
     { path: '/blog', label: 'Blog', description: 'Artigos e insights', isExternal: false },
+    { path: '/ferias', label: 'Férias', description: 'Planejador de férias e aproveitamento de feriados', isExternal: false },
   ];
 
   return (
@@ -220,7 +221,7 @@ export default function Header() {
             }}
             transition="all 0.3s ease-in-out"
           />
-          
+
           <DrawerHeader borderBottomWidth="1px" pb={4}>
             <Logo size="md" />
           </DrawerHeader>
@@ -244,7 +245,7 @@ export default function Header() {
                   {index < navigationItems.length - 1 && <Divider mt={4} />}
                 </Box>
               ))}
-              
+
               {/* CTA Button */}
               <Box pt={8}>
                 <CTAButton onClick={onClose} />

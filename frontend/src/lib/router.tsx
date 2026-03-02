@@ -9,6 +9,7 @@ import Clients from '@/pages/Clients';
 import Blog from '@/pages/Blog';
 import Contact from '@/pages/Contact';
 import QuoteRequest from '@/pages/QuoteRequest';
+import VacationPlanner from '@/pages/VacationPlanner';
 
 export const router = createBrowserRouter([
   {
@@ -50,6 +51,10 @@ export const router = createBrowserRouter([
       {
         path: 'orcamento',
         element: <QuoteRequest />,
+      },
+      {
+        path: 'ferias',
+        element: <VacationPlanner />,
       },
     ],
   },
