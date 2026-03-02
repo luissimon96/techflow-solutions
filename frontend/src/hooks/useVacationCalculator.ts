@@ -1,117 +1,114 @@
 import { useCallback } from 'react';
-import { fetchHolidays, Holiday } from '@/lib/holidays';
-import { addDays, isWeekend, differenceInCalendarDays, format } from 'date-fns';
+import { Holiday } from '@/lib/holidays';
+import { addDays, isWeekend, differenceInCalendarDays } from 'date-fns';
+import {
+  VacationOptions,
+  Suggestion,
+  WorkingDays,
+  SearchPeriod,
+  LocationInfo,
+} from '@/types/vacation';
 
-export interface Suggestion {
-  start: string; // ISO
-  end: string; // ISO
-  daysTaken: number; // N days from allowance
-  spanDays: number; // total calendar days
-  gain: number; // spanDays - daysTaken
-  description?: string;
+// helper for working‑day mask
+function isWorkingDay(date: Date, mask: WorkingDays): boolean {
+  const d = date.getDay();
+  switch (d) {
+    case 0:
+      return mask.sun;
+    case 1:
+      return mask.mon;
+    case 2:
+      return mask.tue;
+    case 3:
+      return mask.wed;
+    case 4:
+      return mask.thu;
+    case 5:
+      return mask.fri;
+    case 6:
+      return mask.sat;
+  }
+  return false;
 }
 
-function iso(date: Date) {
-  return format(date, 'yyyy-MM-dd');
-}
+export function useVacationCalculator(
+  national: Holiday[],
+  getStateHolidays: (state?: string) => Holiday[],
+  getMunicipalHolidays: (state?: string, city?: string) => Holiday[],
+) {
+  /**
+   * Given the current options, compute a merged holiday list (unique by date).
+   */
+  const mergeHolidays = (opts: VacationOptions): Holiday[] => {
+    const map = new Map<string, Holiday>();
+    national.concat(
+      getStateHolidays(opts.location.state),
+      getMunicipalHolidays(opts.location.state, opts.location.city),
+      opts.customHolidays,
+    ).forEach(h => map.set(h.date, h));
+    return Array.from(map.values());
+  };
 
-function isHoliday(date: Date, holidaySet: Set<string>) {
-  return holidaySet.has(iso(date));
-}
-
-export function useVacationCalculator() {
   const generateSuggestions = useCallback(
-    async (year: number, splits: number[], bankHours = 0, workHoursPerDay = 8): Promise<Record<string, Suggestion[]>> => {
-      const holidays: Holiday[] = await fetchHolidays(year, 'BR');
-      const holidaySet = new Set(holidays.map((h) => h.date));
+    async (opts: VacationOptions): Promise<Record<string, Suggestion[]>> => {
+      const allHolidays = mergeHolidays(opts);
+      const holidaySet = new Set(allHolidays.map(h => h.date));
 
-      const bankDays = Math.floor(bankHours / workHoursPerDay);
-      const results: Record<string, Suggestion[]> = {};
+      const startDate =
+        opts.searchPeriod.type === 'custom' && opts.searchPeriod.start
+          ? new Date(opts.searchPeriod.start)
+          : new Date();
+      const endDate =
+        opts.searchPeriod.type === 'custom' && opts.searchPeriod.end
+          ? new Date(opts.searchPeriod.end)
+          : addDays(startDate, 365);
 
-      const startOfYear = new Date(year, 0, 1);
-      const endOfYear = new Date(year, 11, 31);
+      const bankDays = opts.bankDays;
 
-      // Helper: count working days from start to end (inclusive)
-      function countWorkingDays(start: Date, end: Date): number {
+      const grouped: Record<string, Suggestion[]> = {};
+
+      function isHoliday(date: Date): boolean {
+        return holidaySet.has(date.toISOString().slice(0, 10));
+      }
+
+      function findEnd(start: Date, need: number): Date | null {
         let count = 0;
-        let current = new Date(start);
-        while (current <= end) {
-          if (!isWeekend(current) && !isHoliday(current, holidaySet)) {
+        let cur = new Date(start);
+        while (cur <= endDate) {
+          if (isWorkingDay(cur, opts.workingDays) && !isHoliday(cur)) {
             count += 1;
+            if (count === need) return cur;
           }
-          current = addDays(current, 1);
+          cur = addDays(cur, 1);
         }
-        return count;
+        return null;
       }
 
-      // Helper: find the end date that consumes exactly N working days from start
-      function findEndDateForWorkingDays(start: Date, workingDaysNeeded: number): Date | null {
-        let workingDaysConsumed = 0;
-        let current = new Date(start);
-        let lastValidDay: Date | null = null;
-
-        while (current <= endOfYear && workingDaysConsumed < workingDaysNeeded) {
-          if (!isWeekend(current) && !isHoliday(current, holidaySet)) {
-            workingDaysConsumed += 1;
-            if (workingDaysConsumed === workingDaysNeeded) {
-              return current;
-            }
-            lastValidDay = current;
-          }
-          current = addDays(current, 1);
-        }
-        return null; // Could not find enough working days
-      }
-
-      // Generate suggestions for each split
-      for (const split of splits) {
-        const workingDaysNeeded = Math.max(0, split - bankDays);
-        const suggestions: Suggestion[] = [];
-
-        if (workingDaysNeeded === 0) {
-          // If bank days cover all, suggest today (or first business day) with full span as gain
-          const today = new Date(year, 0, 2); // Start from Jan 2
-          if (!isWeekend(today) && !isHoliday(today, holidaySet)) {
-            suggestions.push({
-              start: iso(today),
-              end: iso(today),
-              daysTaken: 0,
-              spanDays: 1,
-              gain: 1,
-            });
-          }
-        } else {
-          // For each possible start date (working day only)
-          for (let d = new Date(startOfYear); d <= endOfYear; d = addDays(d, 1)) {
-            if (isWeekend(d) || isHoliday(d, holidaySet)) continue;
-
-            const endDate = findEndDateForWorkingDays(d, workingDaysNeeded);
-            if (endDate) {
-              const span = differenceInCalendarDays(endDate, d) + 1;
-              const gain = span - workingDaysNeeded;
-
-              suggestions.push({
-                start: iso(d),
-                end: iso(endDate),
-                daysTaken: workingDaysNeeded,
-                spanDays: span,
-                gain,
-              });
-            }
-
-            if (suggestions.length >= 500) break; // Limit results
-          }
-        }
-
-        // Sort by gain (descending) and then by span (ascending)
-        suggestions.sort((a, b) => b.gain - a.gain || a.spanDays - b.spanDays);
+      opts.splits.forEach(split => {
         const key = String(split);
-        results[key] = (results[key] || []).concat(suggestions.slice(0, 10));
-      }
+        grouped[key] = [];
+        const need = Math.max(0, split - bankDays);
+        for (let d = new Date(startDate); d <= endDate; d = addDays(d, 1)) {
+          if (!isWorkingDay(d, opts.workingDays)) continue;
+          if (isHoliday(d)) continue;
+          if (need === 0) {
+            const span = 1;
+            grouped[key].push({ start: d.toISOString().slice(0, 10), end: d.toISOString().slice(0, 10), workingDaysConsumed: 0, calendarSpan: span, gain: span });
+          } else {
+            const end = findEnd(d, need);
+            if (end) {
+              const span = differenceInCalendarDays(end, d) + 1;
+              grouped[key].push({ start: d.toISOString().slice(0, 10), end: end.toISOString().slice(0, 10), workingDaysConsumed: need, calendarSpan: span, gain: span - need });
+            }
+          }
+          if (grouped[key].length >= 10) break; // limit per split
+        }
+        grouped[key].sort((a, b) => b.gain - a.gain || a.calendarSpan - b.calendarSpan);
+      });
 
-      return results;
+      return grouped;
     },
-    []
+    [national, getStateHolidays, getMunicipalHolidays],
   );
 
   return { generateSuggestions };

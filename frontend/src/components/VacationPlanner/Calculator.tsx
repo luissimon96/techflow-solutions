@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   HStack,
@@ -14,51 +14,213 @@ import {
   Stack,
   Divider,
   Tooltip,
+  RadioGroup,
+  Radio,
+  Checkbox,
+  CheckboxGroup,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
+  Textarea,
 } from '@chakra-ui/react';
 import { InfoIcon } from '@chakra-ui/icons';
+import {
+  VacationOptions,
+  Holiday,
+  WorkingDays,
+  SearchPeriod,
+  LocationInfo,
+} from '@/types/vacation';
 
-export interface CalculatorState {
-  year: number;
-  preset: string;
-  customSplits: string; // comma-separated numbers
-  bankHours: number;
-  workHoursPerDay: number;
+// helper to format working days to string
+function workingDaysToString(w: WorkingDays) {
+  return ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sab']
+    .map((d, i) => (Object.values(w)[i] ? d : '_'))
+    .join(' ');
 }
 
 export interface CalculatorProps {
-  state: CalculatorState;
-  onChange: (key: keyof CalculatorState, value: any) => void;
+  options: VacationOptions;
+  onOptionsChange: (opts: Partial<VacationOptions>) => void;
   onGenerateSuggestions: () => Promise<void>;
   loading: boolean;
   presets: Record<string, number[]>;
 }
 
 export function Calculator({
-  state,
-  onChange,
+  options,
+  onOptionsChange,
   onGenerateSuggestions,
   loading,
   presets,
 }: CalculatorProps) {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [tempHolidays, setTempHolidays] = useState<string>('');
+
+  const applyCustomHolidays = () => {
+    const list: Holiday[] = tempHolidays
+      .split(/[\n,;]+/)
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .map((date) => ({ date, name: 'Personalizado' }));
+    onOptionsChange({ customHolidays: list });
+    onClose();
+  };
+
+  const handleWorkingDayToggle = (day: keyof WorkingDays) => {
+    onOptionsChange({
+      workingDays: { ...options.workingDays, [day]: !options.workingDays[day] },
+    });
+  };
+
   return (
     <Box borderWidth={1} borderRadius="lg" p={6} bg="white" boxShadow="sm">
       <VStack spacing={6} align="stretch">
+        {/* Search period */}
         <Box>
           <FormControl>
-            <FormLabel fontWeight="bold">Ano</FormLabel>
-            <NumberInput
-              value={String(state.year)}
-              onChange={(val) => onChange('year', Number(val) || new Date().getFullYear())}
-              min={2020}
-              max={2030}
+            <FormLabel fontWeight="bold">Período de busca</FormLabel>
+            <RadioGroup
+              value={options.searchPeriod.type}
+              onChange={(v) =>
+                onOptionsChange({
+                  searchPeriod: { ...options.searchPeriod, type: v as SearchPeriod['type'] },
+                })
+              }
             >
-              <NumberInputField />
-            </NumberInput>
+              <HStack spacing={4}>
+                <Radio value="12months">12 meses</Radio>
+                <Radio value="custom">Customizado</Radio>
+              </HStack>
+            </RadioGroup>
+            {options.searchPeriod.type === 'custom' && (
+              <HStack mt={2} spacing={4} wrap="wrap">
+                <Box>
+                  <FormLabel fontSize="sm" color="gray.600">
+                    Início
+                  </FormLabel>
+                  <Input
+                    type="date"
+                    value={options.searchPeriod.start || ''}
+                    onChange={(e) =>
+                      onOptionsChange({
+                        searchPeriod: { ...options.searchPeriod, start: e.target.value },
+                      })
+                    }
+                  />
+                </Box>
+                <Box>
+                  <FormLabel fontSize="sm" color="gray.600">
+                    Fim
+                  </FormLabel>
+                  <Input
+                    type="date"
+                    value={options.searchPeriod.end || ''}
+                    onChange={(e) =>
+                      onOptionsChange({
+                        searchPeriod: { ...options.searchPeriod, end: e.target.value },
+                      })
+                    }
+                  />
+                </Box>
+              </HStack>
+            )}
           </FormControl>
         </Box>
 
         <Divider />
 
+        {/* Location */}
+        <Box>
+          <FormControl>
+            <FormLabel fontWeight="bold">Localização</FormLabel>
+            <HStack spacing={4} wrap="wrap">
+              <Box flex={1} minW="120px">
+                <FormLabel fontSize="sm" color="gray.600">
+                  Estado
+                </FormLabel>
+                <Select
+                  placeholder="Selecione"
+                  value={options.location.state || ''}
+                  onChange={(e) =>
+                    onOptionsChange({
+                      location: { ...options.location, state: e.target.value || undefined },
+                    })
+                  }
+                >
+                  <option value="SP">São Paulo</option>
+                  <option value="RJ">Rio de Janeiro</option>
+                  <option value="MG">Minas Gerais</option>
+                  <option value="BA">Bahia</option>
+                  {/* expand as needed */}
+                </Select>
+              </Box>
+              <Box flex={1} minW="120px">
+                <FormLabel fontSize="sm" color="gray.600">
+                  Cidade
+                </FormLabel>
+                <Input
+                  placeholder="Opcional"
+                  value={options.location.city || ''}
+                  onChange={(e) =>
+                    onOptionsChange({
+                      location: { ...options.location, city: e.target.value || undefined },
+                    })
+                  }
+                />
+              </Box>
+            </HStack>
+          </FormControl>
+        </Box>
+
+        <Divider />
+
+        {/* Working days */}
+        <Box>
+          <FormControl>
+            <HStack mb={2}>
+              <FormLabel fontWeight="bold" mb={0}>
+                Dias úteis
+              </FormLabel>
+              <Tooltip
+                label="Marque quais dias da semana contam como dia útil"
+                placement="top"
+              >
+                <InfoIcon boxSize={4} color="gray.500" />
+              </Tooltip>
+            </HStack>
+            <CheckboxGroup
+              value={Object.keys(options.workingDays).filter(
+                (k) => options.workingDays[k as keyof WorkingDays]
+              )}
+            >
+              <HStack spacing={2} wrap="wrap">
+                {(['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as Array<keyof WorkingDays>).map(
+                  (d) => (
+                    <Checkbox
+                      key={d}
+                      isChecked={options.workingDays[d]}
+                      onChange={() => handleWorkingDayToggle(d)}
+                    >
+                      {d.toUpperCase().slice(0, 2)}
+                    </Checkbox>
+                  )
+                )}
+              </HStack>
+            </CheckboxGroup>
+            <Box fontSize="sm" color="gray.500" mt={1}>
+              {workingDaysToString(options.workingDays)}
+            </Box>
+          </FormControl>
+        </Box>
+
+        <Divider />
+
+        {/* Splits */}
         <Box>
           <FormControl>
             <HStack mb={2}>
@@ -79,8 +241,8 @@ export function Calculator({
                   Presets
                 </FormLabel>
                 <Select
-                  value={state.preset}
-                  onChange={(e) => onChange('preset', e.target.value)}
+                  value={options.preset}
+                  onChange={(e) => onOptionsChange({ preset: e.target.value })}
                 >
                   {Object.keys(presets).map((k) => (
                     <option key={k} value={k}>
@@ -101,8 +263,8 @@ export function Calculator({
                 </Tooltip>
                 <Input
                   placeholder="ex.: 5,5,20"
-                  value={state.customSplits}
-                  onChange={(e) => onChange('customSplits', e.target.value)}
+                  value={options.customSplits}
+                  onChange={(e) => onOptionsChange({ customSplits: e.target.value })}
                 />
               </Box>
             </Stack>
@@ -111,6 +273,7 @@ export function Calculator({
 
         <Divider />
 
+        {/* Bank hours */}
         <Box>
           <FormControl>
             <HStack mb={2}>
@@ -131,8 +294,8 @@ export function Calculator({
                   Horas
                 </FormLabel>
                 <NumberInput
-                  value={String(state.bankHours)}
-                  onChange={(val) => onChange('bankHours', Number(val) || 0)}
+                  value={String(options.bankHours)}
+                  onChange={(val) => onOptionsChange({ bankHours: Number(val) || 0 })}
                   min={0}
                   max={240}
                   step={8}
@@ -146,8 +309,10 @@ export function Calculator({
                   Horas por dia útil
                 </FormLabel>
                 <NumberInput
-                  value={String(state.workHoursPerDay)}
-                  onChange={(val) => onChange('workHoursPerDay', Number(val) || 8)}
+                  value={String(options.workHoursPerDay)}
+                  onChange={(val) =>
+                    onOptionsChange({ workHoursPerDay: Number(val) || 8 })
+                  }
                   min={6}
                   max={12}
                 >
@@ -156,6 +321,13 @@ export function Calculator({
               </Box>
             </Stack>
           </FormControl>
+        </Box>
+
+        <Divider />
+
+        {/* Custom holidays button */}
+        <Box>
+          <Button onClick={onOpen}>Feriados personalizados ({options.customHolidays.length})</Button>
         </Box>
 
         <Divider />
@@ -171,6 +343,30 @@ export function Calculator({
           {loading ? 'Gerando sugestões...' : 'Gerar Sugestões'}
         </Button>
       </VStack>
+
+      {/* Modal for custom holidays */}
+      <Modal isOpen={isOpen} onClose={onClose} size="lg">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Feriados personalizados</ModalHeader>
+          <ModalBody>
+            <Textarea
+              placeholder="Insira datas no formato yyyy-MM-dd, separadas por vírgula ou nova linha"
+              value={tempHolidays}
+              onChange={(e) => setTempHolidays(e.target.value)}
+              rows={6}
+            />
+          </ModalBody>
+          <ModalFooter>
+            <Button variant="ghost" mr={3} onClick={onClose}>
+              Cancelar
+            </Button>
+            <Button colorScheme="brand" onClick={applyCustomHolidays}>
+              Aplicar
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 }

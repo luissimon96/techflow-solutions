@@ -142,30 +142,33 @@ export function CalendarView({
                     isDisabled={!isCurrentMonth}
                     bg={
                       isSelected
-                        ? 'brand.500'
+                        ? '#5B4FA0'
                         : isInSelectedRange
-                          ? 'brand.100'
+                          ? '#87CEEB'
                           : isHolidayDay
-                            ? 'yellow.100'
+                            ? '#FF6B6B'
                             : isWeekendDay && isCurrentMonth
-                              ? 'gray.100'
+                              ? '#F0F0F0'
                               : 'white'
                     }
                     color={
                       isSelected
                         ? 'white'
-                        : isHolidayDay || isWeekendDay
-                          ? 'gray.600'
-                          : 'black'
+                        : isHolidayDay
+                          ? 'white'
+                          : isWeekendDay
+                            ? 'gray.600'
+                            : 'black'
                     }
                     borderColor={isCurrentMonth ? 'gray.300' : 'transparent'}
                     borderWidth={1}
                     _hover={
                       isCurrentMonth
-                        ? { bg: isSelected ? 'brand.600' : 'brand.50', cursor: 'pointer' }
+                        ? { bg: isSelected ? '#4A3F80' : '#E0E0E0', cursor: 'pointer' }
                         : {}
                     }
                     opacity={isCurrentMonth ? 1 : 0.4}
+                    fontWeight={isSelected || isInSelectedRange ? 'bold' : 'normal'}
                   >
                     <VStack spacing={0.5}>
                       <Text>{day ? format(day, 'd') : ''}</Text>

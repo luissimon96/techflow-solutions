@@ -9,8 +9,20 @@ import {
 } from '@chakra-ui/react';
 import { useVacationCalculator, Suggestion } from '@/hooks/useVacationCalculator';
 import { fetchHolidays } from '@/lib/holidays';
-import { Calculator, CalendarView, SuggestionsList, ExportPanel } from '@/components/VacationPlanner';
-import type { CalculatorState, AppliedSegment } from '@/components/VacationPlanner';
+import {
+  Calculator,
+  CalendarView,
+  SuggestionsList,
+  ExportPanel,
+} from '@/components/VacationPlanner';
+import type { AppliedSegment } from '@/components/VacationPlanner';
+import {
+  VacationOptions,
+  Holiday,
+  WorkingDays,
+  SearchPeriod,
+  LocationInfo,
+} from '@/types/vacation';
 
 const presets: Record<string, number[]> = {
   '5+5+20': [5, 5, 20],
@@ -19,12 +31,27 @@ const presets: Record<string, number[]> = {
 };
 
 export default function VacationPlanner() {
-  const [state, setState] = useState<CalculatorState>({
-    year: new Date().getFullYear(),
+  const defaultWorking: WorkingDays = {
+    mon: true,
+    tue: true,
+    wed: true,
+    thu: true,
+    fri: true,
+    sat: false,
+    sun: false,
+  };
+
+  const [options, setOptions] = useState<VacationOptions>({
+    totalDays: 30,
+    splits: [5, 5, 20],
     preset: '5+5+20',
     customSplits: '',
-    bankHours: 0,
+    bankDays: 0,
     workHoursPerDay: 8,
+    searchPeriod: { type: '12months' },
+    workingDays: defaultWorking,
+    location: {},
+    customHolidays: [],
   });
 
   const [results, setResults] = useState<Record<string, Suggestion[]>>({});
@@ -33,45 +60,41 @@ export default function VacationPlanner() {
   const [appliedSegments, setAppliedSegments] = useState<AppliedSegment[]>([]);
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
 
-  const { generateSuggestions } = useVacationCalculator();
+  const { generateSuggestions } = useVacationCalculator(
+    [],
+    () => [],
+    () => []
+  );
   const toast = useToast();
 
-  const handleStateChange = (key: keyof CalculatorState, value: any) => {
-    setState((prev) => ({ ...prev, [key]: value }));
+  const handleOptionsChange = (opts: Partial<VacationOptions>) => {
+    setOptions((prev) => ({ ...prev, ...opts }));
   };
 
   const handleGenerateSuggestions = async () => {
     setLoading(true);
     try {
-      // Fetch holidays
-      const holidayData = await fetchHolidays(state.year, 'BR');
-      const holidaySet = new Set(holidayData.map((h) => h.date));
-      setHolidays(holidaySet);
+      // fetch just national holidays for earlier calendar visualization
+      const year = new Date().getFullYear();
+      const holidayData = await fetchHolidays(year, 'BR');
+      setHolidays(new Set(holidayData.map((h) => h.date)));
 
-      // Parse splits
-      let splits = presets[state.preset] || [30];
-      if (state.customSplits.trim()) {
-        const custom = state.customSplits.split(',').map((s) => {
-          const num = parseInt(s.trim(), 10);
-          return isNaN(num) ? 0 : num;
-        });
-        if (custom.some((n) => n > 0)) {
-          splits = custom;
-        }
+      // compute splits array
+      let splits = presets[options.preset] || [30];
+      if (options.customSplits.trim()) {
+        const custom = options.customSplits
+          .split(',')
+          .map((s) => parseInt(s.trim(), 10))
+          .filter((n) => !isNaN(n) && n > 0);
+        if (custom.length) splits = custom;
       }
+      const optsForCalc = { ...options, splits };
 
-      // Generate suggestions
-      const suggestions = await generateSuggestions(
-        state.year,
-        splits,
-        state.bankHours,
-        state.workHoursPerDay
-      );
-
+      const suggestions = await generateSuggestions(optsForCalc);
       setResults(suggestions);
       toast({
         title: 'Sugestões geradas!',
-        description: `${Object.values(suggestions).flat().length} opção(ões) disponível(is)`,
+        description: `${suggestions.length} opção(ões) disponível(is)`,
         status: 'success',
         duration: 4000,
       });
@@ -92,7 +115,7 @@ export default function VacationPlanner() {
       id: segmentId,
       start: suggestion.start,
       end: suggestion.end,
-      daysTaken: suggestion.daysTaken,
+      daysTaken: suggestion.workingDaysConsumed,
       gain: suggestion.gain,
     };
 
@@ -140,8 +163,8 @@ export default function VacationPlanner() {
 
         {/* Calculator Section */}
         <Calculator
-          state={state}
-          onChange={handleStateChange}
+          options={options}
+          onOptionsChange={handleOptionsChange}
           onGenerateSuggestions={handleGenerateSuggestions}
           loading={loading}
           presets={presets}
@@ -157,7 +180,7 @@ export default function VacationPlanner() {
                 📆 Calendário
               </Heading>
               <CalendarView
-                year={state.year}
+                year={new Date().getFullYear()}
                 month={selectedMonth}
                 holidays={holidays}
               />
@@ -195,7 +218,7 @@ export default function VacationPlanner() {
               </Heading>
               <ExportPanel
                 appliedSegments={appliedSegments}
-                year={state.year}
+                year={new Date().getFullYear()}
                 onClearAll={handleClearAll}
               />
             </Box>

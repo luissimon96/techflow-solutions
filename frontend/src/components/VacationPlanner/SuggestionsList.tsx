@@ -20,8 +20,8 @@ import { format, parseISO } from 'date-fns';
 export interface Suggestion {
   start: string;
   end: string;
-  daysTaken: number;
-  spanDays: number;
+  workingDaysConsumed: number;
+  calendarSpan: number;
   gain: number;
   description?: string;
 }
@@ -78,7 +78,7 @@ export function SuggestionsList({ results, onApply, onCompare }: SuggestionsList
                       return (
                         <Tr key={idx} _hover={{ bg: 'gray.50' }}>
                           <Td>
-                            <Text fontSize="sm">
+                            <Text fontSize="sm" fontWeight="semibold">
                               {start} até {end}
                             </Text>
                             <Text fontSize="xs" color="gray.600">
@@ -86,9 +86,11 @@ export function SuggestionsList({ results, onApply, onCompare }: SuggestionsList
                             </Text>
                           </Td>
                           <Td isNumeric>
-                            <Badge colorScheme="purple">{s.daysTaken}d</Badge>
+                            <Badge colorScheme="purple">{s.workingDaysConsumed}d</Badge>
                           </Td>
-                          <Td isNumeric>{s.spanDays}d</Td>
+                          <Td isNumeric>
+                            <Badge colorScheme="blue">{s.calendarSpan}d</Badge>
+                          </Td>
                           <Td isNumeric>
                             <Badge colorScheme={gainColor} fontSize="md" fontWeight="bold">
                               +{s.gain}d
@@ -100,8 +102,9 @@ export function SuggestionsList({ results, onApply, onCompare }: SuggestionsList
                                 size="xs"
                                 colorScheme="brand"
                                 onClick={() => onApply?.(s, segmentId)}
+                                fontWeight="bold"
                               >
-                                Aplicar
+                                ✓ Aplicar
                               </Button>
                               <Button
                                 size="xs"
@@ -109,7 +112,7 @@ export function SuggestionsList({ results, onApply, onCompare }: SuggestionsList
                                 colorScheme="brand"
                                 onClick={() => onCompare?.(s, segmentId)}
                               >
-                                Compartilhar
+                                📊 Info
                               </Button>
                             </HStack>
                           </Td>
