@@ -25,3 +25,11 @@ logs
 
 # Testing
 coverage 
+
+# Jest artifacts
+node_modules/.cache/jest/
+.cache/jest/
+jest-debug.log
+jest-test-results.json
+.jest
+.jest-cache

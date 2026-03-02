@@ -6,6 +6,16 @@ node_modules
 # Testes
 coverage
 
+# Jest artifacts
+# Jest cache directories
+node_modules/.cache/jest/
+.cache/jest/
+# Jest debug/log files
+jest-debug.log
+jest-test-results.json
+.jest
+.jest-cache
+
 # Produção
 build
 dist
