@@ -24,7 +24,7 @@ import {
   FaCheck,
   FaWhatsapp
 } from 'react-icons/fa';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import {
   itServices,
@@ -33,10 +33,33 @@ import {
 } from '../data/itServices';
 
 const ITServices = () => {
+  const navigate = useNavigate();
   const bgColor = useColorModeValue('gray.50', 'gray.900');
   const cardBg = useColorModeValue('white', 'gray.800');
   const textColor = useColorModeValue('gray.600', 'gray.300');
   const borderColor = useColorModeValue('gray.100', 'gray.700');
+
+  // Handle quote request with pre-filled form
+  const handleQuoteRequest = (service: typeof itServices[0]) => {
+    // Convert category to a more readable format
+    const serviceTypeMap: Record<string, string> = {
+      'support': 'Suporte Técnico',
+      'security': 'Segurança Cibernética',
+      'cloud': 'Serviços em Nuvem',
+      'maintenance': 'Manutenção de TI'
+    };
+
+    navigate('/orcamento', {
+      state: {
+        projectName: service.title,
+        projectType: serviceTypeMap[service.category] || service.category,
+        timeline: service.duration,
+        budget: 'A definir',
+        projectDescription: service.description,
+        mainGoals: service.benefits.join(', '),
+      },
+    });
+  };
 
   // Serviços em destaque
   const featuredServices = itServices.filter(service => service.featured);
@@ -243,8 +266,8 @@ const ITServices = () => {
                             variant="subtle"
                             colorScheme={
                               service.category === 'support' ? 'blue' :
-                              service.category === 'security' ? 'red' :
-                              service.category === 'cloud' ? 'purple' : 'green'
+                                service.category === 'security' ? 'red' :
+                                  service.category === 'cloud' ? 'purple' : 'green'
                             }
                           >
                             {service.category === 'support' && 'Suporte'}
@@ -291,8 +314,7 @@ const ITServices = () => {
                         </Box>
 
                         <Button
-                          as={RouterLink}
-                          to="/orcamento"
+                          onClick={() => handleQuoteRequest(service)}
                           colorScheme="brand"
                           size="md"
                           width="full"
@@ -374,8 +396,7 @@ const ITServices = () => {
                         </HStack>
 
                         <Button
-                          as={RouterLink}
-                          to="/orcamento"
+                          onClick={() => handleQuoteRequest(service)}
                           size="sm"
                           colorScheme="brand"
                           width="full"
@@ -474,8 +495,10 @@ const ITServices = () => {
                         </VStack>
 
                         <Button
-                          as={RouterLink}
-                          to="/orcamento"
+                          onClick={() => {
+                            const selectedService = itServices.find(s => s.featured) || itServices[0];
+                            handleQuoteRequest(selectedService);
+                          }}
                           colorScheme="brand"
                           size="md"
                           width="full"
@@ -580,8 +603,10 @@ const ITServices = () => {
                         </VStack>
 
                         <Button
-                          as={RouterLink}
-                          to="/orcamento"
+                          onClick={() => {
+                            const selectedService = itServices.find(s => s.featured) || itServices[0];
+                            handleQuoteRequest(selectedService);
+                          }}
                           colorScheme="brand"
                           size="md"
                           width="full"
