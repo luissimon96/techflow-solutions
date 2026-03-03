@@ -46,4 +46,3 @@ If anything here is unclear or you want more examples, ask and reference the fil
 - See `docs/ARCHITECTURE.md` for detailed architecture and design patterns
 - See `docs/DEPLOYMENT.md` for deployment procedures and production setup
 - See `docs/CHANGELOG.md` for recent changes and removed features
-- See `CLAUDE.md` for critical fixes and important notes

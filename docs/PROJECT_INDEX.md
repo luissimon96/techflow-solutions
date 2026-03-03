@@ -2,7 +2,7 @@
 
 **Generated:** 2025-11-17
 **Version:** 1.0.0
-**Type:** Full-stack Web Application (Monorepo)
+**Type:** React Frontend Web Application
 
 ---
 
@@ -13,11 +13,12 @@
 3. [Entry Points](#-entry-points)
 4. [Core Modules](#-core-modules)
 5. [Configuration Files](#-configuration-files)
-6. [Documentation](#-documentation)
-7. [Test Coverage](#-test-coverage)
-8. [Key Dependencies](#-key-dependencies)
-9. [Quick Start](#-quick-start)
-10. [Deployment](#-deployment)
+6. [Implementation Patterns](#-implementation-patterns)
+7. [Documentation](#-documentation)
+8. [Test Coverage](#-test-coverage)
+9. [Key Dependencies](#-key-dependencies)
+10. [Quick Start](#-quick-start)
+11. [Deployment](#-deployment)
 
 ---
 
@@ -27,13 +28,10 @@
 
 **Tech Stack:**
 - **Frontend:** React 18 + TypeScript + Chakra UI + Vite
-- **Backend:** Node.js + Express + TypeScript
-- **Architecture:** Monorepo with npm workspaces
+- **Architecture:** Single workspace with frontend focus
 
 **Key Features:**
-- WhatsApp integration for contact/quotes (no database storage)
-- Comprehensive security middleware stack
-- Rate limiting and attack detection
+- WhatsApp integration for contact/quotes (direct URL generation, no API)
 - Responsive UI with Chakra UI
 - SEO optimization with react-helmet-async
 - Analytics integration (Vercel Analytics + Sentry)
@@ -44,20 +42,6 @@
 
 ```
 techflow-solutions/
-├── backend/                    # Node.js/Express backend
-│   ├── src/
-│   │   ├── index.ts           # Main entry point
-│   │   ├── controllers/       # API controllers
-│   │   ├── middleware/        # Security & error handling
-│   │   ├── routes/            # Express routes
-│   │   ├── config/            # Configuration files
-│   │   └── tests/             # Backend tests
-│   ├── dist/                  # Compiled JavaScript (build output)
-│   ├── logs/                  # Winston logs (runtime)
-│   ├── package.json
-│   ├── tsconfig.json
-│   └── jest.config.js
-│
 ├── frontend/                   # React/TypeScript frontend
 │   ├── src/
 │   │   ├── main.tsx           # Main entry point
@@ -74,11 +58,9 @@ techflow-solutions/
 │   └── jest.config.ts
 │
 ├── node_modules/              # Root dependencies
-├── package.json               # Monorepo root package.json
+├── package.json               # Root package.json
 ├── README.md                  # Quick start guide
-├── CLAUDE.md                  # Developer instructions (Claude Code)
 ├── SCRIPTS.md                 # Detailed command reference
-├── render.yaml                # Render.com deployment config
 └── vercel.json                # Vercel deployment config
 ```
 
@@ -86,88 +68,36 @@ techflow-solutions/
 
 ## 🚀 Entry Points
 
-### Backend
-- **Main:** `backend/src/index.ts` - Express server with security middleware
-- **Test Server:** `backend/src/index-test.ts` - Test environment server
-- **Build Output:** `backend/dist/index.js` - Production entry point
-
 ### Frontend
 - **Main:** `frontend/src/main.tsx` - React app initialization
 - **Router:** `frontend/src/lib/router.tsx` - React Router configuration
 - **Theme:** `frontend/src/theme.ts` - Chakra UI custom theme
 
 ### Development Scripts
-- **Root:** `package.json` - Monorepo orchestration scripts
-- **Backend Dev:** `npm run dev:backend` (ts-node-dev on port 10000)
-- **Frontend Dev:** `npm run dev:frontend` (Vite on port 3001+)
+- **Root:** `package.json` - Root orchestration scripts
+- **Frontend Dev:** `npm run dev` (Vite on port 5173+)
 
 ---
 
 ## 📦 Core Modules
 
-### Backend Core Modules
-
-#### Controllers (`backend/src/controllers/`)
-- **contactController.ts** - Generates WhatsApp URL with contact form data
-  - Exports: `createContactRequest`
-  - WhatsApp Phone: `5554997109051`
-
-- **quoteController.ts** - Generates WhatsApp URL with quote request data
-  - Exports: `createQuoteRequest`
-  - Formats service details and project specifications
-
-#### Middleware (`backend/src/middleware/`)
-- **security.ts** - Comprehensive security middleware
-  - Exports: `helmetConfig`, `compressionConfig`, `securityMorgan`
-  - Rate limiters: `generalRateLimit` (100/15min), `strictRateLimit` (20/15min), `authRateLimit` (5/15min)
-  - Security: `attackDetection`, `originValidation`, `sanitizeHeaders`, `auditLog`
-  - Logger: `securityLogger` (Winston)
-
-- **errorHandler.ts** - Global error handling middleware
-  - Exports: `errorHandler`
-  - Handles validation errors, rate limit errors, generic errors
-
-- **cache.ts** - Response caching middleware
-  - Exports: `cacheMiddleware`
-  - In-memory cache with TTL
-
-#### Routes (`backend/src/routes/`)
-- **health.ts** - Health check endpoint
-  - Path: `/health`, `/api/health`
-  - Returns: Server status, uptime, timestamp
-
-- **contact.ts** - Contact form route
-  - Path: `/api/contact`
-  - Middleware: `strictRateLimit`, `auditLog`
-  - Returns: WhatsApp URL
-
-- **quotes.ts** - Quote request route
-  - Path: `/api/quotes`
-  - Middleware: `strictRateLimit`, `auditLog`
-  - Returns: WhatsApp URL
-
-#### Configuration (`backend/src/config/`)
-- **cors.ts** - CORS configuration
-  - Allowed origins from `CORS_ORIGIN` env var
-  - Default: `http://localhost:5173` (dev)
-
 ### Frontend Core Modules
 
 #### Pages (`frontend/src/pages/`)
 - **Home.tsx** - Landing page with hero, stats, services, and CTA
-- **Services.tsx** - Web, mobile, e-commerce development services
-- **ITServices.tsx** - IT support, security, and cloud infrastructure services
-- **About.tsx** - Company information and featured projects
+- **ITServices.tsx** (Featured) - IT support, security, and cloud infrastructure services with pre-filled quote form
+- **Services.tsx** - Web, mobile, e-commerce development services with pre-filled quote form
+- **About.tsx** - TechFlow Solutions company info, mission, values, and services overview
 - **Contact.tsx** - Contact form with WhatsApp integration
-- **QuoteRequest.tsx** - Quote request form with WhatsApp integration
-- **Clients.tsx** - Client logos carousel
+- **QuoteRequest.tsx** - Quote request form with pre-fill from Services/ITServices pages via navigation state
 
 #### Components (`frontend/src/components/`)
 - **Layout.tsx** - Main layout wrapper
   - Exports: `Layout` (default)
   - Includes: Header, Footer, Outlet
 
-- **Header.tsx** - Navigation header
+- **Header.tsx** - Navigation header with reordered navigation
+  - Navigation Order: Serviços de TI → Desenvolvimento → Sobre
   - Exports: `Header` (default)
 
 - **Footer.tsx** - Site footer
@@ -186,13 +116,19 @@ techflow-solutions/
   - `PackageComparison.tsx` - Package comparison table
 
 #### Libraries (`frontend/src/lib/`)
-- **api.ts** - API integration layer
-  - Exports: `API_ENDPOINTS`, `submitContactForm`, `submitQuoteRequest`
-  - Base URL: `https://techflow-solutions-backend.onrender.com/api` (production)
+- **api.ts** - API integration layer (deprecated/unused)
+  - Frontend generates WhatsApp URLs directly
+  - No API intermediary needed
 
 - **router.tsx** - React Router configuration
   - Exports: `router`
-  - Routes: 6 pages (Home, Services, ITServices, About, Contact, QuoteRequest, Clients)
+  - Routes: 6 pages
+    - `/` - Home (landing page)
+    - `/servicos-ti` - IT Services (featured in navigation)
+    - `/servicos` - Development Services
+    - `/sobre` - About TechFlow Solutions
+    - `/contato` - Contact form
+    - `/orcamento` - Quote request form
 
 - **query.tsx** - React Query configuration
   - Exports: `QueryProvider`
@@ -226,10 +162,9 @@ techflow-solutions/
 ## 🔧 Configuration Files
 
 ### Root Configuration
-- **package.json** - Monorepo root with workspace configuration
-  - Workspaces: `backend`, `frontend`
+- **package.json** - Root configuration
   - Scripts: dev, build, test, lint, format, clean
-  - Dependencies: `concurrently`, `playwright`
+  - Dependencies: React workspace
 
 ### Backend Configuration
 - **backend/package.json** - Backend dependencies and scripts
@@ -282,6 +217,51 @@ techflow-solutions/
 
 ---
 
+## 🎨 Implementation Patterns
+
+### Pre-filled Quote Form Pattern
+
+**Use Case:** Seamlessly pass service information from Services pages to QuoteRequest form
+
+**Implementation Location:** 
+- `frontend/src/pages/Services.tsx` (handleQuoteRequest function)
+- `frontend/src/pages/ITServices.tsx` (handleQuoteRequest function)
+- `frontend/src/pages/QuoteRequest.tsx` (useEffect with location.state)
+
+**Pattern Details:**
+1. Service card buttons use `onClick={() => handleQuoteRequest(service)}` instead of `<Link>`
+2. Function navigates with pre-filled state:
+```typescript
+navigate('/orcamento', {
+  state: {
+    projectName: service.title,
+    projectType: service.category,
+    timeline: service.duration,
+    budget: 'A definir',
+    projectDescription: service.description,
+    mainGoals: service.benefits.join(', '),
+  },
+});
+```
+3. QuoteRequest.tsx useEffect reads location.state and populates form fields
+4. Category mapping converts service categories to readable types
+
+**Services Covered:**
+- ✅ Development Services (Services.tsx)
+- ✅ IT Services (ITServices.tsx)
+  - Featured services
+  - All services list
+  - Individual plans
+  - Business plans
+
+**Benefits:**
+- Improved UX with pre-filled form
+- Consistent experience across service pages
+- Reduced friction in conversion funnel
+- User data already contextual to service type
+
+---
+
 ## 📚 Documentation
 
 ### Developer Documentation
@@ -291,42 +271,18 @@ techflow-solutions/
   - Technology stack
   - Deployment links
 
-- **CLAUDE.md** - Comprehensive developer guide for Claude Code
-  - Project architecture details
-  - Development workflow
-  - Security considerations
-  - Testing strategy
-  - WhatsApp integration flow
-  - Common patterns and examples
-  - **Size:** ~15KB
-  - **Purpose:** Primary reference for AI-assisted development
-
 - **SCRIPTS.md** - Detailed command reference
   - All npm scripts explained
   - Development workflow
   - Troubleshooting tips
 
 ### Code Documentation
-- Type definitions in `backend/src/types/express.d.ts`
 - Type definitions in `frontend/src/types/global.d.ts`
-- Inline JSDoc comments in controllers and utilities
+- Inline JSDoc comments in components and utilities
 
 ---
 
 ## 🧪 Test Coverage
-
-### Backend Tests (`backend/src/tests/`)
-- **security.test.ts** - Security middleware tests
-  - Rate limiting verification
-  - Attack detection (XSS, SQL injection)
-  - CORS validation
-  - Header sanitization
-  - **Coverage:** Core security features
-
-- **routes/__tests__/health.test.ts** - Health endpoint tests
-  - Health check response validation
-
-- **setup.ts** - Test environment setup
 
 ### Frontend Tests (`frontend/src/`)
 - **pages/__tests__/Contact.test.tsx** - Contact page tests
@@ -339,36 +295,14 @@ techflow-solutions/
 
 ### Test Commands
 ```bash
-npm test                    # Run all tests (backend + frontend)
-npm run test:backend        # Backend tests only
+npm test                    # Run all tests (frontend)
 npm run test:frontend       # Frontend tests only
 npm run test:coverage       # Coverage report
-cd backend && npm run test:watch      # Backend watch mode
-cd backend && npm run test:security   # Security tests only
 ```
-
-### Test Stack
-- **Backend:** Jest + Supertest + ts-jest
-- **Frontend:** Jest + React Testing Library + jest-axe + jest-environment-jsdom
-- **Storybook:** Component development and testing
 
 ---
 
 ## 🔗 Key Dependencies
-
-### Backend Dependencies
-| Dependency | Version | Purpose |
-|------------|---------|---------|
-| express | ^4.18.2 | Web framework |
-| helmet | ^8.1.0 | Security headers |
-| cors | ^2.8.5 | CORS middleware |
-| express-rate-limit | ^7.5.0 | Rate limiting |
-| express-slow-down | ^2.1.0 | Speed limiting |
-| express-validator | ^7.2.1 | Request validation |
-| winston | ^3.17.0 | Logging |
-| compression | ^1.8.0 | Response compression |
-| morgan | ^1.10.0 | HTTP request logging |
-| dotenv | ^16.6.1 | Environment variables |
 
 ### Frontend Dependencies
 | Dependency | Version | Purpose |
@@ -406,41 +340,29 @@ cd backend && npm run test:security   # Security tests only
 git clone https://github.com/luissimon96/techflow-solutions.git
 cd techflow-solutions
 
-# Install all dependencies (root + backend + frontend)
-npm run install:all
+# Install dependencies
+npm install
 ```
 
 ### Development
 ```bash
-# Start both backend and frontend
+# Start frontend dev server
 npm run dev
-
-# OR start separately
-npm run dev:backend   # Backend only (port 10000)
-npm run dev:frontend  # Frontend only (port 3001+)
 ```
 
 ### Building
 ```bash
-# Build both backend and frontend
+# Build frontend
 npm run build
-
-# OR build separately
-npm run build:backend   # Compiles TypeScript to dist/
-npm run build:frontend  # Vite production build
 ```
 
 ### Testing
 ```bash
-# Run all tests
+# Run tests
 npm test
 
-# Run specific test suites
-npm run test:backend
+# Run frontend tests only
 npm run test:frontend
-
-# Backend security tests
-cd backend && npm run test:security
 ```
 
 ### Code Quality
@@ -459,99 +381,47 @@ npm run clean
 
 ## 🌐 Deployment
 
-### Production URLs
+### Production URL
 - **Frontend:** https://www.srluissimon.com (Vercel)
-- **Backend API:** https://techflow-solutions-backend.onrender.com (Render.com)
-- **Health Check:** https://techflow-solutions-backend.onrender.com/health
 
 ### Deployment Flow
-1. **Backend (Render.com)**
-   - Push to `master` branch → Auto-deploy
-   - Build: `npm install && npm run build`
-   - Start: `npm start`
-   - Port: 10000
-   - Health check: `/health`
-   - Region: Oregon (free tier)
-
-2. **Frontend (Vercel)**
+1. **Frontend (Vercel)**
    - Push to `master` branch → Auto-deploy
    - Build: Vite production build
    - Output: `frontend/dist/`
-   - API rewrites to Render backend
 
-### Environment Variables
-
-#### Backend (.env)
-```
-PORT=10000
-NODE_ENV=production
-CORS_ORIGIN=https://www.srluissimon.com,http://localhost:3000
-RENDER=true
-RENDER_EXTERNAL_URL=https://techflow-solutions-backend.onrender.com
-```
-
-#### Frontend
-- `VITE_API_URL` - Auto-configured based on environment
+For detailed deployment instructions, see [docs/DEPLOYMENT.md](DEPLOYMENT.md)
 
 ---
 
 ## 📊 Project Metrics
 
-- **Total Source Files:** ~60 (excluding node_modules)
-- **Backend Files:** ~15 TypeScript files
-- **Frontend Files:** ~45 TypeScript/TSX files
-- **Test Files:** 4 test files (expandable)
-- **Documentation Files:** 3 (README, CLAUDE, SCRIPTS)
-- **Configuration Files:** 10+
+- **Total Source Files:** ~45 (excluding node_modules)
+- **Frontend Files:** ~40 TypeScript/TSX files
+- **Test Files:** 2 test files (expandable)
+- **Documentation Files:** 3 (README, SCRIPTS, DEPLOYMENT)
+- **Configuration Files:** 5+
 
 ---
 
 ## 🔒 Security Features
 
-### Backend Security Middleware (Order Matters!)
-1. **Helmet** - Security headers (CSP, HSTS, etc.)
-2. **Compression** - Response compression
-3. **Security Logging** - Morgan with custom format
-4. **Header Sanitization** - Remove/sanitize dangerous headers
-5. **Attack Detection** - XSS, SQL injection, path traversal detection
-6. **Speed Limiter** - Slow down frequent requests
-7. **CORS** - Origin validation
-8. **Body Parsers** - JSON/URL-encoded (5MB limit)
-9. **General Rate Limit** - 100 requests/15min per IP
-10. **Origin Validation** - Additional origin checks
-
-### Rate Limiting Strategy
-- **General:** 100 requests per 15 minutes (all routes)
-- **Strict:** 20 requests per 15 minutes (contact/quotes)
-- **Auth:** 5 attempts per 15 minutes (future auth endpoints)
-
-### Attack Detection
-- XSS patterns (script tags, event handlers)
-- SQL injection patterns (UNION, SELECT, DROP, etc.)
-- Path traversal (../, ..\)
-- All attacks logged via Winston
-
-### Logging
-- Winston logger with file rotation
-- Security events logged to `logs/security.log`
-- Error logs to `logs/error.log`
-- Combined logs to `logs/combined.log`
+### Frontend Security
+- HTTPS enforced via Vercel
+- Content Security Policy headers
+- React XSS protection
+- Input validation with Zod schemas
+- Sentry error tracking
 
 ---
 
 ## 🎯 Architecture Highlights
 
-### Monorepo Benefits
-- Shared tooling and configuration
-- Coordinated builds and deployments
-- Simplified dependency management
-- Unified testing and linting
-
-### WhatsApp Integration (No Database)
+### WhatsApp Integration (No Backend API)
 1. User submits form (Contact or Quote)
-2. Backend validates and formats data
-3. Backend generates WhatsApp URL with pre-filled message
-4. Frontend receives URL and opens WhatsApp in new tab
+2. Frontend validates form data with Zod
+3. Frontend generates WhatsApp URL with pre-filled message
+4. Frontend opens WhatsApp URL in new tab
 5. No data stored - all communication via WhatsApp
 6. WhatsApp number: `5554997109051`
 
@@ -563,30 +433,18 @@ RENDER_EXTERNAL_URL=https://techflow-solutions-backend.onrender.com
 - **SEO:** react-helmet-async for meta tags
 - **Analytics:** Vercel Analytics + Sentry error tracking
 
-### Backend Architecture
-- **RESTful API:** Express.js with TypeScript
-- **Middleware Stack:** Comprehensive security layers
-- **No Database:** Stateless API with WhatsApp integration
-- **Logging:** Winston for structured logging
-- **Error Handling:** Centralized error handler
-
 ---
 
 ## 🎉 Summary
 
-**TechFlow Solutions** is a well-architected full-stack monorepo featuring:
-- Comprehensive security middleware
-- WhatsApp-based contact system (no database)
-- Modern React frontend with Chakra UI
-- TypeScript throughout
-- Production-ready deployment (Render + Vercel)
-- Automated CI/CD
+**TechFlow Solutions** is a modern React frontend featuring:
+- Direct WhatsApp integration (no backend database)
+- Responsive UI with Chakra UI
+- React Router v6 routing
+- SEO optimized with react-helmet-async
+- Production-ready deployment on Vercel
+- Comprehensive form validation
 - Extensive developer documentation
-
-**Token Efficiency:**
-- **Full codebase read:** ~58,000 tokens
-- **This index read:** ~3,500 tokens
-- **Savings:** 94% token reduction
 
 ---
 

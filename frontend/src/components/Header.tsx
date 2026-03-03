@@ -132,9 +132,10 @@ export default function Header() {
   }, [location.pathname, onClose]);
 
   const navigationItems = [
-    { path: '/servicos', label: 'Desenvolvimento', description: 'Web, mobile e e-commerce', isExternal: false },
     { path: '/servicos-ti', label: 'Serviços de TI', description: 'Suporte, segurança e infraestrutura', isExternal: false },
+    { path: '/servicos', label: 'Desenvolvimento', description: 'Web, mobile e e-commerce', isExternal: false },
     { path: '/sobre', label: 'Sobre', description: 'Nossa história e missão', isExternal: false },
+    { path: '/contato', label: 'Contato', description: 'Entre em contato conosco', isExternal: false },
   ];
 
   return (

@@ -8,10 +8,6 @@
   ],
   "rewrites": [
     {
-      "source": "/api/:path*",
-      "destination": "https://api.techflow.com.br/:path*"
-    },
-    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
@@ -35,8 +31,6 @@
       ]
     }
   ],
-  "env": {
-    "VITE_API_URL": "https://techflow-solutions-backend.onrender.com"
-  },
-  "buildCommand": "npm run build:frontend"
+  "env": {},
+  "buildCommand": "cd frontend && npm run build"
 }

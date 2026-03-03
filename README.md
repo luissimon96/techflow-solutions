@@ -1,6 +1,6 @@
 # 🚀 TechFlow Solutions
 
-**Full-stack web application** para empresa de desenvolvimento de software, construída com React/TypeScript (frontend) e Node.js/Express (backend) com integração WhatsApp.
+**React frontend web application** para empresa de desenvolvimento de software, construída com React/TypeScript + Chakra UI com integração WhatsApp nativa.
 
 ## 🚀 Início Rápido
 
@@ -13,27 +13,27 @@ cd techflow-solutions
 npm run install:all
 
 # Iniciar desenvolvimento
-npm run dev
+npm run dev  # Inicia frontend em http://localhost:5173
 ```
 
 ## 📋 Scripts Principais
 
 ```bash
-npm run dev          # Backend + Frontend
-npm run dev:backend  # Apenas backend (porta 10000)
-npm run dev:frontend # Apenas frontend (porta 3001+)
-npm run build        # Build completo
-npm test             # Testes
+npm run dev          # Iniciar frontend (porta 5173)
+npm run dev:frontend # Apenas frontend
+npm run build        # Build para produção
+npm test             # Executar testes
 npm run lint         # Verificação de código
 ```
 
 ## 🛠️ Stack Tecnológica
 
 ### Frontend
-- React 18 + TypeScript + Chakra UI + Vite
-
-### Backend  
-- Node.js + Express + TypeScript + WhatsApp Integration
+- React 18 + TypeScript
+- Chakra UI + Framer Motion (animações)
+- Vite (build tool)
+- React Router v6 (navegação)
+- React Query (state management)
 
 ## 📱 Funcionalidades
 
@@ -47,34 +47,32 @@ npm run lint         # Verificação de código
 
 ```
 techflow-solutions/
-├── backend/         # API Node.js
-├── frontend/        # React App
+├── frontend/        # React App + Vite
 ├── docs/            # Documentação centralizada
-│   ├── CHANGELOG.md # Histórico de mudanças
-│   ├── ARCHITECTURE.md # Arquitetura do projeto
-│   └── DEPLOYMENT.md   # Guia de deployment
-├── SCRIPTS.md       # Comandos detalhados
-└── package.json     # Scripts raiz
+│   ├── CHANGELOG.md       # Histórico de mudanças
+│   ├── ARCHITECTURE.md    # Arquitetura do projeto
+│   ├── DEPLOYMENT.md      # Guia de deployment (Vercel)
+│   ├── PROJECT_INDEX.md   # Índice detalhado
+│   └── SCRIPTS.md         # Comandos detalhados
+└── package.json          # Scripts raiz
 ```
 
 ## 📚 Documentação
 
 - **[ARCHITECTURE.md](./docs/ARCHITECTURE.md)** - Arquitetura, padrões e estrutura do projeto
-- **[DEPLOYMENT.md](./docs/DEPLOYMENT.md)** - Guia completo para deploy em Render e Vercel
+- **[DEPLOYMENT.md](./docs/DEPLOYMENT.md)** - Guia de deployment em Vercel
 - **[CHANGELOG.md](./docs/CHANGELOG.md)** - Histórico de todas as mudanças
-- **[CLAUDE.md](./CLAUDE.md)** - Instruções para IA (Claude Code)
-- **[PROJECT_INDEX.md](./PROJECT_INDEX.md)** - Índice detalhado do projeto
-- **[SCRIPTS.md](./SCRIPTS.md)** - Referência de comandos
+- **[PROJECT_INDEX.md](./docs/PROJECT_INDEX.md)** - Índice detalhado do projeto
+- **[SCRIPTS.md](./docs/SCRIPTS.md)** - Referência de comandos disponíveis
 
 ## 🔗 Links
 
 - **Site:** https://www.srluissimon.com
-- **API:** https://techflow-solutions-backend.onrender.com
-- **Health:** https://techflow-solutions-backend.onrender.com/health
+- **GitHub:** https://github.com/luissimon96/techflow-solutions
 
 ## 🚀 Deploy
 
-O projeto usa deploy automático no Render. Push para `master` dispara deploy automático.
+O projeto é deployado automaticamente em Vercel quando há push para `master`. Configuração em `vercel.json`.
 
 ---
 

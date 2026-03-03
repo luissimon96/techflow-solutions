@@ -266,19 +266,6 @@ export default function Home() {
                 >
                   Começar Projeto
                 </Button>
-                <Button
-                  as={RouterLink}
-                  to="/clientes"
-                  size="lg"
-                  variant="outline"
-                  colorScheme="brand"
-                  _hover={{
-                    transform: "translateY(-2px)",
-                    boxShadow: "md"
-                  }}
-                >
-                  Ver Projetos
-                </Button>
               </SimpleGrid>
             </motion.div>
           </MotionVStack>

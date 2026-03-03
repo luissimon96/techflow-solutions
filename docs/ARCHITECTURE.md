@@ -7,51 +7,48 @@ Documentação sobre a arquitetura, padrões e decisões de design do TechFlow S
 1. [Visão Geral](#visão-geral)
 2. [Arquitetura de Alto Nível](#arquitetura-de-alto-nível)
 3. [Frontend](#frontend)
-4. [Backend](#backend)
-5. [Padrões & Convenções](#padrões--convenções)
-6. [Segurança](#segurança)
-7. [Fluxos Principais](#fluxos-principais)
+4. [Padrões & Convenções](#padrões--convenções)
+5. [Fluxos Principais](#fluxos-principais)
 
 ---
 
 ## Visão Geral
 
-TechFlow Solutions é uma **aplicação web full-stack com monorepo** que demonstra uma empresa de desenvolvimento de software. 
+TechFlow Solutions é uma **aplicação web frontend-only** que demonstra uma empresa de desenvolvimento de software. 
 
 **Características principais:**
-- ✅ Sem banco de dados (WhatsApp como canal de comunicação)
+- ✅ Frontend React (TypeScript + Chakra UI)
 - ✅ Integração direta com WhatsApp para contato/orçamentos
-- ✅ Segurança em camada (rate limiting, detecção de ataque, validação CORS)
-- ✅ Deploy automático (Render + Vercel)
-- ✅ SEO otimizado
+- ✅ SEO otimizado com react-helmet-async
 - ✅ Responsivo em todos os dispositivos
+- ✅ Deploy automático (Vercel)
+- ✅ Estado gerenciado com React Query e hooks
 
 ---
 
 ## Arquitetura de Alto Nível
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                        FRONTEND (React)                      │
-│  ├─ Pages: Home, Services, ITServices, About, Clients       │
-│  ├─ Components: Header, Footer, Layout, Common, IT          │
-│  └─ Lib: API, Router, Query, Alerts, WhatsApp               │
-└────────────────┬────────────────────────────────────────────┘
-                 │ HTTP/REST
-                 ▼
-┌─────────────────────────────────────────────────────────────┐
-│                      BACKEND (Express)                       │
-│  ├─ Routes: /health, /api/contact, /api/quotes              │
-│  ├─ Controllers: contactController, quoteController         │
-│  ├─ Middleware: Security, Error Handling, CORS              │
-│  └─ Config: CORS, Security Headers                          │
-└────────────────┬────────────────────────────────────────────┘
-                 │ Generate WhatsApp URL
-                 ▼
-            ┌──────────────────┐
-            │  WhatsApp (URL)  │
-            └──────────────────┘
+┌──────────────────────────────────────────────┐
+│            FRONTEND (React)                  │
+│  ├─ Pages (6): Home, Services, ITServices,   │
+│  │             About, Contact, QuoteRequest  │
+│  ├─ Components: Header, Footer, Layout        │
+│  ├─ Lib: API, Router, Query, WhatsApp        │
+│  └─ Theme: Chakra UI custom theme            │
+└────────────┬─────────────────────────────────┘
+             │ Direct WhatsApp integration
+             ▼
+      ┌──────────────────┐
+      │  WhatsApp URL    │  (wa.me/...)
+      └──────────────────┘
 ```
+
+**Fluxo Simplificado:**
+1. User fills form (Contact/Quote)
+2. Frontend validates locally
+3. Frontend generates WhatsApp URL with pre-filled message
+4. User redirected to WhatsApp (native app or web)
 
 ---
 
@@ -63,12 +60,11 @@ TechFlow Solutions é uma **aplicação web full-stack com monorepo** que demons
 frontend/src/
 ├── pages/                 # Página components
 │  ├── Home.tsx           # Landing page (hero, stats, services, CTA)
-│  ├── Services.tsx       # Serviços de desenvolvimento
-│  ├── ITServices.tsx     # Serviços de TI (suporte, segurança, cloud)
-│  ├── About.tsx          # Sobre mim e projetos
-│  ├── Clients.tsx        # Carousel de clientes
+│  ├── ITServices.tsx     # Serviços de TI (suporte, segurança, cloud) [Em destaque na navegação]
+│  ├── Services.tsx       # Serviços de desenvolvimento (web, mobile, e-commerce)
+│  ├── About.tsx          # Sobre TechFlow Solutions (missão, valores, serviços)
 │  ├── Contact.tsx        # Formulário de contato → WhatsApp
-│  └── QuoteRequest.tsx   # Formulário de orçamento → WhatsApp
+│  └── QuoteRequest.tsx   # Formulário de orçamento → WhatsApp (com pré-preenchimento)
 │
 ├── components/           # Componentes reutilizáveis
 │  ├── Header.tsx         # Navegação principal
@@ -79,7 +75,6 @@ frontend/src/
 │  │  ├── ServiceCard.tsx
 │  │  ├── SEOHead.tsx
 │  │  ├── ImageFallback.tsx
-│  │  ├── ClientCarousel.tsx
 │  │  └── ServiceModal.tsx
 │  └── IT/               # Componentes específicos IT
 │     └── PackageComparison.tsx
@@ -98,7 +93,7 @@ frontend/src/
 │
 ├── types/              # TypeScript type definitions
 │  ├── global.d.ts
-│  └── vacation.ts (removido)
+│  └── (vacation.ts - removido em v2.0.0)
 │
 ├── utils/              # Funções auxiliares
 │  └── iconUtils.ts
@@ -179,82 +174,6 @@ export async function submitContactForm(data: ContactFormData) {
 const whatsappUrl = getWhatsAppUrl('Olá! Gostaria...');
 window.open(whatsappUrl, '_blank');
 ```
-
----
-
-## Backend
-
-### Estrutura de Pastas
-
-```
-backend/src/
-├── index.ts                    # Entry point + server setup
-├── config/
-│  └── cors.ts                 # CORS configuration
-├── controllers/
-│  ├── contactController.ts     # Gera WhatsApp URL para contato
-│  └── quoteController.ts       # Gera WhatsApp URL para orçamento
-├── middleware/
-│  ├── security.ts             # Rate limiting, attack detection
-│  ├── errorHandler.ts         # Global error handling
-│  └── cache.ts                # Caching (se implementado)
-├── routes/
-│  ├── health.ts               # GET /health e /api/health
-│  ├── contact.ts              # POST /api/contact
-│  ├── quotes.ts               # POST /api/quotes
-│  └── __tests__/
-│     └── health.test.ts
-├── types/
-│  └── express.d.ts            # Express type augmentation
-└── tests/
-   └── security.test.ts        # Security middleware tests
-```
-
-### Stack Backend
-
-| Função | Tecnologia |
-|--------|-----------|
-| Runtime | Node.js 18+ |
-| Framework | Express.js |
-| Linguagem | TypeScript |
-| Teste | Jest + Supertest |
-| Logging | Winston |
-| Segurança | Helmet, express-rate-limit |
-
-### Middleware Stack (Ordem Importa)
-
-1. **Helmet** - Security headers
-2. **Compression** - Comprime responses
-3. **Morgan** - HTTP request logging
-4. **Header Sanitization** - Limpa headers perigosos
-5. **Attack Detection** - Bloqueia XSS, SQL injection, path traversal
-6. **Speed Limiter** - Desacelera requisições suspeitas
-7. **CORS** - Validação de origem
-8. **JSON Parser** - Parseia request body
-9. **Rate Limiter** - 100 req/15min por IP
-10. **Origin Validation** - Validação adicional de origem
-
-### Controladores
-
-#### contactController.ts
-```
-POST /api/contact
-├─ Input: { name, email, phone, message, projectType }
-├─ Output: { whatsappUrl: "https://wa.me/..." }
-└─ Função: Cria URL WhatsApp com mensagem pré-formatada
-```
-
-#### quoteController.ts
-```
-POST /api/quotes
-├─ Input: { name, email, phone, projectType, timeline, budget, description }
-├─ Output: { whatsappUrl: "https://wa.me/..." }
-└─ Função: Cria URL WhatsApp com detalhes do orçamento
-```
-
-### Segurança
-
-See [DEPLOYMENT.md](./DEPLOYMENT.md#segurança) para detalhes de segurança.
 
 ---
 
@@ -371,6 +290,88 @@ App (main.tsx)
 - Caching automático
 - Retry automático em falhas
 - Sincronização em background
+
+---
+
+## 📋 Padrões de Implementação
+
+### 1. Pré-preenchimento de Formulário de Orçamento
+
+**Páginas Afetadas:**
+- `Services.tsx` - Serviços de Desenvolvimento
+- `ITServices.tsx` - Serviços de TI
+- `QuoteRequest.tsx` - Formulário de Orçamento
+
+**Fluxo:**
+
+```
+ServiçoCard (Services/ITServices)
+    ↓ click: "Solicitar Orçamento"
+handleQuoteRequest(service)
+    ↓ navigate with location.state
+QuoteRequest.tsx (useEffect)
+    ↓ reads location.state
+setFormData (pre-filled)
+```
+
+**Dados Transferidos:**
+| Campo | Origem | Destino |
+|-------|--------|---------|
+| `projectName` | `service.title` | `projectName` |
+| `projectType` | `service.category` (mapped) | `projectType` |
+| `timeline` | `service.duration` | `timeline` |
+| `budget` | Literal: 'A definir' | `budget` |
+| `projectDescription` | `service.description` | `projectDescription` |
+| `mainGoals` | `service.benefits` (joined) | `mainGoals` |
+
+**Implementação em ITServices:**
+- Função `handleQuoteRequest` com category mapping
+- Botões em 4 locais: serviços destacados, serviços full list, planos PF, planos PJ
+- Acesso ao serviço correto via closure em maps
+
+### 2. Navegação Reordenada
+
+**Ordem Atual (Header.tsx):**
+1. **Serviços de TI** → `/servicos-ti` (destaque em negócio)
+2. **Desenvolvimento** → `/servicos`
+3. **Sobre** → `/sobre`
+
+**Aplicado em:**
+- Desktop Navigation (HStack)
+- Mobile Menu (DrawerBody)
+
+### 3. Página About Corporativa
+
+**Mudança de Escopo:**
+- De: Página de perfil pessoal
+- Para: Página de apresentação corporativa TechFlow Solutions
+
+**Seções:**
+1. Apresentação da Empresa
+   - Logo oficial (favicon)
+   - Nome e localização (Foz do Iguaçu, PR)
+   - Estatísticas (150+ clientes, 250+ projetos, 10+ anos)
+
+2. Missão & Visão
+   - Duas cards lado-a-lado
+
+3. Valores 
+   - 4 cards: Inovação, Excelência, Confiabilidade, Transparência
+
+4. Serviços
+   - Mantém a exposição dos 3 pilares
+   - Ordem: TI, Web, Mobile
+
+### 4. Remoção de Páginas
+
+**Removidas:**
+- `/clientes` - Página de Clients.tsx
+- `/blog` - Página de Blog
+- `/portfolio` - Página de Portfolio
+**Impacto:**
+- Router simplificado (6 rotas principais: Home, Serviços, Serviços de TI, Sobre, Contato, Orçamento)
+- Header limpo (4 itens de navegação)
+- Eliminado botão "Ver Projetos" de Home
 
 ---
 

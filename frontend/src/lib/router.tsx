@@ -4,7 +4,6 @@ import Home from '@/pages/Home';
 import Services from '@/pages/Services';
 import ITServices from '@/pages/ITServices';
 import About from '@/pages/About';
-import Clients from '@/pages/Clients';
 import Contact from '@/pages/Contact';
 import QuoteRequest from '@/pages/QuoteRequest';
 
@@ -28,10 +27,6 @@ export const router = createBrowserRouter([
       {
         path: 'sobre',
         element: <About />,
-      },
-      {
-        path: 'clientes',
-        element: <Clients />,
       },
       {
         path: 'contato',
