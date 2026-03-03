@@ -1,28 +1,28 @@
-import { 
-  Box, 
-  Container, 
-  Heading, 
-  Text, 
-  VStack, 
-  HStack, 
-  SimpleGrid, 
-  Avatar, 
-  Stack, 
-  Badge, 
-  Card, 
-  CardBody, 
-  Icon, 
+import {
+  Box,
+  Container,
+  Heading,
+  Text,
+  VStack,
+  HStack,
+  SimpleGrid,
+  Avatar,
+  Stack,
+  Badge,
+  Card,
+  CardBody,
+  Icon,
   Button,
   Link,
   Divider
 } from '@chakra-ui/react';
-import { 
-  FaGithub, 
-  FaLinkedin, 
-  FaMapMarkerAlt, 
-  FaBuilding, 
-  FaCode, 
-  FaUsers, 
+import {
+  FaGithub,
+  FaLinkedin,
+  FaMapMarkerAlt,
+  FaBuilding,
+  FaCode,
+  FaUsers,
   FaCalendarAlt,
   FaPlane
 } from 'react-icons/fa';
@@ -32,7 +32,7 @@ const aboutData = {
   name: 'Luís Eduardo Simon',
   title: 'Desenvolvedor Full-Stack & Founder da TechFlow Solutions',
   bio: 'Com mais de 10 anos de experiência no setor de tecnologia, acredito em ser protagonista do meu próprio presente e futuro. Minha paixão é viajar.',
-  location: 'Carazinho, RS - Brasil',
+  location: 'Foz do Iguaçu, PR - Brasil',
   company: 'Telefonica Brasil',
   avatar: 'https://avatars.githubusercontent.com/u/55896446?v=4',
   github: 'https://github.com/luissimon96',
@@ -49,7 +49,7 @@ const featuredProjects = [
     name: 'TechFlow Solutions',
     description: 'Site institucional da TechFlow Solutions, uma empresa especializada em desenvolvimento de software e soluções tecnológicas.',
     language: 'TypeScript',
-    url: 'https://techflow-solutions.vercel.app',
+    url: 'https://www.srluissimon.com/',
     featured: true
   },
   {
@@ -68,7 +68,7 @@ const featuredProjects = [
     name: 'Estradeirando',
     description: 'Site oficial do estradeirando',
     language: 'TypeScript',
-    url: 'https://estradeirando.vercel.app',
+    url: 'https://www.estradeirando.com.br/',
     featured: false
   }
 ];
@@ -82,8 +82,8 @@ const skills = [
 
 export default function About() {
   return (
-    <Box 
-      as="section" 
+    <Box
+      as="section"
       minH="100vh"
       pt={{ base: 32, md: 40, lg: 44 }}
       pb={{ base: 16, md: 20, lg: 24 }}
@@ -94,7 +94,7 @@ export default function About() {
         <VStack spacing={{ base: 12, md: 16, lg: 20 }}>
           {/* Hero Section */}
           <Box textAlign="center" maxW="5xl" mx="auto" px={{ base: 4, md: 6 }}>
-            <Heading 
+            <Heading
               as="h1"
               size={{ base: "2xl", md: "3xl", lg: "4xl" }}
               mb={{ base: 6, md: 8 }}
@@ -107,9 +107,9 @@ export default function About() {
             >
               Sobre Nós
             </Heading>
-            <Text 
+            <Text
               fontSize={{ base: "lg", md: "xl", lg: "2xl" }}
-              color="gray.600" 
+              color="gray.600"
               maxW="3xl"
               mx="auto"
               lineHeight="tall"
@@ -120,7 +120,7 @@ export default function About() {
           </Box>
 
           {/* Profile Section */}
-          <Card 
+          <Card
             w="full"
             maxW="4xl"
             mx="auto"
@@ -135,9 +135,9 @@ export default function About() {
               <VStack spacing={8}>
                 {/* Avatar and Basic Info */}
                 <VStack spacing={6}>
-                  <Avatar 
-                    size="2xl" 
-                    src={aboutData.avatar} 
+                  <Avatar
+                    size="2xl"
+                    src={aboutData.avatar}
                     name={aboutData.name}
                     border="4px solid"
                     borderColor="brand.500"
@@ -234,17 +234,17 @@ export default function About() {
 
           {/* Skills Section */}
           <Box w="full" maxW="6xl" mx="auto">
-            <Heading 
-              size="lg" 
-              mb={8} 
-              textAlign="center" 
+            <Heading
+              size="lg"
+              mb={8}
+              textAlign="center"
               color="gray.800"
             >
               Tecnologias & Especialidades
             </Heading>
             <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6}>
               {skills.map((skillGroup, index) => (
-                <Card 
+                <Card
                   key={index}
                   p={6}
                   bg="white"
@@ -252,8 +252,8 @@ export default function About() {
                   boxShadow="md"
                   border="1px solid"
                   borderColor="gray.100"
-                  _hover={{ 
-                    transform: 'translateY(-4px)', 
+                  _hover={{
+                    transform: 'translateY(-4px)',
                     boxShadow: 'xl',
                     borderColor: 'brand.200'
                   }}
@@ -266,7 +266,7 @@ export default function About() {
                       </Heading>
                       <Stack direction="column" spacing={2} w="full">
                         {skillGroup.technologies.map((tech, techIndex) => (
-                          <Badge 
+                          <Badge
                             key={techIndex}
                             variant="subtle"
                             colorScheme="brand"
@@ -288,17 +288,17 @@ export default function About() {
 
           {/* Featured Projects */}
           <Box w="full" maxW="6xl" mx="auto">
-            <Heading 
-              size="lg" 
-              mb={8} 
-              textAlign="center" 
+            <Heading
+              size="lg"
+              mb={8}
+              textAlign="center"
               color="gray.800"
             >
               Projetos em Destaque
             </Heading>
             <SimpleGrid columns={{ base: 1, md: 2 }} spacing={8}>
               {featuredProjects.map((project, index) => (
-                <Card 
+                <Card
                   key={index}
                   p={6}
                   bg="white"
@@ -306,8 +306,8 @@ export default function About() {
                   boxShadow="md"
                   border="1px solid"
                   borderColor="gray.100"
-                  _hover={{ 
-                    transform: 'translateY(-4px)', 
+                  _hover={{
+                    transform: 'translateY(-4px)',
                     boxShadow: 'xl',
                     borderColor: 'brand.200'
                   }}

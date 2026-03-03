@@ -1,12 +1,12 @@
-import { 
-  Box, 
-  Container, 
-  Heading, 
-  Text, 
-  VStack, 
-  SimpleGrid, 
-  Card, 
-  CardBody, 
+import {
+  Box,
+  Container,
+  Heading,
+  Text,
+  VStack,
+  SimpleGrid,
+  Card,
+  CardBody,
   Button,
   Link,
   Badge,
@@ -30,7 +30,7 @@ const portfolioData = {
       description: 'Site institucional da empresa com design moderno, sistema de orçamentos e integração WhatsApp. Desenvolvido com React, TypeScript e Chakra UI.',
       image: '/placeholder-project1.jpg',
       technologies: ['React', 'TypeScript', 'Chakra UI', 'Vite'],
-      liveUrl: 'https://techflow-solutions.vercel.app',
+      liveUrl: 'https://www.srluissimon.com/',
       githubUrl: 'https://github.com/luissimon96/techflow-solutions',
       category: 'Website Institucional',
       year: '2024',
@@ -101,8 +101,8 @@ export default function Portfolio() {
   const allProjects = portfolioData.featuredProjects;
 
   return (
-    <Box 
-      as="section" 
+    <Box
+      as="section"
       minH="100vh"
       pt={{ base: 32, md: 40, lg: 44 }}
       pb={{ base: 16, md: 20, lg: 24 }}
@@ -113,7 +113,7 @@ export default function Portfolio() {
         <VStack spacing={{ base: 12, md: 16, lg: 20 }}>
           {/* Hero Section */}
           <Box textAlign="center" maxW="5xl" mx="auto" px={{ base: 4, md: 6 }}>
-            <Heading 
+            <Heading
               as="h1"
               size={{ base: "2xl", md: "3xl", lg: "4xl" }}
               mb={{ base: 6, md: 8 }}
@@ -126,9 +126,9 @@ export default function Portfolio() {
             >
               Nosso Portfólio
             </Heading>
-            <Text 
+            <Text
               fontSize={{ base: "lg", md: "xl", lg: "2xl" }}
-              color="gray.600" 
+              color="gray.600"
               maxW="3xl"
               mx="auto"
               lineHeight="tall"
@@ -176,25 +176,25 @@ export default function Portfolio() {
 
           {/* Featured Projects */}
           <Box w="full" maxW="6xl" mx="auto">
-            <Heading 
-              size="lg" 
-              mb={8} 
-              textAlign="center" 
+            <Heading
+              size="lg"
+              mb={8}
+              textAlign="center"
               color="gray.800"
             >
               Projetos em Destaque
             </Heading>
             <SimpleGrid columns={{ base: 1, md: 2 }} spacing={8}>
               {featuredProjects.map((project, index) => (
-                <Card 
+                <Card
                   key={index}
                   bg="white"
                   borderRadius="xl"
                   boxShadow="xl"
                   border="1px solid"
                   borderColor="gray.100"
-                  _hover={{ 
-                    transform: 'translateY(-8px)', 
+                  _hover={{
+                    transform: 'translateY(-8px)',
                     boxShadow: '2xl',
                     borderColor: 'brand.200'
                   }}
@@ -242,15 +242,15 @@ export default function Portfolio() {
                           </Badge>
                         </Stack>
                       </VStack>
-                      
+
                       <Text color="gray.600" lineHeight="relaxed">
                         {project.description}
                       </Text>
-                      
+
                       <Stack direction="row" flexWrap="wrap" spacing={2}>
                         {project.technologies.slice(0, 3).map((tech, techIndex) => (
-                          <Badge 
-                            key={techIndex} 
+                          <Badge
+                            key={techIndex}
                             variant="subtle"
                             colorScheme="brand"
                             fontSize="xs"
@@ -262,7 +262,7 @@ export default function Portfolio() {
                           </Badge>
                         ))}
                         {project.technologies.length > 3 && (
-                          <Badge 
+                          <Badge
                             variant="subtle"
                             colorScheme="gray"
                             fontSize="xs"
@@ -274,7 +274,7 @@ export default function Portfolio() {
                           </Badge>
                         )}
                       </Stack>
-                      
+
                       <Stack direction="row" spacing={3} pt={2}>
                         {project.liveUrl !== '#' && (
                           <Button
@@ -315,25 +315,25 @@ export default function Portfolio() {
 
           {/* All Projects */}
           <Box w="full" maxW="6xl" mx="auto">
-            <Heading 
-              size="lg" 
-              mb={8} 
-              textAlign="center" 
+            <Heading
+              size="lg"
+              mb={8}
+              textAlign="center"
               color="gray.800"
             >
               Todos os Projetos
             </Heading>
             <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
               {allProjects.map((project, index) => (
-                <Card 
+                <Card
                   key={index}
                   bg="white"
                   borderRadius="xl"
                   boxShadow="md"
                   border="1px solid"
                   borderColor="gray.100"
-                  _hover={{ 
-                    transform: 'translateY(-4px)', 
+                  _hover={{
+                    transform: 'translateY(-4px)',
                     boxShadow: 'lg',
                     borderColor: 'brand.200'
                   }}
@@ -360,11 +360,11 @@ export default function Portfolio() {
                           {project.category}
                         </Badge>
                       </VStack>
-                      
+
                       <Text color="gray.600" fontSize="sm" lineHeight="relaxed">
                         {project.description.substring(0, 80)}...
                       </Text>
-                      
+
                       <Stack direction="row" spacing={2} pt={1}>
                         {project.liveUrl !== '#' && (
                           <Button

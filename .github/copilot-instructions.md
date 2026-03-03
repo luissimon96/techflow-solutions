@@ -27,6 +27,7 @@ Backend-only: `cd backend && npm run test:security` (security middleware tests).
 - Place route tests next to route files under `backend/src/routes/__tests__/`.
 - Frontend centralizes endpoints in `frontend/src/lib/api.ts` and uses React Query.
 - UI examples: `frontend/src/components/common/Logo.tsx` and `frontend/src/pages/Contact.tsx`.
+- **CRITICAL:** `HelmetProvider` from `react-helmet-async` must wrap the entire app in `frontend/src/main.tsx` - without it, pages using `<Helmet>` for SEO will crash with "Cannot read properties of undefined (reading 'add')".
 
 ## Integration & deployment
 - Backend only communicates via generated WhatsApp links; no external DBs.
@@ -40,3 +41,9 @@ Backend-only: `cd backend && npm run test:security` (security middleware tests).
 If a change touches security, CORS, or rate limits, add/adjust tests (see `backend/src/tests/`) and run `cd backend && npm run test:security` before opening a PR.
 
 If anything here is unclear or you want more examples, ask and reference the file or area you plan to modify.
+
+## Documentation & References
+- See `docs/ARCHITECTURE.md` for detailed architecture and design patterns
+- See `docs/DEPLOYMENT.md` for deployment procedures and production setup
+- See `docs/CHANGELOG.md` for recent changes and removed features
+- See `CLAUDE.md` for critical fixes and important notes

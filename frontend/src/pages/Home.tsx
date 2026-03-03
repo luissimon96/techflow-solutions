@@ -12,7 +12,6 @@ import {
   StatLabel,
   StatNumber,
   HStack,
-  useColorModeValue,
   Flex
 } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
@@ -149,11 +148,6 @@ function ServiceCard({
 }
 
 export default function Home() {
-  const bgGradient = useColorModeValue(
-    'linear(to-br, brand.500, brand.600, purple.500)',
-    'linear(to-br, brand.600, brand.700, purple.600)'
-  );
-
   const services = [
     {
       icon: FaCode,
@@ -179,24 +173,12 @@ export default function Home() {
     <Box>
       {/* Professional Hero Section */}
       <Box
-        bgGradient={bgGradient}
-        color="white"
-        py={{ base: 16, md: 24 }}
+        bgGradient="linear(to-br, gray.50, white, gray.50)"
+        py={{ base: 20, md: 28 }}
         position="relative"
         overflow="hidden"
       >
-        {/* Background Pattern */}
-        <Box
-          position="absolute"
-          top={0}
-          left={0}
-          right={0}
-          bottom={0}
-          opacity={0.1}
-          bgImage="data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"
-        />
-
-        <Container position="relative">
+        <Container>
           <MotionVStack
             spacing={8}
             align="center"
@@ -212,7 +194,7 @@ export default function Home() {
               transition={{ delay: 0.2, duration: 0.5 }}
             >
               <Badge
-                colorScheme="whiteAlpha"
+                colorScheme="brand"
                 px={4}
                 py={2}
                 borderRadius="full"
@@ -231,10 +213,15 @@ export default function Home() {
               transition={{ delay: 0.4, duration: 0.6 }}
             >
               <Heading
-                size="3xl"
-                fontWeight="extrabold"
+                as="h1"
+                size={{ base: "2xl", md: "3xl", lg: "4xl" }}
                 maxW="4xl"
                 lineHeight="shorter"
+                bgGradient="linear(to-r, brand.600, brand.400)"
+                bgClip="text"
+                fontWeight="extrabold"
+                textShadow="0 2px 4px rgba(0,0,0,0.1)"
+                letterSpacing="tight"
               >
                 Desenvolva o Futuro do Seu Negócio com Soluções Sob Medida
               </Heading>
@@ -247,10 +234,11 @@ export default function Home() {
               transition={{ delay: 0.6, duration: 0.6 }}
             >
               <Text
-                fontSize="xl"
+                fontSize={{ base: "lg", md: "xl", lg: "2xl" }}
                 maxW="3xl"
-                color="whiteAlpha.900"
+                color="gray.600"
                 lineHeight="tall"
+                fontWeight="medium"
               >
                 Impulsionamos empresas através de tecnologia de ponta, entregando soluções que
                 transformam processos, aumentam a eficiência e aceleram o crescimento do seu negócio.
@@ -268,10 +256,8 @@ export default function Home() {
                   as={RouterLink}
                   to="/orcamento"
                   size="lg"
-                  bg="white"
-                  color="brand.600"
+                  colorScheme="brand"
                   _hover={{
-                    bg: "gray.50",
                     transform: "translateY(-2px)",
                     boxShadow: "xl"
                   }}
@@ -285,12 +271,10 @@ export default function Home() {
                   to="/clientes"
                   size="lg"
                   variant="outline"
-                  borderColor="whiteAlpha.400"
-                  color="white"
+                  colorScheme="brand"
                   _hover={{
-                    bg: "whiteAlpha.200",
-                    borderColor: "whiteAlpha.600",
-                    transform: "translateY(-2px)"
+                    transform: "translateY(-2px)",
+                    boxShadow: "md"
                   }}
                 >
                   Ver Projetos

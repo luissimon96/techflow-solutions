@@ -154,15 +154,13 @@ techflow-solutions/
 ### Frontend Core Modules
 
 #### Pages (`frontend/src/pages/`)
-- **Home.tsx** - Landing page
-- **Services.tsx** - Services overview
-- **ITServices.tsx** - IT services with package comparison
-- **Portfolio.tsx** - Project showcase
-- **About.tsx** - Company information
-- **Contact.tsx** - Contact form (WhatsApp integration)
-- **QuoteRequest.tsx** - Quote request form (WhatsApp integration)
-- **Clients.tsx** - Client logos/carousel
-- **Blog.tsx** - Blog posts
+- **Home.tsx** - Landing page with hero, stats, services, and CTA
+- **Services.tsx** - Web, mobile, e-commerce development services
+- **ITServices.tsx** - IT support, security, and cloud infrastructure services
+- **About.tsx** - Company information and featured projects
+- **Contact.tsx** - Contact form with WhatsApp integration
+- **QuoteRequest.tsx** - Quote request form with WhatsApp integration
+- **Clients.tsx** - Client logos carousel
 
 #### Components (`frontend/src/components/`)
 - **Layout.tsx** - Main layout wrapper
@@ -194,7 +192,7 @@ techflow-solutions/
 
 - **router.tsx** - React Router configuration
   - Exports: `router`
-  - Routes: 9 pages (Home, Services, IT, Portfolio, About, Clients, Blog, Contact, Quote)
+  - Routes: 6 pages (Home, Services, ITServices, About, Contact, QuoteRequest, Clients)
 
 - **query.tsx** - React Query configuration
   - Exports: `QueryProvider`

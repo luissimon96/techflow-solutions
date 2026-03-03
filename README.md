@@ -49,9 +49,22 @@ npm run lint         # Verificação de código
 techflow-solutions/
 ├── backend/         # API Node.js
 ├── frontend/        # React App
+├── docs/            # Documentação centralizada
+│   ├── CHANGELOG.md # Histórico de mudanças
+│   ├── ARCHITECTURE.md # Arquitetura do projeto
+│   └── DEPLOYMENT.md   # Guia de deployment
 ├── SCRIPTS.md       # Comandos detalhados
 └── package.json     # Scripts raiz
 ```
+
+## 📚 Documentação
+
+- **[ARCHITECTURE.md](./docs/ARCHITECTURE.md)** - Arquitetura, padrões e estrutura do projeto
+- **[DEPLOYMENT.md](./docs/DEPLOYMENT.md)** - Guia completo para deploy em Render e Vercel
+- **[CHANGELOG.md](./docs/CHANGELOG.md)** - Histórico de todas as mudanças
+- **[CLAUDE.md](./CLAUDE.md)** - Instruções para IA (Claude Code)
+- **[PROJECT_INDEX.md](./PROJECT_INDEX.md)** - Índice detalhado do projeto
+- **[SCRIPTS.md](./SCRIPTS.md)** - Referência de comandos
 
 ## 🔗 Links
 

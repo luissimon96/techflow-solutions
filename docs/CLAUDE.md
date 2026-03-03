@@ -119,15 +119,13 @@ The backend does NOT use a database. Instead, contact and quote forms generate W
 - API base URL: `https://techflow-solutions-backend.onrender.com/api` (production) or `/api` (development via Vite proxy)
 
 **Key Pages:**
-- `Home` - Landing page
-- `Services` - Services overview
-- `ITServices` - IT services with package comparison
-- `Portfolio` - Project showcase
-- `About` - Company information
-- `Contact` - Contact form (WhatsApp integration)
-- `QuoteRequest` - Quote request form (WhatsApp integration)
-- `Clients` - Client logos/carousel
-- `Blog` - Blog posts
+- `Home` - Landing page with responsive hero, stats, featured services, and CTA
+- `Services` - Web, mobile, and e-commerce development services
+- `ITServices` - IT support, security, and cloud infrastructure with package comparison
+- `About` - Developer bio, skills, and featured projects  
+- `Contact` - Contact form with WhatsApp integration
+- `QuoteRequest` - Quote request form with WhatsApp integration
+- `Clients` - Client logos carousel
 
 **Components Structure:**
 - `components/common/` - Reusable components (Logo, ServiceCard, SEOHead, etc.)
@@ -219,6 +217,25 @@ cd frontend && npx jest src/pages/__tests__/Contact.test.tsx
 - Backend default: 10000 (configurable via PORT env var)
 - Frontend dev: 3001+ (Vite auto-increments if port busy)
 - Frontend production: Served by CDN (Vercel)
+
+## Critical Fixes & Important Notes
+
+### HelmetProvider (React-Helmet-Async)
+- **Required:** `HelmetProvider` must wrap the entire app in `frontend/src/main.tsx`
+- **Why:** Components using `<Helmet>` (like ITServices) need the context to set meta tags
+- **Error if missing:** `TypeError: Cannot read properties of undefined (reading 'add')`
+- **Status:** ✅ Fixed (added to main.tsx)
+
+### Home.tsx Design
+- **Recent change:** Removed blue gradient banner in favor of consistent gray/white theme
+- **Pattern:** Home now matches Services, ITServices, and About pages
+- **Typography:** Uses gradient text for main heading + gray text for description
+
+### Pages Removed (No Longer Used)
+- ❌ `/blog` - Blog.tsx removed
+- ❌ `/ferias` - VacationPlanner.tsx removed
+- ❌ `/portfolio` - Portfolio.tsx removed
+- Updated: Router, Header navigation, sitemap.xml, robots.txt, api.ts
 
 ## Known Issues & Quirks
 - The backend intentionally has no database - this is not a bug
