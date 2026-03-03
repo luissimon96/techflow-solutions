@@ -23,15 +23,8 @@ export const API_ENDPOINTS = {
   // Orçamentos
   QUOTES: '/quotes',
 
-  // Portfolio
-  PROJECTS: '/projects',
-
   // Serviços
   SERVICES: '/services',
-
-  // Blog (se implementado)
-  BLOG: '/blog',
-  POSTS: '/blog/posts',
 
   // Autenticação (se implementado)
   AUTH: {
@@ -91,7 +84,7 @@ export const sendContactData = async (data: {
   }
 
   const result = await response.json();
-  
+
   // Redirecionar automaticamente para o WhatsApp se a URL foi fornecida
   if (result.data?.whatsappUrl) {
     // Aguardar um momento para mostrar o feedback ao usuário
@@ -99,7 +92,7 @@ export const sendContactData = async (data: {
       window.open(result.data.whatsappUrl, '_blank');
     }, 1500);
   }
-  
+
   return result;
 };
 
@@ -218,7 +211,7 @@ export const sendQuoteRequest = async (data: {
   }
 
   const result = await response.json();
-  
+
   // Redirecionar automaticamente para o WhatsApp se a URL foi fornecida
   if (result.data?.whatsappUrl) {
     // Aguardar um momento para mostrar o feedback ao usuário
@@ -226,6 +219,6 @@ export const sendQuoteRequest = async (data: {
       window.open(result.data.whatsappUrl, '_blank');
     }, 2000); // Um pouco mais de tempo para orçamentos (mais dados)
   }
-  
+
   return result;
 }; 
