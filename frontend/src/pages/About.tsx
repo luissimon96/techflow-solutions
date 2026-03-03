@@ -190,7 +190,7 @@ export default function About() {
                     p={2}
                   >
                     <Image
-                      src="/logos/logo.png"
+                      src="/logos/favicon.png"
                       alt="TechFlow Solutions"
                       h="80%"
                       objectFit="contain"
