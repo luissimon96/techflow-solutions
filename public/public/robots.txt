@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://www.srluissimon.com/sitemap.xml
+
+# Disallow admin areas (quando houver)
+Disallow: /admin/
+Disallow: /dashboard/
+
+# Allow important pages
+Allow: /
+Allow: /services
+Allow: /contact
+
+# Crawl delay (opcional, em segundos)
+Crawl-delay: 1 
