@@ -6,7 +6,6 @@ import {
   VStack,
   HStack,
   SimpleGrid,
-  Avatar,
   Stack,
   Badge,
   Card,
@@ -14,70 +13,114 @@ import {
   Icon,
   Button,
   Link,
-  Divider
+  Divider,
+  Image,
+  List,
+  ListItem,
+  ListIcon
 } from '@chakra-ui/react';
 import {
-  FaGithub,
-  FaLinkedin,
   FaMapMarkerAlt,
-  FaBuilding,
-  FaCode,
+  FaAward,
+  FaLaptopCode,
+  FaMobileAlt,
+  FaServer,
+  FaCheckCircle,
+  FaRocket,
+  FaHeartbeat,
+  FaBullseye,
   FaUsers,
-  FaCalendarAlt,
-  FaPlane
+  FaHandshake
 } from 'react-icons/fa';
 import { Link as RouterLink } from 'react-router-dom';
 
-const aboutData = {
-  name: 'Luís Eduardo Simon',
-  title: 'Desenvolvedor Full-Stack & Founder da TechFlow Solutions',
-  bio: 'Com mais de 10 anos de experiência no setor de tecnologia, acredito em ser protagonista do meu próprio presente e futuro. Minha paixão é viajar.',
-  location: 'Foz do Iguaçu, PR - Brasil',
-  company: 'Telefonica Brasil',
-  avatar: 'https://avatars.githubusercontent.com/u/55896446?v=4',
-  github: 'https://github.com/luissimon96',
-  linkedin: 'https://www.linkedin.com/in/luis-eduardo-simon/',
+const companyData = {
+  name: 'TechFlow Solutions',
+  tagline: 'Transformando ideias em soluções tecnológicas inovadoras',
+  location: 'Foz do Iguaçu, Paraná - Brasil',
+  founded: '2015',
+  description: 'Especializada em oferecer serviços tecnológicos de alto padrão para pequenas e grandes empresas. Com uma equipe dedicada de profissionais, transformamos desafios digitais em oportunidades de crescimento.',
   stats: {
-    experience: '10+',
-    projects: '44',
-    followers: '13'
+    clients: '150+',
+    projects: '250+',
+    yearsExperience: '10+'
   }
 };
 
-const featuredProjects = [
+const values = [
   {
-    name: 'TechFlow Solutions',
-    description: 'Site institucional da TechFlow Solutions, uma empresa especializada em desenvolvimento de software e soluções tecnológicas.',
-    language: 'TypeScript',
-    url: 'https://www.srluissimon.com/',
-    featured: true
+    title: 'Inovação',
+    description: 'Buscamos constantemente novas tecnologias e metodologias para oferecer as melhores soluções',
+    icon: FaRocket
   },
   {
-    name: 'TimeMedic',
-    description: 'Sistema de gestão de medicamentos com foco em segurança',
-    language: 'TypeScript',
-    featured: false
+    title: 'Excelência',
+    description: 'Comprometidos com a qualidade em cada projeto, entrega e interação',
+    icon: FaAward
   },
   {
-    name: 'AI-Powered Migration Validation',
-    description: 'Sistema de Validação de Migração por IA... QA (Quality Assurance) Automatizado Inteligente',
-    language: 'Python',
-    featured: false
+    title: 'Confiabilidade',
+    description: 'Somos parceiros de confiança com suporte técnico sempre disponível',
+    icon: FaHeartbeat
   },
   {
-    name: 'Estradeirando',
-    description: 'Site oficial do estradeirando',
-    language: 'TypeScript',
-    url: 'https://www.estradeirando.com.br/',
-    featured: false
+    title: 'Transparência',
+    description: 'Comunicação clara e honesta em todas as etapas do projeto',
+    icon: FaHandshake
   }
 ];
 
-const skills = [
-  { category: 'Frontend', technologies: ['React', 'TypeScript', 'Next.js', 'Chakra UI', 'Vue.js'] },
-  { category: 'Backend', technologies: ['Node.js', 'Python', 'Express', 'PostgreSQL', 'Firebase'] },
-  { category: 'Mobile', technologies: ['React Native', 'Expo', 'Flutter'] },
-  { category: 'DevOps', technologies: ['AWS', 'Docker', 'Vercel', 'Git', 'CI/CD'] }
+const serviceCategories = [
+  {
+    title: 'Desenvolvimento de Sistemas & Sites',
+    description: 'Criamos soluções web personalizadas com as tecnologias mais modernas do mercado',
+    icon: FaLaptopCode,
+    features: [
+      'Desenvolvimento Web Full-Stack',
+      'Aplicações E-commerce',
+      'Dashboards e Painéis Analíticos',
+      'PWAs e Aplicações Responsivas',
+      'Integração com APIs',
+      'SEO Otimizado'
+    ]
+  },
+  {
+    title: 'Desenvolvimento Mobile',
+    description: 'Aplicativos móveis nativos e híbridos para iOS e Android',
+    icon: FaMobileAlt,
+    features: [
+      'Apps para iOS e Android',
+      'React Native & Flutter',
+      'Push Notifications',
+      'Sincronização em tempo real',
+      'Integração com APIs',
+      'Deploy nas App Stores'
+    ]
+  },
+  {
+    title: 'Manutenção de TI & Suporte Técnico',
+    description: 'Suporte proativo para manter seus sistemas funcionando com máximo desempenho',
+    icon: FaServer,
+    features: [
+      'Manutenção de Computadores & Servidores',
+      'Suporte Técnico 24/7',
+      'Monitoramento de Sistemas',
+      'Backup e Recuperação de Dados',
+      'Segurança de Rede',
+      'Consultoria Técnica'
+    ]
+  }
+];
+
+const missionVision = [
+  {
+    title: 'Nossa Missão',
+    content: 'Empoderar empresas de todos os tamanhos com soluções tecnológicas inovadoras, confiáveis e personalizadas que impulsionam crescimento digital e transformação empresarial.'
+  },
+  {
+    title: 'Nossa Visão',
+    content: 'Ser a principal parceira de tecnologia para empresas na região, reconhecida pela excelência, inovação e comprometimento com o sucesso de nossos clientes.'
+  }
 ];
 
 export default function About() {
@@ -102,10 +145,9 @@ export default function About() {
               bgClip="text"
               fontWeight="extrabold"
               lineHeight="shorter"
-              textShadow="0 2px 4px rgba(0,0,0,0.1)"
               letterSpacing="tight"
             >
-              Sobre Nós
+              Sobre a TechFlow Solutions
             </Heading>
             <Text
               fontSize={{ base: "lg", md: "xl", lg: "2xl" }}
@@ -115,11 +157,11 @@ export default function About() {
               lineHeight="tall"
               fontWeight="medium"
             >
-              Conheça a história por trás da TechFlow Solutions e a experiência que nos move
+              {companyData.tagline}
             </Text>
           </Box>
 
-          {/* Profile Section */}
+          {/* Company Info Section */}
           <Card
             w="full"
             maxW="4xl"
@@ -133,42 +175,43 @@ export default function About() {
           >
             <CardBody>
               <VStack spacing={8}>
-                {/* Avatar and Basic Info */}
+                {/* Logo and Basic Info */}
                 <VStack spacing={6}>
-                  <Avatar
-                    size="2xl"
-                    src={aboutData.avatar}
-                    name={aboutData.name}
-                    border="4px solid"
+                  <Box
+                    w={24}
+                    h={24}
+                    bg="brand.100"
+                    borderRadius="2xl"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    border="3px solid"
                     borderColor="brand.500"
                     boxShadow="xl"
-                  />
+                  >
+                    <Icon as={FaBullseye} w={12} h={12} color="brand.600" />
+                  </Box>
                   <VStack spacing={2} textAlign="center">
                     <Heading size="xl" color="gray.800">
-                      {aboutData.name}
+                      {companyData.name}
                     </Heading>
-                    <Text fontSize="lg" color="brand.600" fontWeight="semibold">
-                      {aboutData.title}
-                    </Text>
-                    <HStack spacing={4} fontSize="sm" color="gray.600">
+                    <HStack spacing={4} fontSize="sm" color="gray.600" justify="center" flexWrap="wrap">
                       <HStack spacing={1}>
                         <Icon as={FaMapMarkerAlt} />
-                        <Text>{aboutData.location}</Text>
+                        <Text>{companyData.location}</Text>
                       </HStack>
-                      <HStack spacing={1}>
-                        <Icon as={FaBuilding} />
-                        <Text>{aboutData.company}</Text>
-                      </HStack>
+                      <Text>•</Text>
+                      <Text fontWeight="semibold">Desde {companyData.founded}</Text>
                     </HStack>
                   </VStack>
                 </VStack>
 
                 <Divider />
 
-                {/* Bio */}
+                {/* Description */}
                 <Box textAlign="center" maxW="3xl">
                   <Text fontSize="lg" color="gray.700" lineHeight="tall">
-                    {aboutData.bio}
+                    {companyData.description}
                   </Text>
                 </Box>
 
@@ -176,77 +219,40 @@ export default function About() {
                 <SimpleGrid columns={3} spacing={8} w="full" maxW="md">
                   <VStack spacing={2}>
                     <Text fontSize="2xl" fontWeight="bold" color="brand.600">
-                      {aboutData.stats.experience}
+                      {companyData.stats.clients}
                     </Text>
                     <Text fontSize="sm" color="gray.600" textAlign="center">
-                      Anos de Experiência
+                      Clientes Atendidos
                     </Text>
                   </VStack>
                   <VStack spacing={2}>
                     <Text fontSize="2xl" fontWeight="bold" color="brand.600">
-                      {aboutData.stats.projects}
+                      {companyData.stats.projects}
                     </Text>
                     <Text fontSize="sm" color="gray.600" textAlign="center">
-                      Projetos no GitHub
+                      Projetos Realizados
                     </Text>
                   </VStack>
                   <VStack spacing={2}>
                     <Text fontSize="2xl" fontWeight="bold" color="brand.600">
-                      {aboutData.stats.followers}
+                      {companyData.stats.yearsExperience}
                     </Text>
                     <Text fontSize="sm" color="gray.600" textAlign="center">
-                      Seguidores
+                      Anos Experiência
                     </Text>
                   </VStack>
                 </SimpleGrid>
-
-                {/* Social Links */}
-                <HStack spacing={4}>
-                  <Button
-                    as={Link}
-                    href={aboutData.github}
-                    isExternal
-                    leftIcon={<FaGithub />}
-                    variant="outline"
-                    colorScheme="gray"
-                    size="lg"
-                    _hover={{ transform: 'translateY(-2px)', boxShadow: 'lg' }}
-                    transition="all 0.2s"
-                  >
-                    GitHub
-                  </Button>
-                  <Button
-                    as={Link}
-                    href={aboutData.linkedin}
-                    isExternal
-                    leftIcon={<FaLinkedin />}
-                    colorScheme="linkedin"
-                    size="lg"
-                    _hover={{ transform: 'translateY(-2px)', boxShadow: 'lg' }}
-                    transition="all 0.2s"
-                  >
-                    LinkedIn
-                  </Button>
-                </HStack>
               </VStack>
             </CardBody>
           </Card>
 
-          {/* Skills Section */}
+          {/* Mission & Vision Section */}
           <Box w="full" maxW="6xl" mx="auto">
-            <Heading
-              size="lg"
-              mb={8}
-              textAlign="center"
-              color="gray.800"
-            >
-              Tecnologias & Especialidades
-            </Heading>
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6}>
-              {skills.map((skillGroup, index) => (
+            <SimpleGrid columns={{ base: 1, md: 2 }} spacing={8}>
+              {missionVision.map((item, index) => (
                 <Card
                   key={index}
-                  p={6}
+                  p={8}
                   bg="white"
                   borderRadius="xl"
                   boxShadow="md"
@@ -262,23 +268,11 @@ export default function About() {
                   <CardBody p={0}>
                     <VStack spacing={4} align="start">
                       <Heading size="md" color="brand.600">
-                        {skillGroup.category}
+                        {item.title}
                       </Heading>
-                      <Stack direction="column" spacing={2} w="full">
-                        {skillGroup.technologies.map((tech, techIndex) => (
-                          <Badge
-                            key={techIndex}
-                            variant="subtle"
-                            colorScheme="brand"
-                            fontSize="xs"
-                            px={2}
-                            py={1}
-                            borderRadius="md"
-                          >
-                            {tech}
-                          </Badge>
-                        ))}
-                      </Stack>
+                      <Text color="gray.600" lineHeight="relaxed" fontSize="md">
+                        {item.content}
+                      </Text>
                     </VStack>
                   </CardBody>
                 </Card>
@@ -286,7 +280,7 @@ export default function About() {
             </SimpleGrid>
           </Box>
 
-          {/* Featured Projects */}
+          {/* Values Section */}
           <Box w="full" maxW="6xl" mx="auto">
             <Heading
               size="lg"
@@ -294,10 +288,10 @@ export default function About() {
               textAlign="center"
               color="gray.800"
             >
-              Projetos em Destaque
+              Nossos Valores
             </Heading>
-            <SimpleGrid columns={{ base: 1, md: 2 }} spacing={8}>
-              {featuredProjects.map((project, index) => (
+            <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6}>
+              {values.map((value, index) => (
                 <Card
                   key={index}
                   p={6}
@@ -312,57 +306,93 @@ export default function About() {
                     borderColor: 'brand.200'
                   }}
                   transition="all 0.3s"
-                  position="relative"
-                  overflow="hidden"
                 >
-                  {project.featured && (
-                    <Badge
-                      colorScheme="brand"
-                      variant="solid"
-                      position="absolute"
-                      top={4}
-                      right={4}
-                      borderRadius="full"
-                      px={3}
-                      py={1}
-                      fontSize="xs"
-                      fontWeight="bold"
-                    >
-                      Destaque
-                    </Badge>
-                  )}
                   <CardBody p={0}>
-                    <VStack spacing={4} align="start">
-                      <VStack spacing={2} align="start" w="full">
-                        <Heading size="md" color="gray.800">
-                          {project.name}
-                        </Heading>
-                        <Badge variant="subtle" colorScheme="purple">
-                          {project.language}
-                        </Badge>
-                      </VStack>
-                      <Text color="gray.600" lineHeight="relaxed">
-                        {project.description}
+                    <VStack spacing={4} align="center">
+                      <Icon
+                        as={value.icon}
+                        w={10}
+                        h={10}
+                        color="brand.500"
+                      />
+                      <Heading size="sm" textAlign="center" color="gray.800">
+                        {value.title}
+                      </Heading>
+                      <Text
+                        color="gray.600"
+                        fontSize="sm"
+                        lineHeight="relaxed"
+                        textAlign="center"
+                      >
+                        {value.description}
                       </Text>
-                      {project.url && (
-                        <Button
-                          as={Link}
-                          href={project.url}
-                          isExternal
-                          size="sm"
-                          variant="outline"
-                          colorScheme="brand"
-                          _hover={{ transform: 'translateY(-2px)' }}
-                          transition="all 0.2s"
-                        >
-                          Ver Projeto
-                        </Button>
-                      )}
                     </VStack>
                   </CardBody>
                 </Card>
               ))}
             </SimpleGrid>
+          </Box>
+
+          {/* Services Section */}
+          <Box w="full" maxW="6xl" mx="auto">
+            <Heading
+              size="lg"
+              mb={8}
+              textAlign="center"
+              color="gray.800"
+            >
+              Nossos Serviços
+            </Heading>
+            <VStack spacing={8} w="full">
+              {serviceCategories.map((service, index) => (
+                <Card
+                  key={index}
+                  w="full"
+                  p={{ base: 6, md: 8 }}
+                  bg="white"
+                  borderRadius="xl"
+                  boxShadow="md"
+                  border="1px solid"
+                  borderColor="gray.100"
+                  _hover={{
+                    boxShadow: 'xl',
+                    borderColor: 'brand.200'
+                  }}
+                  transition="all 0.3s"
+                >
+                  <CardBody p={0}>
+                    <VStack spacing={6} align="start">
+                      <HStack spacing={4} pb={4} borderBottom="1px solid" borderColor="gray.100">
+                        <Icon
+                          as={service.icon}
+                          w={8}
+                          h={8}
+                          color="brand.500"
+                        />
+                        <VStack spacing={1} align="start">
+                          <Heading size="md" color="gray.800">
+                            {service.title}
+                          </Heading>
+                          <Text color="gray.600">
+                            {service.description}
+                          </Text>
+                        </VStack>
+                      </HStack>
+                      <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} w="full">
+                        {service.features.map((feature, featureIndex) => (
+                          <HStack key={featureIndex} spacing={3}>
+                            <Icon as={FaCheckCircle} color="brand.500" />
+                            <Text color="gray.600" fontSize="sm">
+                              {feature}
+                            </Text>
+                          </HStack>
+                        ))}
+                      </SimpleGrid>
+                    </VStack>
+                  </CardBody>
+                </Card>
+              ))}
+            </VStack>
           </Box>
 
           {/* CTA Section */}
@@ -378,9 +408,9 @@ export default function About() {
           >
             <VStack spacing={6}>
               <HStack spacing={2} justify="center">
-                <Icon as={FaPlane} color="brand.500" />
+                <Icon as={FaRocket} color="brand.500" />
                 <Heading size="lg" color="brand.700">
-                  Vamos trabalhar juntos?
+                  Vamos transformar seu negócio?
                 </Heading>
               </HStack>
               <Text
@@ -389,7 +419,7 @@ export default function About() {
                 maxW="2xl"
                 mx="auto"
               >
-                Com mais de 10 anos de experiência, estou pronto para transformar suas ideias em soluções tecnológicas inovadoras.
+                Com mais de 10 anos de experiência, somos o parceiro ideal para impulsionar sua transformação digital. Entre em contato e descubra como podemos ajudar!
               </Text>
               <Stack
                 direction={{ base: "column", sm: "row" }}
