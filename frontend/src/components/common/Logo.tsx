@@ -1,22 +1,26 @@
-import { Box, Text } from '@chakra-ui/react';
+import { Box, Image } from '@chakra-ui/react';
 
 interface LogoProps {
   size?: 'sm' | 'md' | 'lg';
-  color?: string;
 }
 
-export const Logo = ({ size = 'md', color = 'brand.500' }: LogoProps) => {
-  const sizes = {
-    sm: { fontSize: 'lg', fontWeight: 'bold' },
-    md: { fontSize: 'xl', fontWeight: 'bold' },
-    lg: { fontSize: '2xl', fontWeight: 'bold' },
+export const Logo = ({ size = 'md' }: LogoProps) => {
+  // determine height based on size prop
+  const heights: Record<string, string> = {
+    sm: '24px',
+    md: '32px',
+    lg: '48px',
   };
+  const height = heights[size] || heights.md;
 
   return (
     <Box>
-      <Text color={color} {...sizes[size]}>
-        TechFlow Solutions
-      </Text>
+      <Image
+        src="/logos/logo.png"
+        alt="TechFlow Solutions"
+        h={height}
+        objectFit="contain"
+      />
     </Box>
   );
 }; 

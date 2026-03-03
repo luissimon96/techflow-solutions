@@ -84,7 +84,7 @@ export const SCHEMA_TEMPLATES = {
     "@type": "Organization",
     "name": "TechFlow Solutions",
     "url": "https://www.srluissimon.com",
-    "logo": "https://www.srluissimon.com/logo.png",
+    "logo": "https://www.srluissimon.com/logos/logo.png",
     "description": "Empresa especializada em desenvolvimento de software e soluções tecnológicas",
     "foundingDate": "2023",
     "contactPoint": {
@@ -96,7 +96,7 @@ export const SCHEMA_TEMPLATES = {
     "address": {
       "@type": "PostalAddress",
       "addressCountry": "BR",
-      "addressLocality": "Carazinho"
+      "addressLocality": "Foz do Iguaçu"
     },
     "sameAs": [
       "https://www.linkedin.com/in/luis-eduardo-simon/",
