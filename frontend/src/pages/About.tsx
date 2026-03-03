@@ -28,7 +28,6 @@ import {
   FaCheckCircle,
   FaRocket,
   FaHeartbeat,
-  FaBullseye,
   FaUsers,
   FaHandshake
 } from 'react-icons/fa';
@@ -72,6 +71,19 @@ const values = [
 
 const serviceCategories = [
   {
+    title: 'Manutenção de TI & Suporte Técnico',
+    description: 'Suporte proativo para manter seus sistemas funcionando com máximo desempenho',
+    icon: FaServer,
+    features: [
+      'Manutenção de Computadores & Servidores',
+      'Suporte Técnico 24/7',
+      'Monitoramento de Sistemas',
+      'Backup e Recuperação de Dados',
+      'Segurança de Rede',
+      'Consultoria Técnica'
+    ]
+  },
+  {
     title: 'Desenvolvimento de Sistemas & Sites',
     description: 'Criamos soluções web personalizadas com as tecnologias mais modernas do mercado',
     icon: FaLaptopCode,
@@ -95,19 +107,6 @@ const serviceCategories = [
       'Sincronização em tempo real',
       'Integração com APIs',
       'Deploy nas App Stores'
-    ]
-  },
-  {
-    title: 'Manutenção de TI & Suporte Técnico',
-    description: 'Suporte proativo para manter seus sistemas funcionando com máximo desempenho',
-    icon: FaServer,
-    features: [
-      'Manutenção de Computadores & Servidores',
-      'Suporte Técnico 24/7',
-      'Monitoramento de Sistemas',
-      'Backup e Recuperação de Dados',
-      'Segurança de Rede',
-      'Consultoria Técnica'
     ]
   }
 ];
@@ -180,7 +179,7 @@ export default function About() {
                   <Box
                     w={24}
                     h={24}
-                    bg="brand.100"
+                    bg="white"
                     borderRadius="2xl"
                     display="flex"
                     alignItems="center"
@@ -188,8 +187,14 @@ export default function About() {
                     border="3px solid"
                     borderColor="brand.500"
                     boxShadow="xl"
+                    p={2}
                   >
-                    <Icon as={FaBullseye} w={12} h={12} color="brand.600" />
+                    <Image
+                      src="/logos/logo.png"
+                      alt="TechFlow Solutions"
+                      h="80%"
+                      objectFit="contain"
+                    />
                   </Box>
                   <VStack spacing={2} textAlign="center">
                     <Heading size="xl" color="gray.800">
