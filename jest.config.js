@@ -1,4 +1,4 @@
 module.exports = {
-  // Delegate to backend and frontend project configs
-  projects: ['<rootDir>/backend', '<rootDir>/frontend'],
+  // Frontend project config only
+  projects: ['<rootDir>/frontend'],
 };

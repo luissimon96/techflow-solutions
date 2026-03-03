@@ -167,20 +167,6 @@ techflow-solutions/
   - Dependencies: React workspace
 
 ### Backend Configuration
-- **backend/package.json** - Backend dependencies and scripts
-  - Main: `dist/index.js`
-  - Scripts: dev, build, start, test, lint
-  - Key deps: express, helmet, cors, winston, express-rate-limit
-
-- **backend/tsconfig.json** - TypeScript configuration
-  - Target: ES2020
-  - Module: CommonJS
-  - Output: `dist/`
-
-- **backend/jest.config.js** - Jest test configuration
-  - Preset: ts-jest
-  - Environment: node
-
 ### Frontend Configuration
 - **frontend/package.json** - Frontend dependencies and scripts
   - Type: module
