@@ -8,35 +8,58 @@ export default function Footer() {
       <Container>
         <SimpleGrid columns={{ base: 1, md: 3 }} spacing={8}>
           <Box>
-            <Text fontSize="lg" fontWeight="bold" mb={4}>
+            <Text
+              fontSize="lg"
+              fontWeight="bold"
+              mb={4}
+              color="white"
+              textShadow="0 1px 2px rgba(0,0,0,0.3)"
+            >
               TechFlow Solutions
             </Text>
-            <Text>Transformando negócios através da tecnologia</Text>
-
-            {/* Link discreto para admin */}
-            <Link
-              as={RouterLink}
-              to="/admin/login"
-              fontSize="xs"
-              color="gray.600"
-              _hover={{ color: 'gray.400' }}
-              mt={4}
-              display="block"
+            <Text
+              color="white"
+              fontWeight="medium"
+              textShadow="0 1px 2px rgba(0,0,0,0.3)"
             >
-              Admin
-            </Link>
+              Transformando negócios através da tecnologia
+            </Text>
           </Box>
 
           <Box>
-            <Text fontSize="lg" fontWeight="bold" mb={4}>
+            <Text
+              fontSize="lg"
+              fontWeight="bold"
+              mb={4}
+              color="white"
+              textShadow="0 1px 2px rgba(0,0,0,0.3)"
+            >
               Contato
             </Text>
-            <Text>luissimonazure@gmail.com</Text>
-            <Text>(54) 99710-9051</Text>
+            <Text
+              color="white"
+              fontWeight="medium"
+              textShadow="0 1px 2px rgba(0,0,0,0.3)"
+            >
+              luissimonazure@gmail.com
+            </Text>
+            <Text
+              color="white"
+              fontWeight="medium"
+              textShadow="0 1px 2px rgba(0,0,0,0.3)"
+            >
+              (54) 99710-9051
+            </Text>
           </Box>
 
           <Box>
-            <Text fontSize="lg" fontWeight="bold" mb={4}>
+            <Text
+              fontSize="lg"
+              fontWeight="bold"
+              mb={4}
+              color="white"
+              textShadow="0 1px 2px rgba(0,0,0,0.3)"
+            >
               Redes Sociais
             </Text>
             <Box>

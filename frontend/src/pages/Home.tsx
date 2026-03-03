@@ -1,12 +1,12 @@
-import { 
-  Box, 
-  Container, 
-  Heading, 
-  Text, 
-  Button, 
-  SimpleGrid, 
-  VStack, 
-  Icon, 
+import {
+  Box,
+  Container,
+  Heading,
+  Text,
+  Button,
+  SimpleGrid,
+  VStack,
+  Icon,
   Badge,
   Stat,
   StatLabel,
@@ -16,12 +16,12 @@ import {
   Flex
 } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
-import { 
-  FaCode, 
-  FaCloud, 
-  FaMobile, 
-  FaRocket, 
-  FaShieldAlt, 
+import {
+  FaCode,
+  FaCloud,
+  FaMobile,
+  FaRocket,
+  FaShieldAlt,
   FaUsers,
   FaWhatsapp,
   FaArrowRight
@@ -34,10 +34,10 @@ const MotionBox = motion(Box);
 const MotionVStack = motion(VStack);
 
 // Animated Counter Component
-function AnimatedCounter({ endValue, suffix = '', duration = 2000 }: { 
-  endValue: number; 
-  suffix?: string; 
-  duration?: number; 
+function AnimatedCounter({ endValue, suffix = '', duration = 2000 }: {
+  endValue: number;
+  suffix?: string;
+  duration?: number;
 }) {
   const [count, setCount] = useState(0);
   const ref = useRef(null);
@@ -51,7 +51,7 @@ function AnimatedCounter({ endValue, suffix = '', duration = 2000 }: {
         const progress = Math.min(elapsed / duration, 1);
         const easeOutCubic = 1 - Math.pow(1 - progress, 3);
         setCount(Math.floor(endValue * easeOutCubic));
-        
+
         if (progress < 1) {
           requestAnimationFrame(animate);
         }
@@ -64,13 +64,13 @@ function AnimatedCounter({ endValue, suffix = '', duration = 2000 }: {
 }
 
 // Service Card Component
-function ServiceCard({ 
-  icon, 
-  title, 
-  description, 
-  technologies, 
-  index 
-}: { 
+function ServiceCard({
+  icon,
+  title,
+  description,
+  technologies,
+  index
+}: {
   icon: React.ElementType;
   title: string;
   description: string;
@@ -92,8 +92,8 @@ function ServiceCard({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
-      whileHover={{ 
-        y: -5, 
+      whileHover={{
+        y: -5,
         boxShadow: "lg",
         borderColor: "brand.300"
       }}
@@ -117,9 +117,9 @@ function ServiceCard({
         </VStack>
         <HStack spacing={2} flexWrap="wrap">
           {technologies.map((tech) => (
-            <Badge 
-              key={tech} 
-              colorScheme="blue" 
+            <Badge
+              key={tech}
+              colorScheme="blue"
               variant="subtle"
               fontSize="xs"
               px={2}
@@ -130,7 +130,7 @@ function ServiceCard({
           ))}
         </HStack>
       </VStack>
-      
+
       {/* Hover effect gradient */}
       <Box
         position="absolute"
@@ -178,9 +178,9 @@ export default function Home() {
   return (
     <Box>
       {/* Professional Hero Section */}
-      <Box 
+      <Box
         bgGradient={bgGradient}
-        color="white" 
+        color="white"
         py={{ base: 16, md: 24 }}
         position="relative"
         overflow="hidden"
@@ -195,11 +195,11 @@ export default function Home() {
           opacity={0.1}
           bgImage="data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"
         />
-        
+
         <Container position="relative">
-          <MotionVStack 
-            spacing={8} 
-            align="center" 
+          <MotionVStack
+            spacing={8}
+            align="center"
             textAlign="center"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
@@ -211,10 +211,10 @@ export default function Home() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2, duration: 0.5 }}
             >
-              <Badge 
-                colorScheme="whiteAlpha" 
-                px={4} 
-                py={2} 
+              <Badge
+                colorScheme="whiteAlpha"
+                px={4}
+                py={2}
                 borderRadius="full"
                 fontSize="sm"
                 fontWeight="semibold"
@@ -230,8 +230,8 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.6 }}
             >
-              <Heading 
-                size="3xl" 
+              <Heading
+                size="3xl"
                 fontWeight="extrabold"
                 maxW="4xl"
                 lineHeight="shorter"
@@ -246,13 +246,13 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6, duration: 0.6 }}
             >
-              <Text 
-                fontSize="xl" 
+              <Text
+                fontSize="xl"
                 maxW="3xl"
                 color="whiteAlpha.900"
                 lineHeight="tall"
               >
-                Impulsionamos empresas através de tecnologia de ponta, entregando soluções que 
+                Impulsionamos empresas através de tecnologia de ponta, entregando soluções que
                 transformam processos, aumentam a eficiência e aceleram o crescimento do seu negócio.
               </Text>
             </motion.div>
@@ -270,7 +270,7 @@ export default function Home() {
                   size="lg"
                   bg="white"
                   color="brand.600"
-                  _hover={{ 
+                  _hover={{
                     bg: "gray.50",
                     transform: "translateY(-2px)",
                     boxShadow: "xl"
@@ -287,7 +287,7 @@ export default function Home() {
                   variant="outline"
                   borderColor="whiteAlpha.400"
                   color="white"
-                  _hover={{ 
+                  _hover={{
                     bg: "whiteAlpha.200",
                     borderColor: "whiteAlpha.600",
                     transform: "translateY(-2px)"
@@ -363,13 +363,13 @@ export default function Home() {
               <Heading size="2xl" color="gray.800">
                 Soluções Especializadas
               </Heading>
-              <Text 
-                fontSize="xl" 
-                color="gray.600" 
+              <Text
+                fontSize="xl"
+                color="gray.600"
                 maxW="3xl"
                 lineHeight="tall"
               >
-                Oferecemos um portfólio completo de serviços de tecnologia, 
+                Oferecemos um portfólio completo de serviços de tecnologia,
                 desde desenvolvimento personalizado até migração para nuvem.
               </Text>
             </MotionVStack>
@@ -391,9 +391,9 @@ export default function Home() {
       </Box>
 
       {/* Final CTA Section */}
-      <Box 
-        bgGradient="linear(to-r, gray.800, gray.900)" 
-        color="white" 
+      <Box
+        bgGradient="linear(to-r, gray.800, gray.900)"
+        color="white"
         py={20}
       >
         <Container>
@@ -406,17 +406,28 @@ export default function Home() {
             transition={{ duration: 0.6 }}
           >
             <VStack spacing={4}>
-              <Heading size="2xl" fontWeight="bold">
+              <Heading
+                size="2xl"
+                fontWeight="bold"
+                color="white"
+                textShadow="0 2px 4px rgba(0,0,0,0.3)"
+              >
                 Pronto para Transformar seu Negócio?
               </Heading>
-              <Text fontSize="xl" maxW="2xl" color="gray.300">
-                Entre em contato conosco e descubra como podemos acelerar o crescimento 
+              <Text
+                fontSize="xl"
+                maxW="2xl"
+                color="white"
+                fontWeight="medium"
+                textShadow="0 1px 3px rgba(0,0,0,0.3)"
+              >
+                Entre em contato conosco e descubra como podemos acelerar o crescimento
                 da sua empresa com soluções tecnológicas inovadoras.
               </Text>
             </VStack>
 
-            <Flex 
-              direction={{ base: 'column', sm: 'row' }} 
+            <Flex
+              direction={{ base: 'column', sm: 'row' }}
               gap={4}
               align="center"
             >
@@ -428,7 +439,7 @@ export default function Home() {
                 size="lg"
                 colorScheme="green"
                 leftIcon={<FaWhatsapp />}
-                _hover={{ 
+                _hover={{
                   transform: "translateY(-2px)",
                   boxShadow: "xl"
                 }}
@@ -443,7 +454,7 @@ export default function Home() {
                 variant="outline"
                 borderColor="whiteAlpha.400"
                 color="white"
-                _hover={{ 
+                _hover={{
                   bg: "whiteAlpha.200",
                   borderColor: "whiteAlpha.600",
                   transform: "translateY(-2px)"
