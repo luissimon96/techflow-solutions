@@ -15,7 +15,7 @@ export const Logo = ({ size = 'md', color = 'brand.500' }: LogoProps) => {
   return (
     <Box>
       <Text color={color} {...sizes[size]}>
-        TechFlow
+        TechFlow Solutions
       </Text>
     </Box>
   );
