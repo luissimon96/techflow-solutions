@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { ZodError } from 'zod';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Box,
@@ -26,6 +27,8 @@ import {
   AlertDescription,
 } from '@chakra-ui/react';
 import { FaLaptopCode, FaUser, FaDollarSign } from 'react-icons/fa';
+import { quoteRequestSchema, validateAndSanitize } from '@/lib/validation';
+import { getWhatsAppUrl, sendWhatsAppQuote } from '@/lib/whatsapp';
 
 interface QuoteFormData {
   clientName: string;
@@ -40,6 +43,13 @@ interface QuoteFormData {
   mainGoals: string;
   consent: boolean;
 }
+
+type QuotePrefillState = Partial<
+  Pick<
+    QuoteFormData,
+    'projectName' | 'projectType' | 'timeline' | 'budget' | 'projectDescription' | 'mainGoals'
+  >
+>;
 
 export default function QuoteRequest() {
   const navigate = useNavigate();
@@ -62,8 +72,9 @@ export default function QuoteRequest() {
 
   // Pre-fill form data if coming from Services page
   useEffect(() => {
-    if (location.state) {
-      const { projectName, projectType, timeline, budget, projectDescription, mainGoals } = location.state as any;
+    const prefillData = location.state as QuotePrefillState | null;
+    if (prefillData) {
+      const { projectName, projectType, timeline, budget, projectDescription, mainGoals } = prefillData;
       
       setFormData(prev => ({
         ...prev,
@@ -118,110 +129,71 @@ export default function QuoteRequest() {
     setFormData(prev => ({ ...prev, [name]: fieldValue }));
   };
 
-  const sendToWhatsApp = (data: QuoteFormData) => {
-    console.log('sendToWhatsApp function called with data:', data);
-    let message = `*TechFlow Solutions - Solicitacao de Orcamento*\n\n`;
-    
-    // Client Information
-    message += `*DADOS DO CLIENTE*\n`;
-    message += `Nome: ${data.clientName}\n`;
-    message += `Email: ${data.clientEmail}\n`;
-    
-    if (data.clientPhone) {
-      message += `Telefone: ${data.clientPhone}\n`;
-    }
-    
-    if (data.clientCompany) {
-      message += `Empresa: ${data.clientCompany}\n`;
-    }
-    
-    // Project Information
-    message += `\n*DETALHES DO PROJETO*\n`;
-    message += `Nome: ${data.projectName}\n`;
-    message += `Tipo: ${data.projectType}\n`;
-    message += `Descricao: ${data.projectDescription}\n`;
-    
-    // Timeline & Budget
-    if (data.timeline || data.budget) {
-      message += `\n*CRONOGRAMA E ORCAMENTO*\n`;
-      
-      if (data.timeline) {
-        message += `Prazo: ${data.timeline}\n`;
-      }
-      
-      if (data.budget) {
-        message += `Orcamento: ${data.budget}\n`;
-      }
-    }
-    
-    // Additional Information
-    if (data.mainGoals) {
-      message += `\n*OBJETIVOS PRINCIPAIS*\n${data.mainGoals}\n`;
-    }
-    
-    message += `\n*Solicitado em:* ${new Date().toLocaleString('pt-BR')}\n\n`;
-    message += `Nossa equipe analisara sua solicitacao e retornara em ate 24 horas com uma proposta detalhada!`;
-    
-    const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/5554997109051?text=${encodedMessage}`;
-    
-    console.log('Generated WhatsApp URL:', whatsappUrl);
-    console.log('Opening WhatsApp window...');
-    
-    window.open(whatsappUrl, '_blank');
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Basic validation
-    if (!formData.clientName || !formData.clientEmail || !formData.projectName || 
-        !formData.projectDescription || !formData.projectType || !formData.consent) {
-      toast({
-        title: 'Campos obrigatórios',
-        description: 'Por favor, preencha todos os campos obrigatórios.',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
-      return;
-    }
 
     setIsSubmitting(true);
 
-    // Show success and immediately try to open WhatsApp
-    setSubmitSuccess(true);
-    setIsSubmitting(false);
-    
-    console.log('About to send to WhatsApp with data:', formData);
-    
-    // Try to send immediately
-    sendToWhatsApp(formData);
-    
-    toast({
-      title: 'Redirecionando para WhatsApp... 📱',
-      description: 'Se o WhatsApp não abrir automaticamente, clique no botão abaixo.',
-      status: 'success',
-      duration: 5000,
-      isClosable: true,
-    });
-
-    // Reset form after a delay
-    setTimeout(() => {
-      setFormData({
-        clientName: '',
-        clientEmail: '',
-        clientPhone: '',
-        clientCompany: '',
-        projectName: '',
-        projectDescription: '',
-        projectType: '',
-        timeline: '',
-        budget: '',
-        mainGoals: '',
-        consent: false,
+    try {
+      const validatedData = validateAndSanitize(quoteRequestSchema, {
+        ...formData,
+        clientPhone: formData.clientPhone || undefined,
+        clientCompany: formData.clientCompany || undefined,
+        projectCategory: formData.projectType || 'Projeto personalizado',
+        technologies: [],
+        features: [],
+        integrations: [],
+        platforms: [],
+        hasExistingSystem: false,
       });
-    }, 3000);
+
+      sendWhatsAppQuote(validatedData);
+      setSubmitSuccess(true);
+
+      toast({
+        title: 'Redirecionando para WhatsApp... 📱',
+        description: 'Se o WhatsApp não abrir automaticamente, clique no botão abaixo.',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+      });
+
+      setTimeout(() => {
+        setFormData({
+          clientName: '',
+          clientEmail: '',
+          clientPhone: '',
+          clientCompany: '',
+          projectName: '',
+          projectDescription: '',
+          projectType: '',
+          timeline: '',
+          budget: '',
+          mainGoals: '',
+          consent: false,
+        });
+      }, 3000);
+    } catch (error: unknown) {
+      if (error instanceof ZodError) {
+        toast({
+          title: 'Dados inválidos',
+          description: error.issues[0]?.message ?? 'Revise os campos obrigatórios do formulário.',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+      } else {
+        toast({
+          title: 'Erro ao enviar solicitação',
+          description: 'Tente novamente em alguns minutos.',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -253,13 +225,8 @@ export default function QuoteRequest() {
                       size="sm"
                       leftIcon={<Icon as={FaUser} />}
                       onClick={() => {
-                        console.log('Manual WhatsApp button clicked - using last submitted data');
-                        // Create a basic message if form was reset
                         const basicMessage = 'Olá! Acabei de enviar uma solicitação de orçamento pelo site da TechFlow Solutions. Gostaria de conversar sobre meu projeto.';
-                        const encodedMessage = encodeURIComponent(basicMessage);
-                        const whatsappUrl = `https://wa.me/5554997109051?text=${encodedMessage}`;
-                        console.log('Manual WhatsApp URL:', whatsappUrl);
-                        window.open(whatsappUrl, '_blank');
+                        window.open(getWhatsAppUrl(basicMessage), '_blank');
                       }}
                     >
                       Abrir WhatsApp Manualmente

@@ -163,7 +163,7 @@ npm run preview  # testar build
 1. Verificar no console (F12) se há erros
 2. Considerar que alguns navegadores/dispositivos podem bloquear window.open()
 3. Testar em navegador diferente
-4. Verificar se número WhatsApp está correto em `contactController.ts`
+4. Verificar se número WhatsApp está correto em `src/lib/whatsapp.ts`
 
 ---
 

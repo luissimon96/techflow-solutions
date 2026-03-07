@@ -1,0 +1,5 @@
+- Purpose: Frontend-first website for TechFlow Solutions with lead capture via WhatsApp links, no backend persistence in current scope.
+- Stack: React 18, TypeScript, Vite, Chakra UI, React Router v6, React Query, Zod, Jest + Testing Library, Storybook.
+- Architecture: Pages in src/pages, reusable UI in src/components, domain/static data in src/data, cross-cutting libs in src/lib, theme/provider wiring in src/main.tsx.
+- Key flow: Contact/Quote forms validate with Zod, generate WhatsApp URL via src/lib/whatsapp.ts, open in new tab.
+- Deployment: Vercel-oriented frontend app.

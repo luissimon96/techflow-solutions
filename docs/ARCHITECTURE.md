@@ -214,27 +214,20 @@ User (Frontend)
     │
     ├─> Preenche formulário Contact.tsx
     │
-    ├─> submitContactForm(data)
-    │       │
-    │       ├─> POST /api/contact
-    │       │
-    │       └─> Backend contactController.ts
-    │               ├─ Valida dados
-    │               ├─ Gera WhatsApp URL (wa.me/5554997109051?text=...)
-    │               └─ Retorna { whatsappUrl }
-    │
-    ├─> Frontend recebe URL
-    │
-    └─> window.open(whatsappUrl) → Abre WhatsApp em nova aba
+  ├─> Frontend valida/sanitiza com Zod (src/lib/validation.ts)
+  │
+  ├─> Frontend monta mensagem e URL via src/lib/whatsapp.ts
+  │
+  └─> window.open(whatsappUrl) → Abre WhatsApp em nova aba
 ```
 
 ### 2. Fluxo de Orçamento
 
 ```
 Similar ao fluxo de contato, mas:
-- Endpoint: POST /api/quotes
-- Incluir mais dados: timeline, budget, description
-- Mensagem no WhatsApp é mais detalhada
+- Usa quoteRequestSchema para validação
+- Inclui mais dados (timeline, budget, descrição)
+- Usa sendWhatsAppQuote com template mais detalhado
 ```
 
 ### 3. Fluxo de Renderização (Home → ITServices)
@@ -244,15 +237,19 @@ App (main.tsx)
   │
   └─> HelmetProvider (context para react-helmet-async)
       │
-      └─> ChakraProvider (tema Chakra UI)
+    └─> AnalyticsProvider
+      │
+      └─> QueryProvider (React Query)
+        │
+        └─> ChakraProvider (tema Chakra UI)
           │
-          └─> RouterProvider (React Router)
+          └─> Sentry ErrorBoundary + RouterProvider (React Router)
+            │
+            ├─> Layout (Header + Outlet + Footer)
+            │
+            └─> Page Component (Home, Services, ITServices, etc)
               │
-              ├─> Layout (Header + Outlet + Footer)
-              │
-              └─> Page Component (Home, Services, ITServices, etc)
-                  │
-                  └─> Helmet (SEO tags)
+              └─> Helmet (SEO tags)
 ```
 
 ---
@@ -265,11 +262,11 @@ App (main.tsx)
 - Simplifica deploy e reduz custos
 - Melhor UX - usuário já está no WhatsApp
 
-### Por que monorepo?
-- Frontend e Backend separados logicamente
-- Compartilham package.json (npm workspaces)
-- Scripts unificados (npm run dev inicia ambos)
-- Facilita deployment coordenado
+### Por que frontend-only?
+- Escopo atual não exige persistência de dados no backend
+- Fluxo de contato/orçamento é resolvido com WhatsApp direto
+- Menor custo operacional e menor complexidade de deploy
+- Evolução futura pode adicionar backend sem quebrar o fluxo atual
 
 ### Por que Chakra UI?
 - Componentes acessíveis out-of-the-box

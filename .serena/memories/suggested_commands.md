@@ -1,0 +1,13 @@
+- Install deps: npm install
+- Dev server: npm run dev
+- Preview build: npm run preview
+- Build: npm run build
+- Type/build check: npm run build:check
+- Lint: npm run lint
+- Format: npm run format
+- Tests: npm run test -- --runInBand
+- Test coverage: npm run test:coverage
+- Storybook: npm run storybook
+- Storybook build: npm run build-storybook
+- Clean dist: npm run clean
+- Windows useful commands: Get-ChildItem, Select-String, Get-Content, Set-Location, git status, git diff, rg (if installed).

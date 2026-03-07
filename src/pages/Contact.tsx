@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { ZodError } from 'zod';
 import {
   Box,
   Container,
@@ -13,7 +14,6 @@ import {
   useToast,
   SimpleGrid,
   Icon,
-  Stack,
   FormErrorMessage,
   Alert,
   AlertIcon,
@@ -27,10 +27,12 @@ import {
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import { FaEnvelope, FaPhone, FaMapMarkerAlt, FaCheckCircle, FaWhatsapp } from 'react-icons/fa';
+import { contactFormSchema, validateAndSanitize } from '@/lib/validation';
+import { getWhatsAppUrl, sendWhatsAppContact } from '@/lib/whatsapp';
 
 const MotionBox = motion(Box);
 
-interface ContactFormData {
+interface ContactFormState {
   name: string;
   email: string;
   company: string;
@@ -40,14 +42,13 @@ interface ContactFormData {
   consent: boolean;
 }
 
-type FormErrors = Partial<Record<keyof ContactFormData, string>>;
+type FormErrors = Partial<Record<keyof ContactFormState, string>>;
 
 export default function Contact() {
-  const bgColor = useColorModeValue('white', 'gray.800');
   const textColor = useColorModeValue('gray.600', 'gray.300');
   const cardBg = useColorModeValue('white', 'gray.700');
   const borderColor = useColorModeValue('gray.200', 'gray.600');
-  const [formData, setFormData] = useState<ContactFormData>({
+  const [formData, setFormData] = useState<ContactFormState>({
     name: '',
     email: '',
     company: '',
@@ -73,25 +74,17 @@ export default function Contact() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validação simples
-    const newErrors: FormErrors = {};
-    if (!formData.name.trim()) newErrors.name = 'Nome é obrigatório';
-    if (!formData.email.trim()) newErrors.email = 'Email é obrigatório';
-    if (!formData.subject.trim()) newErrors.subject = 'Assunto é obrigatório';
-    if (!formData.message.trim()) newErrors.message = 'Mensagem é obrigatória';
-    if (!formData.consent) newErrors.consent = 'Você deve aceitar os termos';
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
-
     setIsSubmitting(true);
     setErrors({});
 
     try {
-      // Simular envio
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const validatedData = validateAndSanitize(contactFormSchema, {
+        ...formData,
+        company: formData.company || undefined,
+        phone: formData.phone || undefined,
+      });
+
+      sendWhatsAppContact(validatedData);
 
       setSubmitSuccess(true);
       setFormData({
@@ -106,13 +99,27 @@ export default function Contact() {
 
       toast({
         title: 'Mensagem enviada com sucesso!',
-        description: 'Entraremos em contato em breve.',
+        description: 'Abrimos o WhatsApp com sua mensagem para envio.',
         status: 'success',
         duration: 5000,
         isClosable: true,
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
+      if (error instanceof ZodError) {
+        const newErrors: FormErrors = {};
+
+        error.issues.forEach((issue) => {
+          const field = issue.path[0];
+          if (typeof field === 'string' && !newErrors[field as keyof ContactFormState]) {
+            newErrors[field as keyof ContactFormState] = issue.message;
+          }
+        });
+
+        setErrors(newErrors);
+        return;
+      }
+
       toast({
         title: 'Erro ao enviar mensagem',
         description: 'Tente novamente em alguns minutos.',
@@ -127,9 +134,7 @@ export default function Contact() {
 
   const openWhatsApp = () => {
     const message = 'Olá! Gostaria de saber mais sobre os serviços da TechFlow Solutions.';
-    const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/5554997109051?text=${encodedMessage}`;
-    window.open(whatsappUrl, '_blank');
+    window.open(getWhatsAppUrl(message), '_blank');
   };
 
   return (

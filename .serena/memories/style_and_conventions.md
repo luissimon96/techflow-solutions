@@ -1,0 +1,7 @@
+- React functional components + hooks only.
+- Public interfaces should use explicit TypeScript types; avoid any.
+- Keep providers order in src/main.tsx: HelmetProvider -> AnalyticsProvider -> QueryProvider -> ChakraProvider -> RouterProvider.
+- Use lazy loading at route level in src/lib/router.tsx.
+- Naming: components PascalCase.tsx, utilities camelCase.ts, tests *.test.tsx.
+- Prefer Chakra UI/theme tokens, include visible loading/success/error states, and preserve accessibility (reduced motion, image dimensions for CLS).
+- Keep Sentry production-only when DSN exists; avoid sending sensitive data.
