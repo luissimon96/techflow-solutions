@@ -1,49 +1,32 @@
 import { render, screen } from '@testing-library/react';
-import { BrowserRouter } from 'react-router-dom';
 import { Logo } from '../Logo';
 
 describe('Logo Component', () => {
   it('deve renderizar o logo', () => {
-    render(
-      <BrowserRouter>
-        <Logo />
-      </BrowserRouter>
-    );
+    render(<Logo />);
 
-    const text = screen.getByText('TechFlow');
-    expect(text).toBeInTheDocument();
+    const logo = screen.getByRole('img', { name: 'TechFlow Solutions' });
+    expect(logo).toBeInTheDocument();
   });
 
-  it('deve renderizar como elemento decorativo quando apropriado', () => {
-    render(
-      <BrowserRouter>
-        <Logo />
-      </BrowserRouter>
-    );
+  it('deve renderizar com alt acessivel', () => {
+    render(<Logo />);
 
-    const logo = screen.getByText('TechFlow');
+    const logo = screen.getByRole('img', { name: 'TechFlow Solutions' });
     expect(logo).toBeInTheDocument();
   });
 
   it('deve renderizar sem erros', () => {
     expect(() => {
-      render(
-        <BrowserRouter>
-          <Logo />
-        </BrowserRouter>
-      );
+      render(<Logo />);
     }).not.toThrow();
   });
 
   it('deve aplicar tamanho pequeno corretamente', () => {
-    render(
-      <BrowserRouter>
-        <Logo size="sm" />
-      </BrowserRouter>
-    );
+    render(<Logo size="sm" />);
 
-    const text = screen.getByText('TechFlow');
-    expect(text).toBeInTheDocument();
+    const logo = screen.getByRole('img', { name: 'TechFlow Solutions' });
+    expect(logo).toBeInTheDocument();
   });
 });
 

@@ -5,7 +5,7 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 ## [Unreleased]
 
 ### 🔧 Fixed
-- **HelmetProvider Missing**: Adicionado `HelmetProvider` em `frontend/src/main.tsx` para corrigir erro `Cannot read properties of undefined (reading 'add')` na página ITServices
+- **HelmetProvider Missing**: Adicionado `HelmetProvider` em `src/main.tsx` para corrigir erro `Cannot read properties of undefined (reading 'add')` na página ITServices
 - **Contrast Issues**: Melhorado contraste de fontes em banner CTA final (Home.tsx) e rodapé (Footer.tsx) com white color + text-shadow
 
 ### ✅ Added
@@ -49,7 +49,7 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 - **Página Clientes** (`/clientes`): Removido componente, rota e referencias da navegação
 - **Admin Link**: Removido link discreto de `/admin/login` do footer
 - **Botão "Ver Projetos"**: Removido botão de CTA em Home.tsx que redirecionava para `/clientes`
-- **API Endpoints**: Removidos endpoints não utilizados de Blog e Portfolio de `frontend/src/lib/api.ts`
+- **API Endpoints**: Removidos endpoints não utilizados de Blog e Portfolio de `src/lib/api.ts`
 - **SEO References**: Removidas rotas de `/blog`, `/ferias` de `sitemap.xml` e `robots.txt`
 
 ### 📝 Changed
@@ -76,7 +76,7 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 - **Ordem de Navegação (Atualizada)**:
   - Antes: Desenvolvimento → Serviços de TI → Sobre
   - Depois: **Serviços de TI → Desenvolvimento → Sobre → Contato**
-  - Mudança aplicada em `frontend/src/components/Header.tsx`
+  - Mudança aplicada em `src/components/Header.tsx`
 
 - **Home.tsx Design**: 
   - Removido banner azul colorido (gradiente brand)

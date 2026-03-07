@@ -26,7 +26,7 @@ Guia de deploy do TechFlow Solutions na Vercel (frontend React).
 
 O frontend não usa variáveis de environment para API (integração direta com WhatsApp).
 
-Se necessário adicionar variáveis customizadas, use `frontend/.env`:
+Se necessário adicionar variáveis customizadas, use `.env` na raiz do projeto:
 
 
 
@@ -41,7 +41,7 @@ Se necessário adicionar variáveis customizadas, use `frontend/.env`:
 # 4. Preencher:
 
 Framework Preset:             Vite
-Root Directory:               frontend
+Root Directory:               . (raiz do projeto)
 Build Command:                npm run build (detectado automaticamente)
 Install Command:              npm ci (detectado automaticamente)
 Output Directory:             dist (detectado automaticamente)
@@ -54,8 +54,8 @@ Development Command:          npm run dev
 
 ```json
 {
-  "buildCommand": "cd frontend && npm run build",
-  "outputDirectory": "frontend/dist"
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist"
 }
 ```
 
@@ -146,12 +146,11 @@ https://www.srluissimon.com
 1. Clicar em deployment failed para ver logs
 2. Erros comuns:
    - TypeScript errors: `npm run build` localmente para debug
-   - Missing dependencies: `npm install` em `frontend/`
+  - Missing dependencies: `npm install` na raiz
    - Import paths: verificar caminhos relativos
 
 ```bash
 # Debug local
-cd frontend
 npm run build
 npm run preview  # testar build
 ```

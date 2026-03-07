@@ -1,11 +1,30 @@
+import { Suspense, lazy, type ReactNode } from 'react';
+import { Box, Center, Spinner } from '@chakra-ui/react';
 import { createBrowserRouter } from 'react-router-dom';
 import Layout from '@/components/Layout';
-import Home from '@/pages/Home';
-import Services from '@/pages/Services';
-import ITServices from '@/pages/ITServices';
-import About from '@/pages/About';
-import Contact from '@/pages/Contact';
-import QuoteRequest from '@/pages/QuoteRequest';
+
+const Home = lazy(() => import('@/pages/Home'));
+const Services = lazy(() => import('@/pages/Services'));
+const ITServices = lazy(() => import('@/pages/ITServices'));
+const About = lazy(() => import('@/pages/About'));
+const Contact = lazy(() => import('@/pages/Contact'));
+const QuoteRequest = lazy(() => import('@/pages/QuoteRequest'));
+
+function RouteLoader() {
+  return (
+    <Center minH="40vh" role="status" aria-live="polite" aria-label="Carregando página">
+      <Spinner size="lg" thickness="4px" color="brand.500" />
+    </Center>
+  );
+}
+
+function withSuspense(page: ReactNode) {
+  return (
+    <Suspense fallback={<RouteLoader />}>
+      <Box>{page}</Box>
+    </Suspense>
+  );
+}
 
 export const router = createBrowserRouter([
   {
@@ -14,27 +33,27 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Home />,
+        element: withSuspense(<Home />),
       },
       {
         path: 'servicos',
-        element: <Services />,
+        element: withSuspense(<Services />),
       },
       {
         path: 'servicos-ti',
-        element: <ITServices />,
+        element: withSuspense(<ITServices />),
       },
       {
         path: 'sobre',
-        element: <About />,
+        element: withSuspense(<About />),
       },
       {
         path: 'contato',
-        element: <Contact />,
+        element: withSuspense(<Contact />),
       },
       {
         path: 'orcamento',
-        element: <QuoteRequest />,
+        element: withSuspense(<QuoteRequest />),
       },
     ],
   },

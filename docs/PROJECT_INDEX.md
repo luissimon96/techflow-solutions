@@ -42,21 +42,19 @@
 
 ```
 techflow-solutions/
-├── frontend/                   # React/TypeScript frontend
-│   ├── src/
-│   │   ├── main.tsx           # Main entry point
-│   │   ├── components/        # React components
-│   │   ├── pages/             # Page components
-│   │   ├── lib/               # Utilities & configuration
-│   │   ├── data/              # Static data
-│   │   ├── types/             # TypeScript type definitions
-│   │   └── utils/             # Helper functions
-│   ├── dist/                  # Vite build output
-│   ├── package.json
-│   ├── tsconfig.json
-│   ├── vite.config.ts
-│   └── jest.config.ts
-│
+├── src/                       # React/TypeScript source
+│   ├── main.tsx              # Main entry point
+│   ├── components/           # React components
+│   ├── pages/                # Page components
+│   ├── lib/                  # Utilities & configuration
+│   ├── data/                 # Static data
+│   ├── types/                # TypeScript type definitions
+│   └── utils/                # Helper functions
+├── dist/                     # Vite build output
+├── jest.config.cjs           # Jest config
+├── tsconfig.app.json
+├── tsconfig.node.json
+├── vite.config.ts
 ├── node_modules/              # Root dependencies
 ├── package.json               # Root package.json
 ├── README.md                  # Quick start guide
@@ -69,9 +67,9 @@ techflow-solutions/
 ## 🚀 Entry Points
 
 ### Frontend
-- **Main:** `frontend/src/main.tsx` - React app initialization
-- **Router:** `frontend/src/lib/router.tsx` - React Router configuration
-- **Theme:** `frontend/src/theme.ts` - Chakra UI custom theme
+- **Main:** `src/main.tsx` - React app initialization
+- **Router:** `src/lib/router.tsx` - React Router configuration
+- **Theme:** `src/theme.ts` - Chakra UI custom theme
 
 ### Development Scripts
 - **Root:** `package.json` - Root orchestration scripts
@@ -83,7 +81,7 @@ techflow-solutions/
 
 ### Frontend Core Modules
 
-#### Pages (`frontend/src/pages/`)
+#### Pages (`src/pages/`)
 - **Home.tsx** - Landing page with hero, stats, services, and CTA
 - **ITServices.tsx** (Featured) - IT support, security, and cloud infrastructure services with pre-filled quote form
 - **Services.tsx** - Web, mobile, e-commerce development services with pre-filled quote form
@@ -91,7 +89,7 @@ techflow-solutions/
 - **Contact.tsx** - Contact form with WhatsApp integration
 - **QuoteRequest.tsx** - Quote request form with pre-fill from Services/ITServices pages via navigation state
 
-#### Components (`frontend/src/components/`)
+#### Components (`src/components/`)
 - **Layout.tsx** - Main layout wrapper
   - Exports: `Layout` (default)
   - Includes: Header, Footer, Outlet
@@ -115,7 +113,7 @@ techflow-solutions/
   - `ITServiceCard.tsx` - IT service card
   - `PackageComparison.tsx` - Package comparison table
 
-#### Libraries (`frontend/src/lib/`)
+#### Libraries (`src/lib/`)
 - **api.ts** - API integration layer (deprecated/unused)
   - Frontend generates WhatsApp URLs directly
   - No API intermediary needed
@@ -146,14 +144,14 @@ techflow-solutions/
 - **whatsapp.ts** - WhatsApp URL generation utilities
   - Exports: `generateWhatsAppURL`, `openWhatsApp`
 
-#### Data (`frontend/src/data/`)
+#### Data (`src/data/`)
 - **services.ts** - Service catalog data
   - Exports: `services` array
 
 - **itServices.ts** - IT services data
   - Exports: `itServices`, `packages`
 
-#### Utils (`frontend/src/utils/`)
+#### Utils (`src/utils/`)
 - **iconUtils.ts** - Icon mapping utilities
   - Exports: `getIconComponent`
 
@@ -168,21 +166,21 @@ techflow-solutions/
 
 ### Backend Configuration
 ### Frontend Configuration
-- **frontend/package.json** - Frontend dependencies and scripts
+- **package.json** - Frontend dependencies and scripts
   - Type: module
   - Scripts: dev, build, test, storybook
   - Key deps: react, chakra-ui, react-router-dom, react-query, zod
 
-- **frontend/tsconfig.json** - TypeScript configuration
+- **tsconfig.app.json** - TypeScript app configuration
   - Target: ES2020
   - Module: ESNext
   - Path aliases: `@/*` → `./src/*`
 
-- **frontend/vite.config.ts** - Vite configuration
+- **vite.config.ts** - Vite configuration
   - Plugin: @vitejs/plugin-react
   - Path aliases configured
 
-- **frontend/jest.config.ts** - Jest configuration
+- **jest.config.cjs** - Jest configuration
   - Environment: jsdom
   - Setup: setupTests.ts
 
@@ -198,7 +196,7 @@ techflow-solutions/
 
 - **vercel.json** - Vercel frontend deployment
   - Framework: vite
-  - Build output: `frontend/dist`
+  - Build output: `dist`
   - API rewrites to Render backend
 
 ---
@@ -210,9 +208,9 @@ techflow-solutions/
 **Use Case:** Seamlessly pass service information from Services pages to QuoteRequest form
 
 **Implementation Location:** 
-- `frontend/src/pages/Services.tsx` (handleQuoteRequest function)
-- `frontend/src/pages/ITServices.tsx` (handleQuoteRequest function)
-- `frontend/src/pages/QuoteRequest.tsx` (useEffect with location.state)
+- `src/pages/Services.tsx` (handleQuoteRequest function)
+- `src/pages/ITServices.tsx` (handleQuoteRequest function)
+- `src/pages/QuoteRequest.tsx` (useEffect with location.state)
 
 **Pattern Details:**
 1. Service card buttons use `onClick={() => handleQuoteRequest(service)}` instead of `<Link>`
@@ -263,14 +261,14 @@ navigate('/orcamento', {
   - Troubleshooting tips
 
 ### Code Documentation
-- Type definitions in `frontend/src/types/global.d.ts`
+- Type definitions in `src/types/global.d.ts`
 - Inline JSDoc comments in components and utilities
 
 ---
 
 ## 🧪 Test Coverage
 
-### Frontend Tests (`frontend/src/`)
+### Frontend Tests (`src/`)
 - **pages/__tests__/Contact.test.tsx** - Contact page tests
   - Form validation
   - WhatsApp integration
@@ -374,7 +372,7 @@ npm run clean
 1. **Frontend (Vercel)**
    - Push to `master` branch → Auto-deploy
    - Build: Vite production build
-   - Output: `frontend/dist/`
+  - Output: `dist/`
 
 For detailed deployment instructions, see [docs/DEPLOYMENT.md](DEPLOYMENT.md)
 

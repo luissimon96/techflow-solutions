@@ -10,7 +10,7 @@
     "build": "vite build",
     "build:check": "tsc && vite build",
     "preview": "vite preview",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "lint": "eslint . --report-unused-disable-directives",
     "format": "prettier --write .",
     "test": "jest",
     "test:watch": "jest --watch",

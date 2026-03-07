@@ -192,6 +192,9 @@ export default function About() {
                     <Image
                       src="/logos/favicon.png"
                       alt="TechFlow Solutions"
+                      loading="eager"
+                      width="76"
+                      height="76"
                       h="80%"
                       objectFit="contain"
                     />

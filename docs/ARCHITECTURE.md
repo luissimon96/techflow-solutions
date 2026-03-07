@@ -57,7 +57,7 @@ TechFlow Solutions é uma **aplicação web frontend-only** que demonstra uma em
 ### Estrutura de Pastas
 
 ```
-frontend/src/
+src/
 ├── pages/                 # Página components
 │  ├── Home.tsx           # Landing page (hero, stats, services, CTA)
 │  ├── ITServices.tsx     # Serviços de TI (suporte, segurança, cloud) [Em destaque na navegação]
@@ -80,7 +80,6 @@ frontend/src/
 │     └── PackageComparison.tsx
 │
 ├── lib/                 # Utilidades e configurações
-│  ├── api.ts            # Chamadas HTTP para backend
 │  ├── router.tsx        # React Router config
 │  ├── query.tsx         # React Query setup
 │  ├── validation.ts     # Validação de formulários
@@ -146,22 +145,15 @@ export default function MyPage() {
 - Passar props tipadas com TypeScript
 - Manter componentes simples e focados
 
-#### 3. **Chamadas HTTP**
-- Centralizar em `frontend/src/lib/api.ts`
-- Usar `fetch` com try/catch
-- Retornar tipos tipados
+#### 3. **Fluxo WhatsApp (Frontend-Only)**
+- Centralizar validação em `src/lib/validation.ts`
+- Centralizar geração de links em `src/lib/whatsapp.ts`
+- Abrir URL com `window.open(url, '_blank')`
 
 ```tsx
-// lib/api.ts
-export async function submitContactForm(data: ContactFormData) {
-  const response = await fetch(`${API_BASE_URL}/contact`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data)
-  });
-  
-  if (!response.ok) throw new Error('Failed');
-  return response.json();
+// lib/whatsapp.ts
+export function openWhatsApp(url: string) {
+  window.open(url, '_blank');
 }
 ```
 

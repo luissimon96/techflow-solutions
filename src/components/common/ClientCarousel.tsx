@@ -1,5 +1,5 @@
 import { Box, Image } from '@chakra-ui/react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { ImageFallback } from './ImageFallback';
 
 const MotionBox = motion(Box);
@@ -31,6 +31,8 @@ const clients = [
 const duplicatedClients = [...clients, ...clients];
 
 export function ClientCarousel() {
+  const prefersReducedMotion = useReducedMotion();
+
   return (
     <Box
       w="100%"
@@ -61,17 +63,19 @@ export function ClientCarousel() {
     >
       <MotionBox
         display="flex"
-        animate={{
-          x: [0, -50 * clients.length],
-        }}
-        transition={{
-          x: {
-            repeat: Infinity,
-            repeatType: 'loop',
-            duration: 20,
-            ease: 'linear',
-          },
-        }}
+        animate={prefersReducedMotion ? undefined : { x: [0, -50 * clients.length] }}
+        transition={
+          prefersReducedMotion
+            ? undefined
+            : {
+                x: {
+                  repeat: Infinity,
+                  repeatType: 'loop',
+                  duration: 20,
+                  ease: 'linear',
+                },
+              }
+        }
       >
         {duplicatedClients.map((client, index) => (
           <Box
@@ -85,6 +89,9 @@ export function ClientCarousel() {
             <Image
               src={client.logo}
               alt={client.name}
+              loading="lazy"
+              width="150"
+              height="60"
               fallback={<ImageFallback width="150px" height="60px" text={client.name} />}
               maxH="60px"
               objectFit="contain"
